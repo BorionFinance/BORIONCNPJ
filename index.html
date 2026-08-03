@@ -9,6 +9,10 @@
 <link rel="shortcut icon" href="borion.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <script>
 (function(){
   try{
@@ -17,10 +21,10 @@
   }catch(e){document.documentElement.setAttribute('data-theme','dark');}
 })();
 </script>
-<link rel="preload" href="css/borion-7.6.2.css?v=1.0.4" as="style">
+<link rel="preload" href="css/borion-7.6.2.css?v=1.0.5" as="style">
 <link rel="preload" href="borion-emblem.png" as="image" type="image/png">
-<link rel="stylesheet" href="css/borion-7.6.2.css?v=1.0.4">
-<link rel="stylesheet" href="css/cnpj.css?v=1.0.4">
+<link rel="stylesheet" href="css/borion-7.6.2.css?v=1.0.5">
+<link rel="stylesheet" href="css/cnpj.css?v=1.0.5">
 </head>
 <body class="borion-intro-active">
 
@@ -46,7 +50,7 @@
 })();
 </script>
 
-<div id="borion_version_badge" aria-label="Versão do Borion CNPJ">1.0.4</div>
+<div id="borion_version_badge" aria-label="Versão do Borion CNPJ">1.0.5</div>
 
 <div id="desktop-warning" class="desktop-warning" hidden>
   <img src="borion-emblem.png" alt="Borion CNPJ">
@@ -97,6 +101,8 @@
       <button class="sb-item" data-page="boletos"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h3"/><path d="M15 14v4M17 14v4M19 14v4"/></svg></span><span class="sb-label">Boletos</span></button>
       <button class="sb-item" data-page="fornecedores"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M17 13a3 3 0 1 0 0-6"/><path d="M3 21v-2a6 6 0 0 1 12 0v2M15 15a5 5 0 0 1 6 4v2"/></svg></span><span class="sb-label">Fornecedores</span></button>
       <button class="sb-item" data-page="alertas"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5a2 2 0 1 1 4 0 7 7 0 0 1 4 6v3l2 3H4l2-3v-3a7 7 0 0 1 4-6M9 21h6"/></svg></span><span class="sb-label">Alertas</span><em id="alert-count" hidden>0</em></button>
+      <button class="sb-item mobile-more-item" id="mobile-more" type="button"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></span><span class="sb-label">Mais</span></button>
+      <button class="sb-item" data-page="importar"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V9M8 13l4-4 4 4"/><path d="M5 4h14v4M5 20h14"/></svg></span><span class="sb-label">Importar arquivos</span></button>
       <button class="sb-item" data-page="backup"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M8 11l4 4 4-4M5 19h14"/></svg></span><span class="sb-label">Backup</span></button>
       <button class="sb-item" data-page="config"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37 1 .608 2.296.07 2.572-1.065"/><path d="M9 12a3 3 0 1 0 6 0 3 3 0 0 0-6 0"/></svg></span><span class="sb-label">Configurações</span></button>
     </nav>
@@ -138,6 +144,7 @@
     <section id="page-boletos" class="page"></section>
     <section id="page-fornecedores" class="page"></section>
     <section id="page-alertas" class="page"></section>
+    <section id="page-importar" class="page"></section>
     <section id="page-backup" class="page"></section>
     <section id="page-config" class="page"></section>
   </main>
@@ -147,11 +154,14 @@
 <div id="toast-root"></div>
 <input id="hidden-file-input" type="file" hidden multiple>
 
-<script src="js/config.js?v=1.0.4"></script>
+<script src="js/config.js?v=1.0.5"></script>
 <script src="vendor/tesseract/tesseract.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="js/app.js?v=1.0.4"></script>
+<script src="js/app.js?v=1.0.5"></script>
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(console.warn));}
+</script>
 </body>
 </html>

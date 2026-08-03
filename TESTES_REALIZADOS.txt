@@ -1,11 +1,13 @@
-BORION CNPJ 1.0.4 — validações
+BORION CNPJ 1.0.5 — TESTES REALIZADOS
 
-- Sintaxe JavaScript validada com Node.js.
-- Client ID presente.
-- Migração da base local 1.0.3 para 1.0.4.
-- Google Drive com current.json e snapshots automáticos.
-- Falha de chave antiga não bloqueia novos salvamentos.
-- Conta de cheque cadastrada somente em Configurações.
-- Seleção -- quando não existe conta.
-- Exportação e importação de cheques em JSON.
-- Máscara monetária e CPF/CNPJ preservadas.
+1. Sintaxe completa de js/app.js validada com Node.js.
+2. Sintaxe do service-worker.js validada com Node.js.
+3. Manifesto PWA e RELEASE.json validados como JSON.
+4. Verificador do build confirmou Client ID, Drive, snapshots automático/diário/mensal, contas de cheque, máscaras e importação.
+5. Conferida presença do módulo próprio “Importar arquivos”.
+6. Conferida análise de duplicidades para cheques, boletos, fornecedores, contas e IDs de anexos.
+7. Conferida política de importação: registros existentes são ignorados e não sobrescritos.
+8. Conferidos manifest, service worker, ícones e layout mobile em cartões.
+9. Conferida versão 1.0.5 em index, configuração, payloads do Drive e documentação.
+
+O login real e a sincronização remota dependem do domínio publicado, da API Google Drive ativa e das permissões OAuth da conta.

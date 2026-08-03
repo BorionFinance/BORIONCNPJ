@@ -9,6 +9,7 @@ const PAGE_META = {
   boletos:['Boletos','Cadastre por foto, PDF, linha digitável ou leitor USB.'],
   fornecedores:['Fornecedores','Pessoas e empresas vinculadas aos pagamentos.'],
   alertas:['Alertas','Vencimentos, atrasos e documentos que precisam de atenção.'],
+  importar:['Importar arquivos','Importe cheques, boletos, fornecedores e backups sem criar duplicidades.'],
   backup:['Backup','Exporte, restaure e proteja os dados da empresa.'],
   config:['Configurações','Google Drive, segurança e preferências do Borion.']
 };
@@ -87,7 +88,7 @@ function wireSmartInputs(root=document){
 
 function blankState(){
   return {
-    meta:{version:CFG.version||'1.0.4',createdAt:nowISO(),updatedAt:nowISO()},
+    meta:{version:CFG.version||'1.0.5',createdAt:nowISO(),updatedAt:nowISO()},
     settings:{companyName:'Borion CNPJ',rootFolderId:'',rootFolderName:CFG.driveRootFolderName||'Borion CNPJ',autoSync:true,keepOriginals:true,warningDays:7},
     fornecedores:[],cheques:[],boletos:[],audit:[],deleted:[]
   };
@@ -486,8 +487,8 @@ function setPage(page){
   App.page=page; $$('.sb-item[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===page)); $$('.page').forEach(x=>x.classList.toggle('active',x.id==='page-'+page));
   const meta=PAGE_META[page]||PAGE_META.dashboard;$('#page-title').textContent=meta[0];$('#page-subtitle').textContent=meta[1]; renderPage(page);
 }
-function renderAll(){ renderDashboard();renderCheques();renderBoletos();renderFornecedores();renderAlertas();renderBackup();renderConfig(); }
-function renderPage(page){ ({dashboard:renderDashboard,cheques:renderCheques,boletos:renderBoletos,fornecedores:renderFornecedores,alertas:renderAlertas,backup:renderBackup,config:renderConfig}[page]||renderDashboard)(); }
+function renderAll(){ renderDashboard();renderCheques();renderBoletos();renderFornecedores();renderAlertas();renderImport();renderBackup();renderConfig(); }
+function renderPage(page){ ({dashboard:renderDashboard,cheques:renderCheques,boletos:renderBoletos,fornecedores:renderFornecedores,alertas:renderAlertas,importar:renderImport,backup:renderBackup,config:renderConfig}[page]||renderDashboard)(); }
 function upcomingRecords(){
   const arr=[];
   active(App.state.cheques).filter(x=>!['Compensado','Cancelado'].includes(x.status)).forEach(x=>x.dataBom&&arr.push({type:'Cheque',id:x.id,title:x.numero||'Sem número',party:supplierById(x.fornecedorId)?.nome||x.pessoa||'—',date:x.dataBom,value:x.valor,status:x.status}));
@@ -819,14 +820,14 @@ renderConfig=function(){
 
 
 
-// ---------- Versão 1.0.4: Drive resiliente, redundância e contas de cheque ----------
+// ---------- Versão 1.0.5: Drive resiliente, redundância e contas de cheque ----------
 const V104_LOCAL_STATE_KEY='borion_cnpj_state_v2';
 const V104_LOCAL_LAST_GOOD_KEY='borion_cnpj_state_v2_last_good';
 
 function migrateStateV104(raw){
   const base=blankState();
   const out=Object.assign(base,raw||{});
-  out.meta={...base.meta,...(raw?.meta||{}),version:'1.0.4'};
+  out.meta={...base.meta,...(raw?.meta||{}),version:'1.0.5'};
   out.settings={...base.settings,...(raw?.settings||{})};
   out.settings.chequeAccounts=Array.isArray(out.settings.chequeAccounts)?out.settings.chequeAccounts:[];
   out.settings.autoSync=out.settings.autoSync!==false;
@@ -1015,7 +1016,7 @@ Drive.createSnapshot=async function(structure,prefix='AUTO'){
   const folder=await Drive.monthFolder(structure.backups,todayISO());
   const stamp=nowISO().replace(/[:.]/g,'-');
   const name=`${prefix}_${todayISO()}_${stamp}_R${Number(App.state.meta.revision||0)}.json`;
-  await Drive.uploadJson(folder,name,{app:'Borion CNPJ',version:'1.0.4',kind:prefix,createdAt:nowISO(),user:App.user?.email||'',state:App.state});
+  await Drive.uploadJson(folder,name,{app:'Borion CNPJ',version:'1.0.5',kind:prefix,createdAt:nowISO(),user:App.user?.email||'',state:App.state});
   return name;
 };
 Drive.sync=async function(){
@@ -1029,7 +1030,7 @@ Drive.sync=async function(){
     await Drive.syncAttachments(structure);
     App.state.meta.updatedAt=nowISO();
     await Drive.createSnapshot(structure,'AUTO');
-    const currentPayload={app:'Borion CNPJ',version:'1.0.4',updatedAt:nowISO(),revision:Number(App.state.meta.revision||0),state:App.state};
+    const currentPayload={app:'Borion CNPJ',version:'1.0.5',updatedAt:nowISO(),revision:Number(App.state.meta.revision||0),state:App.state};
     const currentFile=await Drive.findChild(structure.data,'current.json');
     const saved=await Drive.uploadJson(structure.data,'current.json',currentPayload,currentFile?.id||'');
     App.drive.dataFileId=saved.id;
@@ -1100,7 +1101,7 @@ importBackup=async function(){
 };
 
 renderBackup=function(){
-  const root=$('#page-backup');if(!root)return;root.innerHTML=`<div class="grid-2"><section class="panel"><div class="panel-head"><div class="panel-title">Proteção automática no Google Drive</div></div><div class="panel-body"><div class="config-section"><h3>Várias camadas de salvamento</h3><p>Cada alteração é salva imediatamente neste computador. Cada sincronização cria um snapshot completo no Drive antes de atualizar o arquivo atual. Também existem backups diário e mensal.</p><div class="status-line"><span class="sync-dot ${App.drive.connected?'ok':'error'}"></span><div><b>${App.drive.connected?'Drive conectado':'Entre com o Google'}</b><small>Último backup: ${esc(App.state.settings.lastDriveBackupDate?fmtDateTime(App.state.settings.lastDriveBackupDate):'ainda não criado')}</small></div></div><button class="btn btn-primary btn-block" onclick="Borion.driveBackup()">Criar backup no Drive agora</button></div><div class="config-section"><h3>Backup completo externo</h3><button class="btn btn-outline" onclick="Borion.exportBackup()">Exportar ZIP completo</button><button class="btn btn-outline" onclick="Borion.importBackup()">Restaurar ZIP completo</button></div></div></section><section class="panel"><div class="panel-head"><div class="panel-title">Importação de cheques</div></div><div class="panel-body"><div class="config-section"><h3>Levar os cheques sem fotos</h3><p>Gere um JSON com os cheques atuais, fornecedores e contas. As fotos podem ser adicionadas depois em Editar.</p><button class="btn btn-primary btn-block" onclick="Borion.exportChequesImport()">Exportar cheques atuais</button><button class="btn btn-outline btn-block" onclick="Borion.importChequesFile()">Importar arquivo de cheques</button></div></div></section></div>`;
+  const root=$('#page-backup');if(!root)return;root.innerHTML=`<div class="grid-2"><section class="panel"><div class="panel-head"><div class="panel-title">Proteção automática no Google Drive</div></div><div class="panel-body"><div class="config-section"><h3>Várias camadas de salvamento</h3><p>Cada alteração é salva imediatamente neste aparelho. Antes de atualizar o arquivo principal, o Borion cria snapshots no Drive, além de backups diário e mensal.</p><div class="status-line"><span class="sync-dot ${App.drive.connected?'ok':'error'}"></span><div><b>${App.drive.connected?'Drive conectado':'Entre com o Google'}</b><small>Último backup: ${esc(App.state.settings.lastDriveBackupDate?fmtDateTime(App.state.settings.lastDriveBackupDate):'ainda não criado')}</small></div></div><button class="btn btn-primary btn-block" onclick="Borion.driveBackup()">Criar backup no Drive agora</button></div></div></section><section class="panel"><div class="panel-head"><div class="panel-title">Backup externo</div></div><div class="panel-body"><div class="config-section"><h3>Arquivo completo</h3><p>Exporte dados e anexos para guardar fora do Drive.</p><button class="btn btn-outline btn-block" onclick="Borion.exportBackup()">Exportar ZIP completo</button></div><div class="config-section"><h3>Importar sem duplicar</h3><p>A restauração segura agora fica em Importar arquivos e sempre mostra uma conferência antes de salvar.</p><button class="btn btn-outline btn-block" onclick="Borion.go('importar')">Abrir Importar arquivos</button></div></div></section></div>`;
 };
 
 renderConfig=function(){
@@ -1108,6 +1109,190 @@ renderConfig=function(){
   root.innerHTML=`<div class="settings-grid"><section class="settings-card drive-primary"><div class="settings-card-head"><div class="settings-icon">☁</div><div><h3>Google Drive oficial</h3><p>A pasta Borion CNPJ é criada automaticamente na conta conectada.</p></div><span class="connection-pill ${connected?'connected':'disconnected'}">${connected?'Conectado':'Desconectado'}</span></div><div class="settings-details"><div><span>Conta conectada</span><b>${esc(App.user?.email||'Entre novamente com o Google')}</b></div><div><span>Pasta automática</span><b>Borion CNPJ</b></div><div><span>ID da pasta</span><b class="mono">${esc(rootId||'Criado no primeiro acesso')}</b></div><div><span>Proteção</span><b>Google Drive + snapshots locais e remotos</b></div></div><div class="settings-actions">${connected?'<button class="btn btn-outline" onclick="Borion.reconnectGoogle()">Trocar conta Google</button>':''}<button class="btn btn-primary" onclick="Borion.prepareDrive()">Verificar estrutura no Drive</button></div></section><section class="settings-card"><div class="settings-card-head"><div class="settings-icon">⚙</div><div><h3>Preferências da empresa</h3><p>Ajustes visuais e operacionais.</p></div></div><div class="form-grid settings-form"><div class="field full"><label for="cfg-company">Nome da empresa</label><input id="cfg-company" value="${esc(App.state.settings.companyName||'Borion CNPJ')}" autocomplete="organization"></div><div class="field"><label for="cfg-warning">Alertar com antecedência</label><select id="cfg-warning">${[3,5,7,10,15,30].map(v=>`<option value="${v}" ${Number(App.state.settings.warningDays||7)===v?'selected':''}>${v} dias</option>`).join('')}</select></div><div class="field"><label for="cfg-image-quality">Qualidade das fotos</label><select id="cfg-image-quality">${[[.72,'Econômica'],[.82,'Equilibrada'],[.86,'Alta'],[.92,'Máxima']].map(([v,l])=>`<option value="${v}" ${Math.abs(Number(App.state.settings.imageQuality||.86)-v)<.001?'selected':''}>${l} · ${String(v).replace('.',',')}</option>`).join('')}</select></div><div class="field"><label for="cfg-image-max">Resolução máxima</label><select id="cfg-image-max">${[[1600,'1600 px'],[2000,'2000 px'],[2400,'2400 px'],[3200,'3200 px'],[4000,'4000 px']].map(([v,l])=>`<option value="${v}" ${Number(App.state.settings.maxImageDimension||2400)===v?'selected':''}>${l}</option>`).join('')}</select></div><label class="borion-switch full"><input id="cfg-auto-sync" type="checkbox" ${App.state.settings.autoSync?'checked':''}><span class="switch-track"></span><span><b>Sincronização automática</b><small>Salvar no Drive depois de cada alteração.</small></span></label></div><div class="settings-actions"><button class="btn btn-primary" onclick="Borion.saveDriveConfig()">Salvar preferências</button></div></section><section class="settings-card full-width"><div class="settings-card-head"><div class="settings-icon">▣</div><div><h3>Contas de cheque</h3><p>Banco, agência e conta são cadastrados somente aqui. No cheque aparece apenas um selecionável.</p></div><button class="btn btn-primary" onclick="Borion.newChequeAccount()">＋ Nova conta</button></div>${accounts.length?`<div class="table-wrap"><table><thead><tr><th>Nome</th><th>Banco</th><th>Agência</th><th>Conta</th><th>Situação</th><th>Ações</th></tr></thead><tbody>${accounts.map(a=>`<tr><td><b>${esc(a.nome||'--')}</b></td><td>${esc(a.banco||'--')}</td><td>${esc(a.agencia||'--')}</td><td>${esc(a.conta||'--')}</td><td><span class="badge ${a.ativo===false?'cancelled':'paid'}">${a.ativo===false?'Inativa':'Ativa'}</span></td><td><button class="action-btn" onclick="Borion.editChequeAccount('${a.id}')">Editar</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty compact"><b>Nenhuma conta cadastrada</b><p>Os cheques mostrarão “--” até você cadastrar uma conta.</p></div>'}</section><section class="settings-card full-width"><div class="settings-card-head"><div class="settings-icon">▦</div><div><h3>Estrutura automática de segurança</h3><p>Nenhum link ou ID precisa ser digitado.</p></div></div><div class="drive-tree"><div><b>Borion CNPJ</b></div><div class="level-1">Sistema / Dados / current.json</div><div class="level-1">Sistema / Backups / ano / mês / snapshots automáticos</div><div class="level-1">Sistema / Histórico / arquivos preservados</div><div class="level-1">Cheques / ano / mês / fotos e PDFs</div><div class="level-1">Boletos / ano / mês / fotos e PDFs</div></div></section></div>`;
 };
 
+
+
+// ---------- Versão 1.0.5: importação segura e PWA mobile ----------
+App.installPrompt=null;
+App.lastImportAnalysis=null;
+const isMobileView=()=>window.matchMedia('(max-width: 900px)').matches;
+
+function supplierImportKey(x){
+  const doc=digits(x?.cpfCnpj);
+  return doc?`doc:${doc}`:`nome:${normalize(x?.nome)}|${digits(x?.telefone)}`;
+}
+function accountImportKey(x){
+  return normalize([x?.nome,x?.banco,x?.agencia,x?.conta].join('|'));
+}
+function chequeImportKey(x,accountLabel=''){
+  return [normalize(x?.tipo||'Emitido'),normalize(x?.numero),normalize(accountLabel||x?.contaId||''),String(x?.dataBom||x?.dataEmissao||'')].join('|');
+}
+function boletoImportKey(x){
+  const code=digits(x?.linhaDigitavel||x?.codigoBarras);
+  if(code)return `codigo:${code}`;
+  return `fallback:${normalize(x?.documento)}|${normalize(x?.beneficiario)}|${x?.vencimento||''}|${moneyNumber(x?.valor).toFixed(2)}`;
+}
+function extractImportState(raw){
+  if(!raw||typeof raw!=='object')throw new Error('O arquivo não contém dados válidos.');
+  if(raw.format==='cheques-importacao'){
+    return migrateStateV104({settings:{chequeAccounts:raw.contas||[]},fornecedores:raw.fornecedores||[],cheques:raw.cheques||[],boletos:[]});
+  }
+  if(raw.state&&typeof raw.state==='object')return migrateStateV104(raw.state);
+  if(raw.data?.state&&typeof raw.data.state==='object')return migrateStateV104(raw.data.state);
+  if(Array.isArray(raw.cheques)||Array.isArray(raw.boletos)||Array.isArray(raw.fornecedores))return migrateStateV104(raw);
+  throw new Error('Formato não reconhecido. Use JSON ou ZIP exportado pelo Borion CNPJ.');
+}
+async function readImportSource(file){
+  const lower=file.name.toLowerCase();
+  if(lower.endsWith('.zip')){
+    if(!window.JSZip)throw new Error('Leitor de ZIP não carregado.');
+    const zip=await JSZip.loadAsync(file);
+    const candidates=['borion-cnpj-dados.json','current.json','dados.json'];
+    let entry=candidates.map(n=>zip.file(n)).find(Boolean);
+    if(!entry)entry=Object.values(zip.files).find(x=>!x.dir&&x.name.toLowerCase().endsWith('.json'));
+    if(!entry)throw new Error(`${file.name}: nenhum JSON de dados encontrado.`);
+    const raw=JSON.parse(await entry.async('text'));
+    const attachments=new Map();
+    for(const item of Object.values(zip.files)){
+      if(item.dir||!item.name.startsWith('anexos/'))continue;
+      const filename=item.name.split('/').pop()||'';
+      const sep=filename.indexOf('__');
+      const id=sep>=0?filename.slice(0,sep):filename;
+      if(id)attachments.set(id,{entry,name:sep>=0?filename.slice(sep+2):'arquivo'});
+    }
+    return {name:file.name,state:extractImportState(raw),attachments};
+  }
+  if(lower.endsWith('.json')||file.type.includes('json')){
+    return {name:file.name,state:extractImportState(JSON.parse(await file.text())),attachments:new Map()};
+  }
+  throw new Error(`${file.name}: tipo não suportado. Selecione JSON ou ZIP.`);
+}
+async function buildImportPlan(files){
+  const sources=[];for(const file of files)sources.push(await readImportSource(file));
+  const localAttachmentRows=await getAllAttachmentRows();
+  const usedAttachmentIds=new Set(localAttachmentRows.map(x=>x.id));
+  const usedRecordIds=new Set([...App.state.fornecedores,...App.state.cheques,...App.state.boletos,...chequeAccounts(true)].map(x=>x.id).filter(Boolean));
+  const supplierByKey=new Map(active(App.state.fornecedores).map(x=>[supplierImportKey(x),x]));
+  const accountByKey=new Map(chequeAccounts(true).map(x=>[accountImportKey(x),x]));
+  const chequeKeys=new Set(active(App.state.cheques).map(x=>chequeImportKey(x,accountLabelForCheque(x))));
+  const boletoKeys=new Set(active(App.state.boletos).map(boletoImportKey));
+  const plan={sources:[],newSuppliers:[],newAccounts:[],newCheques:[],newBoletos:[],attachmentJobs:[],duplicates:{fornecedores:0,contas:0,cheques:0,boletos:0,anexos:0}};
+  for(const source of sources){
+    const state=source.state,sourceAccounts=state.settings?.chequeAccounts||[];
+    const sourceAccountById=new Map(sourceAccounts.map(x=>[x.id,x]));
+    const supplierMap=new Map(),accountMap=new Map();
+    for(const f of active(state.fornecedores)){
+      const key=supplierImportKey(f);let local=supplierByKey.get(key);
+      if(local){plan.duplicates.fornecedores++;supplierMap.set(f.id,local.id);continue;}
+      const id=f.id&&!usedRecordIds.has(f.id)?f.id:uid();usedRecordIds.add(id);
+      local={...f,id,attachments:undefined,createdAt:f.createdAt||nowISO()};recordTouch(local);
+      plan.newSuppliers.push(local);supplierByKey.set(key,local);supplierMap.set(f.id,id);
+    }
+    for(const a of sourceAccounts){
+      const key=accountImportKey(a);let local=accountByKey.get(key);
+      if(local){plan.duplicates.contas++;accountMap.set(a.id,local.id);continue;}
+      const id=a.id&&!usedRecordIds.has(a.id)?a.id:uid();usedRecordIds.add(id);
+      local={...a,id,createdAt:a.createdAt||nowISO()};recordTouch(local);
+      plan.newAccounts.push(local);accountByKey.set(key,local);accountMap.set(a.id,id);
+    }
+    const prepareAttachments=(record,newRecord)=>{
+      const kept=[];
+      for(const meta of record.attachments||[]){
+        const zipped=source.attachments.get(meta.id);
+        if(!zipped&&!meta.driveFileId)continue;
+        let newId=meta.id&&!usedAttachmentIds.has(meta.id)?meta.id:uid();
+        if(usedAttachmentIds.has(meta.id))plan.duplicates.anexos++;
+        usedAttachmentIds.add(newId);
+        const out={...meta,id:newId,pendingUpload:Boolean(zipped)||Boolean(meta.pendingUpload),createdAt:meta.createdAt||nowISO()};
+        if(zipped){out.driveFileId='';out.driveThumbFileId='';out.driveName='';}
+        kept.push(out);
+        if(zipped)plan.attachmentJobs.push({oldId:meta.id,newId,entry:zipped.entry,name:zipped.name||meta.name||'arquivo',type:meta.type||'application/octet-stream'});
+      }
+      newRecord.attachments=kept;
+    };
+    for(const c of active(state.cheques)){
+      const sourceAccount=sourceAccountById.get(c.contaId);
+      const key=chequeImportKey(c,sourceAccount?accountLabel(sourceAccount):accountLabelForCheque(c));
+      if(chequeKeys.has(key)){plan.duplicates.cheques++;continue;}
+      chequeKeys.add(key);
+      const id=c.id&&!usedRecordIds.has(c.id)?c.id:uid();usedRecordIds.add(id);
+      const item={...c,id,fornecedorId:supplierMap.get(c.fornecedorId)||'',contaId:accountMap.get(c.contaId)||'',createdAt:c.createdAt||nowISO()};
+      delete item.banco;delete item.agencia;delete item.conta;recordTouch(item);prepareAttachments(c,item);plan.newCheques.push(item);
+    }
+    for(const b of active(state.boletos)){
+      const key=boletoImportKey(b);if(boletoKeys.has(key)){plan.duplicates.boletos++;continue;}
+      boletoKeys.add(key);
+      const id=b.id&&!usedRecordIds.has(b.id)?b.id:uid();usedRecordIds.add(id);
+      const item={...b,id,fornecedorId:supplierMap.get(b.fornecedorId)||'',createdAt:b.createdAt||nowISO()};recordTouch(item);prepareAttachments(b,item);plan.newBoletos.push(item);
+    }
+    plan.sources.push(source.name);
+  }
+  return plan;
+}
+function importPlanHtml(plan){
+  const totalNew=plan.newCheques.length+plan.newBoletos.length+plan.newSuppliers.length+plan.newAccounts.length;
+  const totalDup=Object.values(plan.duplicates).reduce((a,b)=>a+b,0);
+  return `<div class="import-summary"><div class="import-source"><b>${plan.sources.length} arquivo(s) analisado(s)</b><small>${plan.sources.map(esc).join(' · ')}</small></div><div class="import-kpis"><div><span>Cheques novos</span><b>${plan.newCheques.length}</b></div><div><span>Boletos novos</span><b>${plan.newBoletos.length}</b></div><div><span>Fornecedores novos</span><b>${plan.newSuppliers.length}</b></div><div><span>Contas novas</span><b>${plan.newAccounts.length}</b></div></div><div class="duplicate-box"><span>Duplicidades encontradas e ignoradas</span><b>${totalDup}</b><small>${plan.duplicates.cheques} cheque(s), ${plan.duplicates.boletos} boleto(s), ${plan.duplicates.fornecedores} fornecedor(es), ${plan.duplicates.contas} conta(s)</small></div><div class="status-line"><span class="sync-dot ${totalNew?'ok':'local'}"></span><div><b>${totalNew?'Importação pronta':'Nada novo para importar'}</b><small>Registros existentes não serão alterados nem duplicados.</small></div></div></div>`;
+}
+async function commitImportPlan(plan){
+  if(!plan)return;
+  await saveLocal('antes-importacao',false);
+  if(App.drive.connected){try{const structure=await Drive.ensureStructure();await Drive.createSnapshot(structure,'PRE_IMPORT')}catch(e){console.warn('Snapshot pré-importação não criado',e)}}
+  App.state.fornecedores.push(...plan.newSuppliers);
+  App.state.settings.chequeAccounts.push(...plan.newAccounts);
+  App.state.cheques.push(...plan.newCheques);
+  App.state.boletos.push(...plan.newBoletos);
+  for(const job of plan.attachmentJobs){
+    const blob=await job.entry.async('blob'),buf=await blob.arrayBuffer(),env=await encryptBytes(buf);
+    await new Promise((resolve,reject)=>{const r=idbTx('readwrite').put({id:job.newId,name:job.name,type:blob.type||job.type,size:blob.size,iv:env.iv,data:env.data,createdAt:nowISO()});r.onsuccess=resolve;r.onerror=()=>reject(r.error)});
+  }
+  const imported=plan.newCheques.length+plan.newBoletos.length;
+  const skipped=plan.duplicates.cheques+plan.duplicates.boletos;
+  App.state.settings.lastImport={at:nowISO(),files:plan.sources,cheques:plan.newCheques.length,boletos:plan.newBoletos.length,fornecedores:plan.newSuppliers.length,duplicates:skipped};
+  logAudit('Arquivos importados',`${imported} registro(s) novos · ${skipped} duplicado(s) ignorado(s)`,'Importação','');
+  await saveLocal('importacao-concluida',false);
+  if(App.drive.connected)scheduleSync();renderAll();setPage('importar');toast(`${imported} registro(s) importados. ${skipped} duplicado(s) ignorado(s).`,'ok',6000);
+}
+async function previewImportFiles(files){
+  if(!files?.length)return;
+  toast('Analisando arquivos e procurando duplicidades...');
+  const plan=await buildImportPlan(Array.from(files));App.lastImportAnalysis=plan;
+  const total=plan.newCheques.length+plan.newBoletos.length+plan.newSuppliers.length+plan.newAccounts.length;
+  openModal({title:'Conferir importação',subtitle:'O Borion compara tudo antes de salvar.',body:importPlanHtml(plan),saveLabel:total?'Importar somente os novos':'Fechar',onSave:async()=>{if(!total){closeModal();return}await commitImportPlan(plan);closeModal();}});
+}
+function selectImportFiles(){
+  const input=document.createElement('input');input.type='file';input.multiple=true;input.accept='.json,.zip,application/json,application/zip';input.onchange=()=>previewImportFiles(input.files).catch(e=>toast(e.message,'error',7000));input.click();
+}
+function renderImport(){
+  const root=$('#page-importar');if(!root)return;const last=App.state.settings.lastImport;
+  root.innerHTML=`<div class="import-layout"><section class="panel import-main"><div class="panel-head"><div><div class="panel-title">Importar arquivos</div><p class="muted">Selecione um ou vários JSON/ZIP do Borion CNPJ. Antes de salvar, o sistema confere cheques, boletos, fornecedores e contas.</p></div></div><div class="panel-body"><div class="import-drop" data-import-drop><div class="import-drop-icon">⇧</div><h3>Solte os arquivos aqui</h3><p>Ou escolha backups ZIP e arquivos JSON exportados pelo Borion.</p><button class="btn btn-primary" onclick="Borion.selectImportFiles()">Selecionar arquivos</button><small>Nenhum registro existente será sobrescrito. Duplicidades são ignoradas.</small></div></div></section><section class="panel"><div class="panel-head"><div class="panel-title">Exportações rápidas</div></div><div class="panel-body"><div class="config-section"><h3>Cheques sem fotos</h3><p>Gera um JSON leve para levar cheques, fornecedores e contas.</p><button class="btn btn-outline btn-block" onclick="Borion.exportChequesImport()">Exportar cheques atuais</button></div><div class="config-section"><h3>Backup completo</h3><p>Inclui todos os dados e anexos.</p><button class="btn btn-outline btn-block" onclick="Borion.exportBackup()">Exportar ZIP completo</button></div></div></section>${last?`<section class="panel full-span"><div class="panel-head"><div class="panel-title">Última importação</div></div><div class="panel-body"><div class="quick-list"><div class="quick-item"><div><b>${esc(last.files?.join(' · ')||'Arquivo importado')}</b><small>${last.cheques||0} cheque(s), ${last.boletos||0} boleto(s), ${last.fornecedores||0} fornecedor(es)</small></div><div class="quick-date"><b>${last.duplicates||0} duplicado(s)</b><small>${fmtDateTime(last.at)}</small></div></div></div></div></section>`:''}</div>`;
+  const drop=$('[data-import-drop]',root);drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('dragover')});drop.addEventListener('dragleave',()=>drop.classList.remove('dragover'));drop.addEventListener('drop',e=>{e.preventDefault();drop.classList.remove('dragover');previewImportFiles(e.dataTransfer.files).catch(err=>toast(err.message,'error',7000))});
+}
+
+// No celular, prioriza leitura rápida em cartões.
+const renderChequesDesktopV105=renderCheques;
+renderCheques=function(){
+  if(!isMobileView())return renderChequesDesktopV105();
+  const root=$('#page-cheques');if(!root)return;let items=active(App.state.cheques).filter(x=>chequeMatches(x,App.search.cheques));
+  if(App.chequeTab==='emitidos')items=items.filter(x=>x.tipo==='Emitido');if(App.chequeTab==='recebidos')items=items.filter(x=>x.tipo==='Recebido');if(App.chequeTab==='abertos')items=items.filter(x=>!['Compensado','Cancelado'].includes(x.status));
+  items.sort((a,b)=>String(b.dataEmissao||b.createdAt).localeCompare(String(a.dataEmissao||a.createdAt)));
+  root.innerHTML=`<div class="mobile-list-head"><div class="search-box"><input value="${esc(App.search.cheques)}" placeholder="Buscar cheque ou fornecedor" data-search-cheques></div><button class="mobile-add" onclick="Borion.newCheque()">＋</button></div><div class="tabs mobile-tabs">${[['todos','Todos'],['emitidos','Emitidos'],['recebidos','Recebidos'],['abertos','Em aberto']].map(([v,l])=>`<button class="tab ${App.chequeTab===v?'active':''}" onclick="Borion.chequeTab('${v}')">${l}</button>`).join('')}</div><div class="mobile-record-list">${items.length?items.map(x=>{const party=supplierById(x.fornecedorId)?.nome||x.pessoa||'—';return`<button class="mobile-record-card" onclick="Borion.viewCheque('${x.id}')"><div class="mobile-record-top"><div><span class="eyebrow">${esc(x.tipo)} · ${esc(accountLabelForCheque(x))}</span><h3>${esc(x.numero||'Sem número')}</h3></div><span class="badge ${statusClass(x.status)}">${esc(x.status)}</span></div><div class="mobile-record-party">${esc(party)}</div><div class="mobile-record-bottom"><div><span>Bom para</span><b>${fmtDate(x.dataBom)}</b></div><div class="mobile-record-value">${brl(x.valor)}</div></div>${(x.attachments||[]).length?`<div class="mobile-file-count">▣ ${x.attachments.length} arquivo(s)</div>`:''}</button>`}).join(''):'<div class="empty"><b>Nenhum cheque encontrado</b></div>'}</div>`;
+  $('[data-search-cheques]',root).oninput=e=>{App.search.cheques=e.target.value;renderCheques()};
+};
+const renderBoletosDesktopV105=renderBoletos;
+renderBoletos=function(){
+  if(!isMobileView())return renderBoletosDesktopV105();
+  const root=$('#page-boletos');if(!root)return;let items=active(App.state.boletos).filter(x=>boletoMatches(x,App.search.boletos));if(App.boletoTab==='abertos')items=items.filter(x=>!['Pago','Cancelado'].includes(x.status));if(App.boletoTab==='pagos')items=items.filter(x=>x.status==='Pago');if(App.boletoTab==='vencidos')items=items.filter(x=>x.vencimento&&daysUntil(x.vencimento)<0&&!['Pago','Cancelado'].includes(x.status));items.sort((a,b)=>String(b.dataCadastro||b.createdAt).localeCompare(String(a.dataCadastro||a.createdAt)));
+  root.innerHTML=`<div class="mobile-list-head"><div class="search-box"><input value="${esc(App.search.boletos)}" placeholder="Buscar boleto ou fornecedor" data-search-boletos></div><button class="mobile-add" onclick="Borion.newBoleto()">＋</button></div><div class="tabs mobile-tabs">${[['todos','Todos'],['abertos','Em aberto'],['pagos','Pagos'],['vencidos','Vencidos']].map(([v,l])=>`<button class="tab ${App.boletoTab===v?'active':''}" onclick="Borion.boletoTab('${v}')">${l}</button>`).join('')}</div><div class="mobile-record-list">${items.length?items.map(x=>{const party=supplierById(x.fornecedorId)?.nome||x.beneficiario||'—';return`<button class="mobile-record-card" onclick="Borion.viewBoleto('${x.id}')"><div class="mobile-record-top"><div><span class="eyebrow">Boleto</span><h3>${esc(x.documento||party)}</h3></div><span class="badge ${statusClass(x.status)}">${esc(x.status)}</span></div><div class="mobile-record-party">${esc(party)}</div><div class="mobile-record-bottom"><div><span>Vencimento</span><b>${fmtDate(x.vencimento)}</b></div><div class="mobile-record-value">${brl(x.valor)}</div></div>${(x.attachments||[]).length?`<div class="mobile-file-count">▣ ${x.attachments.length} arquivo(s)</div>`:''}</button>`}).join(''):'<div class="empty"><b>Nenhum boleto encontrado</b></div>'}</div>`;
+  $('[data-search-boletos]',root).oninput=e=>{App.search.boletos=e.target.value;renderBoletos()};
+};
+function openMobileMore(){
+  const install=App.installPrompt?'<button class="mobile-menu-link" data-mobile-install>Instalar no celular <span>›</span></button>':'';
+  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="importar">Importar arquivos <span>›</span></button><button class="mobile-menu-link" data-mobile-go="backup">Backup <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button></div>`;
+  const modal=openModal({title:'Mais opções',subtitle:'Ferramentas do Borion CNPJ',body});$$('[data-mobile-go]',modal).forEach(b=>b.onclick=()=>{closeModal();setPage(b.dataset.mobileGo)});$('[data-mobile-logout]',modal).onclick=()=>{closeModal();logout()};$('[data-mobile-install]',modal)?.addEventListener('click',async()=>{await installPwa();closeModal()});
+}
+async function installPwa(){if(!App.installPrompt){toast('No navegador, use “Adicionar à tela inicial”.');return}App.installPrompt.prompt();await App.installPrompt.userChoice;App.installPrompt=null;}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();App.installPrompt=e});
+let resizeTimer=0;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>renderPage(App.page),180)});
 
 // ---------- Inicialização ----------
 function showGate(){ $('#boot').hidden=true;$('#app').hidden=true;$('#gate').hidden=false;const note=$('#gate-config-note');if(note)note.textContent=Drive.clientId()?'Entre com a conta Google que será dona da pasta Borion CNPJ.':'Google OAuth ainda não configurado: cole o Client ID em js/config.js antes de publicar.'; }
@@ -1126,10 +1311,11 @@ window.Borion={
   newFornecedor:()=>openFornecedor(),editFornecedor:openFornecedor,viewFornecedor,
   newCheque:()=>openCheque(),editCheque:openCheque,viewCheque:id=>{const x=active(App.state.cheques).find(r=>r.id===id);if(x)showViewer(x,'Cheque')},newLote:openLote,
   newBoleto:()=>openBoleto(),editBoleto:openBoleto,viewBoleto:id=>{const x=active(App.state.boletos).find(r=>r.id===id);if(x)showViewer(x,'Boleto')},focusBarcode,
-  organizePhotos:()=>Organizer.open(),exportBackup,importBackup,exportChequesImport,importChequesFile,newChequeAccount:()=>openChequeAccount(),editChequeAccount:openChequeAccount,saveDriveConfig,prepareDrive,reconnectGoogle,driveBackup:()=>Drive.manualBackup()
+  organizePhotos:()=>Organizer.open(),exportBackup,importBackup,exportChequesImport,importChequesFile,selectImportFiles,previewImportFiles,installPwa,newChequeAccount:()=>openChequeAccount(),editChequeAccount:openChequeAccount,saveDriveConfig,prepareDrive,reconnectGoogle,driveBackup:()=>Drive.manualBackup()
 };
 
 $('#nav').addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(b)setPage(b.dataset.page)});
+$('#mobile-more')?.addEventListener('click',openMobileMore);
 $('#btn-google-login').onclick=()=>Drive.login().catch(e=>toast(e.message,'error',7000));
 $('#btn-logout').onclick=logout;$('#btn-sync').onclick=()=>App.drive.connected?Drive.sync().catch(e=>toast(e.message,'error',6000)):toast('Entre com o Google para sincronizar.','error');
 window.addEventListener('beforeunload',()=>{if(App.saveTimer)saveLocal()});

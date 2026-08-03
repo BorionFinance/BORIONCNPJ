@@ -1,9 +1,15 @@
 {
   "app": "Borion CNPJ",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "baseVisual": "Borion Finance 7.6.2",
-  "desktopOnly": true,
+  "desktopOnly": false,
   "storage": "Google Drive com snapshots locais e remotos",
   "driveRootFolder": "Borion CNPJ",
-  "officialCssSha256": "824f0e807bcf39e66b8a35b6f807545c576de1078c064197c6ee36fe94edadd8"
+  "officialCssSha256": "824f0e807bcf39e66b8a35b6f807545c576de1078c064197c6ee36fe94edadd8",
+  "pwa": true,
+  "features": [
+    "Importação de JSON/ZIP com conferência de duplicidades",
+    "PWA mobile em cartões",
+    "Google Drive com snapshots e backups"
+  ]
 }
