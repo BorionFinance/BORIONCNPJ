@@ -1,6 +1,6 @@
 {
   "app": "Borion CNPJ",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "baseVisual": "Borion Finance 7.6.2",
   "desktopOnly": false,
   "storage": "Google Drive com snapshots locais e remotos",

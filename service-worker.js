@@ -1,5 +1,5 @@
-const CACHE='borion-cnpj-v1.0.5';
-const CORE=['./','./index.html','./manifest.webmanifest','./css/borion-7.6.2.css?v=1.0.5','./css/cnpj.css?v=1.0.5','./js/config.js?v=1.0.5','./js/app.js?v=1.0.5','./borion-emblem.png','./borion-watermark.png','./icon-192.png','./icon-512.png','./favicon-32.png'];
+const CACHE='borion-cnpj-v1.0.6';
+const CORE=['./','./index.html','./manifest.webmanifest','./css/borion-7.6.2.css?v=1.0.6','./css/cnpj.css?v=1.0.6','./js/config.js?v=1.0.6','./js/app.js?v=1.0.6','./borion-emblem.png','./borion-watermark.png','./borion-cnpj-icon-192.png','./borion-cnpj-icon-512.png','./borion-cnpj-favicon-32.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',event=>{
