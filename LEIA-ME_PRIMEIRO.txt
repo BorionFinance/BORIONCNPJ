@@ -1,21 +1,11 @@
-BORION CNPJ 1.0.2 — LEIA PRIMEIRO
+BORION CNPJ 1.0.3
 
-1. EXTRAIA ESTE ZIP.
-2. ENVIE O CONTEÚDO EXTRAÍDO PARA A RAIZ DO GITHUB.
-3. NÃO ENVIE SOMENTE O ZIP FECHADO.
-4. ATIVE O GITHUB PAGES NA BRANCH MAIN / ROOT.
-5. EDITE js/config.js E COLE O GOOGLE OAUTH CLIENT ID.
-6. ABRA O SITE PUBLICADO E ENTRE COM O GOOGLE.
+1. Extraia o ZIP.
+2. Abra js/config.js.
+3. Cole o Google OAuth Client ID em googleClientId.
+4. Envie todo o conteúdo extraído para a raiz do GitHub.
+5. Ative o GitHub Pages.
+6. Entre somente pelo botão Google.
 
-O Google Drive é o armazenamento oficial.
-O navegador guarda apenas uma cópia temporária criptografada.
-
-A pasta criada ou utilizada será:
-Borion CNPJ
-
-O visual usa o CSS oficial e os arquivos visuais da base BORION Finance 7.6.2.
-
-IMPORTANTE:
-- Client ID pode ficar público.
-- Client Secret nunca deve ser enviado ao GitHub.
-- Para dois computadores abrirem os mesmos arquivos criptografados, exporte e importe a mesma chave da equipe.
+A pasta Borion CNPJ será criada automaticamente no Drive da conta logada.
+Não existe configuração manual de Client ID ou pasta dentro do aplicativo.

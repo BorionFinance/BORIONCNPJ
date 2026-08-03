@@ -1,40 +1,47 @@
-# BORION CNPJ 1.0.2
+# BORION CNPJ 1.0.3
 
 Sistema web desktop para **Cheques, Boletos e Fornecedores**, construído sobre a identidade visual oficial do **Borion Finance 7.6.2**.
 
-## Fidelidade visual
+## Alterações da versão 1.0.3
 
-O arquivo `css/borion-7.6.2.css` é uma cópia binariamente idêntica do `css/styles.css` da base oficial BORION Finance 7.6.2 fornecida para este projeto.
+- Removida a janela de configuração manual do Google Drive.
+- Removidos os campos de Client ID e link/ID da pasta dentro do aplicativo.
+- Login exclusivamente pelo Google OAuth.
+- O Client ID é configurado somente em `js/config.js`.
+- A pasta `Borion CNPJ` é procurada ou criada automaticamente na raiz do Drive da conta logada.
+- Valores no padrão Borion: `0,00`, com digitação progressiva em centavos.
+- CPF e CNPJ formatados automaticamente durante a digitação.
+- Campos, selects e configurações corrigidos para o visual escuro oficial do Borion.
 
-SHA-256 do CSS oficial usado:
+## Configuração do Google OAuth
 
-```text
-824f0e807bcf39e66b8a35b6f807545c576de1078c064197c6ee36fe94edadd8
+Edite `js/config.js`:
+
+```js
+window.BORION_CONFIG = {
+  appName: 'Borion CNPJ',
+  version: '1.0.3',
+  googleClientId: 'SEU_CLIENT_ID.apps.googleusercontent.com',
+  driveRootFolderName: 'Borion CNPJ',
+  authorizedEmails: [],
+  desktopOnly: true
+};
 ```
 
-A camada `css/cnpj.css` apenas encaixa os módulos específicos de Cheques, Boletos e Fornecedores nos componentes oficiais: sidebar, topbar, botões, formulários, tabelas, modais, cards, splash, boot, scroll e animações.
+O Client ID pode ficar no GitHub. **Nunca coloque Client Secret no site.**
 
-## Recursos
+No Google Cloud:
 
-- Login Google OAuth.
-- Google Drive como armazenamento oficial.
-- Criação automática da pasta `Borion CNPJ`.
-- JSON atual e backups criptografados.
-- Fotos e PDFs criptografados no Drive.
-- Cheques emitidos e recebidos.
-- Emissão em lote com numeração sequencial.
-- Datas automáticas por prazos em dias.
-- Importação em massa de fotos e organização por arrastar.
-- Frente e verso de cheque.
-- Leitura OCR local em português.
-- Leitura de boletos por foto, PDF, linha digitável ou leitor USB.
-- Validação de 44, 47 e 48 dígitos.
-- Cadastro e histórico de fornecedores.
-- Alertas de vencimento.
-- Backup diário no Drive e exportação ZIP.
-- Uso exclusivo em computador.
+1. Ative a Google Drive API.
+2. Configure a tela de consentimento OAuth.
+3. Crie um OAuth Client ID do tipo **Aplicativo da Web**.
+4. Em **Origens JavaScript autorizadas**, adicione a origem do GitHub Pages, por exemplo:
+   `https://seuusuario.github.io`
+5. Adicione as contas de teste enquanto o aplicativo estiver em modo de teste.
 
-## Estrutura criada no Google Drive
+## Google Drive
+
+Depois do login, o Borion cria automaticamente:
 
 ```text
 Borion CNPJ/
@@ -56,20 +63,9 @@ Borion CNPJ/
 ## Publicação no GitHub Pages
 
 1. Extraia o ZIP.
-2. Envie **o conteúdo extraído** para a raiz do repositório.
-3. Não envie apenas o ZIP fechado.
-4. No GitHub, abra `Settings > Pages`.
-5. Em `Build and deployment`, selecione `Deploy from a branch`.
-6. Selecione a branch `main` e a pasta `/ (root)`.
-7. Salve e aguarde a publicação.
-8. Configure o Google OAuth conforme `CONFIGURAR_GOOGLE_DRIVE.md`.
-
-## Configuração principal
-
-Edite `js/config.js` e informe o OAuth Client ID:
-
-```js
-googleClientId: 'SEU_CLIENT_ID.apps.googleusercontent.com'
-```
-
-O Client ID é público e não é uma senha. Nunca coloque Client Secret no site.
+2. Envie o conteúdo extraído para a raiz do repositório.
+3. Abra `Settings > Pages`.
+4. Selecione `Deploy from a branch`.
+5. Escolha `main` e `/ (root)`.
+6. Salve e aguarde a publicação.
+7. Configure o Client ID em `js/config.js`.

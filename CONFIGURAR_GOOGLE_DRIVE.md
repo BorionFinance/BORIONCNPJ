@@ -1,67 +1,44 @@
-# Configurar Google Login e Drive
+# BORION CNPJ 1.0.3
 
-## 1. Criar ou abrir um projeto no Google Cloud
+Sistema web desktop para **Cheques, Boletos e Fornecedores**, construído sobre a identidade visual oficial do **Borion Finance 7.6.2**.
 
-Acesse o Google Cloud Console e selecione o projeto usado pelo Borion.
+## Alterações da versão 1.0.3
 
-## 2. Ativar APIs
+- Removida a janela de configuração manual do Google Drive.
+- Removidos os campos de Client ID e link/ID da pasta dentro do aplicativo.
+- Login exclusivamente pelo Google OAuth.
+- O Client ID é configurado somente em `js/config.js`.
+- A pasta `Borion CNPJ` é procurada ou criada automaticamente na raiz do Drive da conta logada.
+- Valores no padrão Borion: `0,00`, com digitação progressiva em centavos.
+- CPF e CNPJ formatados automaticamente durante a digitação.
+- Campos, selects e configurações corrigidos para o visual escuro oficial do Borion.
 
-Ative:
+## Configuração do Google OAuth
 
-- Google Drive API
-- Google People API ou o acesso OpenID já disponível no OAuth
-
-## 3. Configurar a tela de consentimento
-
-Configure o nome do aplicativo como `Borion CNPJ` e adicione as contas de teste enquanto o aplicativo estiver em modo de testes.
-
-## 4. Criar credencial OAuth
-
-Crie um **OAuth Client ID do tipo Aplicativo da Web**.
-
-Adicione em **Origens JavaScript autorizadas**:
-
-```text
-https://SEU-USUARIO.github.io
-```
-
-Quando o repositório usar domínio próprio, adicione também a origem desse domínio, sem caminho final.
-
-Exemplo:
-
-```text
-https://cnpj.borionfinance.com.br
-```
-
-## 5. Colocar o Client ID
-
-Abra `js/config.js` e preencha:
+Edite `js/config.js`:
 
 ```js
-googleClientId: '000000000000-xxxxxxxxxxxxxxxx.apps.googleusercontent.com'
+window.BORION_CONFIG = {
+  appName: 'Borion CNPJ',
+  version: '1.0.3',
+  googleClientId: 'SEU_CLIENT_ID.apps.googleusercontent.com',
+  driveRootFolderName: 'Borion CNPJ',
+  authorizedEmails: [],
+  desktopOnly: true
+};
 ```
 
-Não coloque Client Secret no GitHub.
+O Client ID pode ficar no GitHub. **Nunca coloque Client Secret no site.**
 
-## 6. Primeira entrada
+No Google Cloud:
 
-Na primeira entrada com Google, o sistema:
+1. Ative a Google Drive API.
+2. Configure a tela de consentimento OAuth.
+3. Crie um OAuth Client ID do tipo **Aplicativo da Web**.
+4. Em **Origens JavaScript autorizadas**, adicione a origem do GitHub Pages, por exemplo:
+   `https://seuusuario.github.io`
+5. Adicione as contas de teste enquanto o aplicativo estiver em modo de teste.
 
-1. solicita acesso ao Drive;
-2. procura uma pasta chamada `Borion CNPJ`;
-3. cria a pasta quando ela ainda não existe;
-4. cria as subpastas de Sistema, Cheques e Boletos;
-5. cria `Sistema/Dados/current.json.borion`;
-6. salva backups diários criptografados.
+## Verificação
 
-## 7. Usar a mesma base com outra conta
-
-Para Pedro e o pai usarem os mesmos dados:
-
-1. a conta proprietária cria a pasta;
-2. compartilha a pasta `Borion CNPJ` com a outra conta como **Editor**;
-3. no segundo computador, entre com a conta compartilhada;
-4. em Configurações, cole o link ou ID da mesma pasta;
-5. importe a mesma **chave da equipe** uma única vez.
-
-Sem a mesma chave da equipe, os arquivos criptografados não abrem no segundo computador.
+Ao entrar com o Google, não aparece nenhuma janela para digitar Client ID ou link de pasta. O sistema procura ou cria automaticamente a pasta `Borion CNPJ` no Drive da conta escolhida.

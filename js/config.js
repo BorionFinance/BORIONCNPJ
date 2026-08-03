@@ -5,8 +5,8 @@
 */
 window.BORION_CONFIG = {
   appName: 'Borion CNPJ',
-  version: '1.0.2',
-  googleClientId: '',
+  version: '1.0.3',
+  googleClientId: '', // cole aqui: 000000000000-xxxx.apps.googleusercontent.com
   driveRootFolderName: 'Borion CNPJ',
   authorizedEmails: [],
   desktopOnly: true
