@@ -1,1 +1,158 @@
-<!doctype html><meta charset="utf-8"><script>location.replace('./');</script>
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Borion CNPJ</title>
+<meta name="description" content="Borion CNPJ — controle de cheques, boletos e fornecedores com Google Drive.">
+<meta name="theme-color" content="#060a10">
+<link rel="shortcut icon" href="borion.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script>
+(function(){
+  try{
+    var choice=localStorage.getItem('borion_cnpj_theme')||'dark';
+    document.documentElement.setAttribute('data-theme',choice==='light'?'light':'dark');
+  }catch(e){document.documentElement.setAttribute('data-theme','dark');}
+})();
+</script>
+<link rel="preload" href="css/borion-7.6.2.css?v=1.0.2" as="style">
+<link rel="preload" href="borion-emblem.png" as="image" type="image/png">
+<link rel="stylesheet" href="css/borion-7.6.2.css?v=1.0.2">
+<link rel="stylesheet" href="css/cnpj.css?v=1.0.2">
+</head>
+<body class="borion-intro-active">
+
+<div id="borion-intro-splash" role="status" aria-live="polite" aria-label="Carregando Borion CNPJ">
+  <img src="borion-emblem.png" alt="Borion CNPJ">
+  <div class="splash-num">R$ 0,00</div>
+  <div class="splash-tag">Carregando</div>
+</div>
+<script>
+(function(){
+  var splash=document.getElementById('borion-intro-splash');
+  if(!splash)return;
+  var numEl=splash.querySelector('.splash-num');
+  var start=performance.now(),duration=780;
+  function money(value){try{return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(value)}catch(e){return 'R$ '+value.toFixed(2).replace('.',',')}}
+  function tick(now){
+    var t=Math.min(1,(now-start)/duration),eased=1-Math.pow(1-t,4);
+    if(numEl)numEl.textContent=money(eased*1000000);
+    if(t<1){requestAnimationFrame(tick);return;}
+    setTimeout(function(){splash.classList.add('is-leaving');setTimeout(function(){splash.remove();document.body.classList.remove('borion-intro-active')},220)},70);
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
+
+<div id="borion_version_badge" aria-label="Versão do Borion CNPJ">1.0.2</div>
+
+<div id="desktop-warning" class="desktop-warning" hidden>
+  <img src="borion-emblem.png" alt="Borion CNPJ">
+  <h1>Borion CNPJ</h1>
+  <p>Este sistema foi projetado exclusivamente para computador.</p>
+</div>
+
+<div id="boot" class="borion-boot" role="status" aria-live="polite" aria-atomic="true">
+  <div class="borion-boot-card">
+    <div class="borion-boot-logo-wrap"><img class="borion-boot-logo" src="borion-watermark.png" alt="Borion CNPJ"></div>
+    <div class="borion-boot-brand">BORION CNPJ</div>
+    <div class="borion-boot-spinner" aria-hidden="true"><span></span></div>
+    <h1>Preparando o Borion</h1>
+    <p id="boot-detail">Carregando os componentes essenciais</p>
+    <div class="borion-boot-progress"><span style="width:72%"></span></div>
+    <p class="borion-boot-safe">Seus dados continuam protegidos.</p>
+  </div>
+</div>
+
+<section id="gate" class="gate-wrap" hidden>
+  <div class="gate-box">
+    <div class="gate-logo">
+      <img src="borion-emblem.png" alt="Borion CNPJ">
+      <div class="appname">Borion CNPJ</div>
+    </div>
+    <div class="gate-card">
+      <p class="gate-title">Entrar no Borion</p>
+      <p class="gate-sub">Entre com a conta Google. O Borion procura ou cria a pasta “Borion CNPJ” no Drive dessa conta.</p>
+      <button id="btn-google-login" class="btn btn-primary btn-block google-login-btn">
+        <span class="google-g">G</span><span>Entrar com Google</span>
+      </button>
+      <button id="btn-local-login" class="btn btn-secondary btn-block">Abrir demonstração local</button>
+      <div id="gate-config-note" class="gate-note"></div>
+      <div class="gate-links"><button id="btn-gate-config" class="link-btn">Configurar Google Drive</button></div>
+    </div>
+    <p class="gate-security">Google Drive oficial · JSON, backups, fotos e PDFs criptografados</p>
+  </div>
+</section>
+
+<div id="app" class="shell" hidden>
+  <aside class="sidebar" id="borion_sidebar">
+    <div class="sb-logo">
+      <img src="borion-emblem.png" alt="Borion CNPJ">
+      <div class="name">BORION CNPJ</div>
+    </div>
+    <nav id="nav" class="sb-nav" aria-label="Menu principal">
+      <button class="sb-item active" data-page="dashboard"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1"/><path d="M5 16h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1"/><path d="M15 12h4a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1"/><path d="M15 4h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1"/></svg></span><span class="sb-label">Visão geral</span></button>
+      <button class="sb-item" data-page="cheques"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="10" rx="2"/><path d="M7 11h6M7 14h4M15.5 12l1.5 1.5 3-3"/></svg></span><span class="sb-label">Cheques</span></button>
+      <button class="sb-item" data-page="boletos"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h3"/><path d="M15 14v4M17 14v4M19 14v4"/></svg></span><span class="sb-label">Boletos</span></button>
+      <button class="sb-item" data-page="fornecedores"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M17 13a3 3 0 1 0 0-6"/><path d="M3 21v-2a6 6 0 0 1 12 0v2M15 15a5 5 0 0 1 6 4v2"/></svg></span><span class="sb-label">Fornecedores</span></button>
+      <button class="sb-item" data-page="alertas"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5a2 2 0 1 1 4 0 7 7 0 0 1 4 6v3l2 3H4l2-3v-3a7 7 0 0 1 4-6M9 21h6"/></svg></span><span class="sb-label">Alertas</span><em id="alert-count" hidden>0</em></button>
+      <button class="sb-item" data-page="backup"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M8 11l4 4 4-4M5 19h14"/></svg></span><span class="sb-label">Backup</span></button>
+      <button class="sb-item" data-page="config"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37 1 .608 2.296.07 2.572-1.065"/><path d="M9 12a3 3 0 1 0 6 0 3 3 0 0 0-6 0"/></svg></span><span class="sb-label">Configurações</span></button>
+    </nav>
+    <div class="sb-footer">
+      <button id="sync-card" class="sync-card" type="button" title="Sincronizar com Google Drive">
+        <span id="sync-dot" class="sync-dot local"></span>
+        <span class="sync-copy"><b id="sync-label">Modo local</b><small id="sync-detail">Aguardando login Google</small></span>
+      </button>
+      <div class="sb-profile">
+        <div id="user-avatar" class="profile-avatar">B</div>
+        <div class="profile-copy"><div id="user-name" class="pname">Borion</div><small id="user-email">Conta Google</small></div>
+        <button id="btn-logout" class="pswitch" title="Sair">⇦</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main" id="view-root">
+    <header class="topbar">
+      <div class="topbar-title-row">
+        <div class="topbar-title">
+          <p id="page-subtitle" class="hello">Acompanhe cheques, boletos e próximos vencimentos.</p>
+          <h1><span id="page-title" class="topbar-title-text">Visão Geral</span></h1>
+        </div>
+      </div>
+      <div class="topbar-controls">
+        <div class="month-nav-wrap">
+          <div class="month-nav drive-status-top">
+            <span id="top-drive-icon" class="drive-cloud">☁</span>
+            <span class="mlabel">Google Drive oficial</span>
+          </div>
+          <span class="clock-label">JSON, fotos, PDFs e backups</span>
+        </div>
+        <button id="btn-sync" class="bell-btn sync-top-btn" type="button" title="Sincronizar agora" aria-label="Sincronizar agora">↻</button>
+      </div>
+    </header>
+
+    <section id="page-dashboard" class="page active"></section>
+    <section id="page-cheques" class="page"></section>
+    <section id="page-boletos" class="page"></section>
+    <section id="page-fornecedores" class="page"></section>
+    <section id="page-alertas" class="page"></section>
+    <section id="page-backup" class="page"></section>
+    <section id="page-config" class="page"></section>
+  </main>
+</div>
+
+<div id="modal-root"></div>
+<div id="toast-root"></div>
+<input id="hidden-file-input" type="file" hidden multiple>
+
+<script src="js/config.js?v=1.0.2"></script>
+<script src="vendor/tesseract/tesseract.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="js/app.js?v=1.0.2"></script>
+</body>
+</html>

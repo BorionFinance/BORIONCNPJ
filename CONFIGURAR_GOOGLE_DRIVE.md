@@ -1,91 +1,67 @@
-# Configurar login Google e Drive
+# Configurar Google Login e Drive
 
-O sistema pode ser testado sem Google pelo botão **Testar em modo local**. Para você e seu pai acessarem os mesmos dados, faça a configuração abaixo.
+## 1. Criar ou abrir um projeto no Google Cloud
 
-## 1. Criar o projeto no Google Cloud
+Acesse o Google Cloud Console e selecione o projeto usado pelo Borion.
 
-1. Entre em `https://console.cloud.google.com/`.
-2. Crie um projeto, por exemplo **Borion CNPJ**.
-3. Abra **APIs e serviços > Biblioteca**.
-4. Ative a **Google Drive API**.
-5. Abra **APIs e serviços > Tela de consentimento OAuth**.
-6. Selecione **Externo**.
-7. Enquanto estiver em modo de teste, adicione seu e-mail e o e-mail do seu pai como **usuários de teste**.
+## 2. Ativar APIs
 
-## 2. Criar o Client ID
+Ative:
 
-1. Abra **APIs e serviços > Credenciais**.
-2. Clique em **Criar credenciais > ID do cliente OAuth**.
-3. Escolha **Aplicativo da Web**.
-4. Em **Origens JavaScript autorizadas**, adicione o endereço do GitHub Pages sem barra no final. Exemplo:
+- Google Drive API
+- Google People API ou o acesso OpenID já disponível no OAuth
 
-```text
-https://seuusuario.github.io
-```
+## 3. Configurar a tela de consentimento
 
-Se o site estiver em domínio próprio, adicione também:
+Configure o nome do aplicativo como `Borion CNPJ` e adicione as contas de teste enquanto o aplicativo estiver em modo de testes.
+
+## 4. Criar credencial OAuth
+
+Crie um **OAuth Client ID do tipo Aplicativo da Web**.
+
+Adicione em **Origens JavaScript autorizadas**:
 
 ```text
-https://seudominio.com.br
+https://SEU-USUARIO.github.io
 ```
 
-5. Copie o Client ID terminado em `.apps.googleusercontent.com`.
+Quando o repositório usar domínio próprio, adicione também a origem desse domínio, sem caminho final.
 
-## 3. Colocar o Client ID no Borion
+Exemplo:
 
-Há duas formas:
+```text
+https://cnpj.borionfinance.com.br
+```
 
-### Pela tela do sistema
+## 5. Colocar o Client ID
 
-Abra o site, clique em **Configurar Google e pasta do Drive**, cole o Client ID e salve.
-
-### Pelo arquivo
-
-Edite `js/config.js` antes de subir:
+Abra `js/config.js` e preencha:
 
 ```js
-window.BORION_CONFIG = {
-  googleClientId: 'COLE-AQUI.apps.googleusercontent.com'
-};
+googleClientId: '000000000000-xxxxxxxxxxxxxxxx.apps.googleusercontent.com'
 ```
 
-O Client ID é público por natureza. Ele não é uma senha.
+Não coloque Client Secret no GitHub.
 
-## 4. Definir a pasta da empresa
+## 6. Primeira entrada
 
-Seu pai pode criar uma pasta chamada **Borion CNPJ** no Drive e compartilhar com sua conta como **Editor**.
+Na primeira entrada com Google, o sistema:
 
-Depois, copie o link da pasta e cole em:
+1. solicita acesso ao Drive;
+2. procura uma pasta chamada `Borion CNPJ`;
+3. cria a pasta quando ela ainda não existe;
+4. cria as subpastas de Sistema, Cheques e Boletos;
+5. cria `Sistema/Dados/current.json.borion`;
+6. salva backups diários criptografados.
 
-**Configurações > Pasta oficial no Google Drive**
+## 7. Usar a mesma base com outra conta
 
-O sistema salva o ID da pasta e cria automaticamente:
+Para Pedro e o pai usarem os mesmos dados:
 
-- Cheques por ano e mês;
-- Boletos por ano e mês;
-- Sistema e backups.
+1. a conta proprietária cria a pasta;
+2. compartilha a pasta `Borion CNPJ` com a outra conta como **Editor**;
+3. no segundo computador, entre com a conta compartilhada;
+4. em Configurações, cole o link ou ID da mesma pasta;
+5. importe a mesma **chave da equipe** uma única vez.
 
-## 5. Compartilhar a chave da equipe
-
-No primeiro computador:
-
-1. Entre no Borion.
-2. Abra **Backup**.
-3. Clique em **Exportar chave da equipe**.
-4. Leve esse arquivo ao computador do seu pai por pendrive ou outro meio seguro.
-
-No computador do seu pai:
-
-1. Abra o mesmo site.
-2. Entre primeiro em modo local.
-3. Abra **Backup > Importar chave da equipe**.
-4. Selecione o arquivo exportado.
-5. Depois entre com a conta Google dele.
-
-Sem a mesma chave, o segundo computador não consegue abrir os arquivos criptografados.
-
-## Observações
-
-- A conta usada precisa ter acesso à pasta compartilhada.
-- Durante o modo de teste do Google Cloud, somente os e-mails cadastrados como usuários de teste conseguem entrar.
-- O navegador pode solicitar novamente a autorização do Google depois de algum tempo.
+Sem a mesma chave da equipe, os arquivos criptografados não abrem no segundo computador.

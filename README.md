@@ -1,46 +1,75 @@
-# Borion CNPJ — Cheques e Boletos
+# BORION CNPJ 1.0.2
 
-Aplicação HTML para computador, criada com a identidade visual da base oficial Borion Finance 7.6.2.
+Sistema web desktop para **Cheques, Boletos e Fornecedores**, construído sobre a identidade visual oficial do **Borion Finance 7.6.2**.
 
-## O que já está incluído
+## Fidelidade visual
 
-- Login Google e acesso a pasta compartilhada do Google Drive.
-- Modo local para testar antes de configurar o Google.
-- Cheques emitidos e recebidos.
-- Geração de cheques em lote com numeração sequencial.
-- Cálculo automático de datas por prazos em dias.
-- Cadastro rápido e completo de fornecedores/pessoas.
-- Fotos da frente, verso, comprovantes e PDFs.
-- Importação em massa de fotos com associação automática e arrastar/soltar.
-- Boletos por foto, PDF, linha digitável e leitor USB que funcione como teclado.
-- OCR local em português com Tesseract.js.
-- Validação básica de linhas de 44, 47 e 48 dígitos.
-- Alertas de vencimento.
-- Backup completo em ZIP.
-- Criptografia AES-256-GCM antes do envio ao Drive.
-- Histórico de ações por conta Google.
+O arquivo `css/borion-7.6.2.css` é uma cópia binariamente idêntica do `css/styles.css` da base oficial BORION Finance 7.6.2 fornecida para este projeto.
 
-## Publicação
-
-Envie **o conteúdo desta pasta** para a raiz do repositório e ative o GitHub Pages. Não envie apenas o ZIP.
-
-## Google Drive
-
-Leia `CONFIGURAR_GOOGLE_DRIVE.md`. O site precisa de um OAuth Client ID criado no Google Cloud para o domínio do GitHub Pages.
-
-## Estrutura do Drive
+SHA-256 do CSS oficial usado:
 
 ```text
-Borion CNPJ
-├── Sistema
-│   ├── borion-cnpj.enc
-│   └── Backups
-├── Cheques
-│   └── 2026
-│       └── 08 - Agosto
-└── Boletos
-    └── 2026
-        └── 08 - Agosto
+824f0e807bcf39e66b8a35b6f807545c576de1078c064197c6ee36fe94edadd8
 ```
 
-Os documentos são enviados com extensão `.borion`, pois ficam criptografados e são visualizados dentro do próprio sistema.
+A camada `css/cnpj.css` apenas encaixa os módulos específicos de Cheques, Boletos e Fornecedores nos componentes oficiais: sidebar, topbar, botões, formulários, tabelas, modais, cards, splash, boot, scroll e animações.
+
+## Recursos
+
+- Login Google OAuth.
+- Google Drive como armazenamento oficial.
+- Criação automática da pasta `Borion CNPJ`.
+- JSON atual e backups criptografados.
+- Fotos e PDFs criptografados no Drive.
+- Cheques emitidos e recebidos.
+- Emissão em lote com numeração sequencial.
+- Datas automáticas por prazos em dias.
+- Importação em massa de fotos e organização por arrastar.
+- Frente e verso de cheque.
+- Leitura OCR local em português.
+- Leitura de boletos por foto, PDF, linha digitável ou leitor USB.
+- Validação de 44, 47 e 48 dígitos.
+- Cadastro e histórico de fornecedores.
+- Alertas de vencimento.
+- Backup diário no Drive e exportação ZIP.
+- Uso exclusivo em computador.
+
+## Estrutura criada no Google Drive
+
+```text
+Borion CNPJ/
+├── Sistema/
+│   ├── Dados/
+│   │   └── current.json.borion
+│   ├── Backups/
+│   │   └── ANO/
+│   │       └── MM - Mês/
+│   └── Histórico/
+├── Cheques/
+│   └── ANO/
+│       └── MM - Mês/
+└── Boletos/
+    └── ANO/
+        └── MM - Mês/
+```
+
+## Publicação no GitHub Pages
+
+1. Extraia o ZIP.
+2. Envie **o conteúdo extraído** para a raiz do repositório.
+3. Não envie apenas o ZIP fechado.
+4. No GitHub, abra `Settings > Pages`.
+5. Em `Build and deployment`, selecione `Deploy from a branch`.
+6. Selecione a branch `main` e a pasta `/ (root)`.
+7. Salve e aguarde a publicação.
+8. Configure o Google OAuth conforme `CONFIGURAR_GOOGLE_DRIVE.md`.
+
+## Configuração principal
+
+Edite `js/config.js` e informe o OAuth Client ID:
+
+```js
+googleClientId: 'SEU_CLIENT_ID.apps.googleusercontent.com'
+```
+
+O Client ID é público e não é uma senha. Nunca coloque Client Secret no site.

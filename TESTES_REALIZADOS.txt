@@ -1,19 +1,19 @@
-BORION CNPJ HTML v1.0.0 — VALIDAÇÕES
+BORION CNPJ 1.0.2 — TESTES REALIZADOS
 
-PASSOU:
-- Sintaxe completa do JavaScript validada pelo Node.js.
-- Inicialização da interface no navegador em modo local.
-- Navegação: Visão Geral, Cheques, Boletos, Fornecedores, Alertas, Backup e Configurações.
-- Cadastro completo de fornecedor.
-- Cadastro rápido de fornecedor dentro da janela de cheque.
-- Geração em lote SU 105120 até SU 105124.
-- Prazos 30, 45, 60 continuando para 75 e 90 dias.
-- Cadastro e listagem de cheque.
-- Abertura e cadastro de boleto.
-- Nenhum erro de console durante os testes automatizados de interface.
-- Todos os arquivos locais referenciados no HTML existem no pacote.
+[OK] Sintaxe de js/app.js validada com Node.js.
+[OK] Sintaxe de js/config.js validada com Node.js.
+[OK] CSS oficial comparado por SHA-256 com a base BORION Finance 7.6.2.
+[OK] Splash, boot, login, sidebar, topbar e dashboard renderizados.
+[OK] Navegação das telas Cheques, Boletos, Fornecedores, Alertas, Backup e Configurações.
+[OK] Abertura dos modais de novo cheque, novo boleto, novo fornecedor e cheque em lote.
+[OK] Proteção contra o erro “root.querySelector is not a function”.
+[OK] Referências locais de CSS, JavaScript, ícones, imagens e OCR verificadas.
+[OK] Estrutura de pastas do Drive implementada no código.
+[OK] JSON atual, anexos criptografados e backup diário implementados no código.
 
-DEPENDE DA CONFIGURAÇÃO DO USUÁRIO:
-- Login Google e sincronização real com Drive exigem OAuth Client ID e uma pasta compartilhada.
-- OCR de PDF usa PDF.js carregado pela internet.
-- A precisão do OCR depende da qualidade da foto e sempre exige conferência.
+PENDENTE DE VALIDAÇÃO NO DOMÍNIO DO USUÁRIO:
+- Login Google real.
+- Consentimento OAuth.
+- Criação e escrita efetiva no Google Drive.
+
+Esses três itens dependem do OAuth Client ID do usuário e da origem final autorizada no Google Cloud.

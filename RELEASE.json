@@ -1,7 +1,9 @@
 {
   "app": "Borion CNPJ",
-  "version": "1.0.0",
-  "baseVisual": "Borion Finance 7.6.2 Estavel",
-  "platform": "HTML / GitHub Pages / PC",
-  "modules": ["Cheques", "Boletos", "Fornecedores", "Alertas", "Backup", "Google Drive"]
+  "version": "1.0.2",
+  "baseVisual": "Borion Finance 7.6.2",
+  "desktopOnly": true,
+  "storage": "Google Drive",
+  "driveRootFolder": "Borion CNPJ",
+  "officialCssSha256": "824f0e807bcf39e66b8a35b6f807545c576de1078c064197c6ee36fe94edadd8"
 }
