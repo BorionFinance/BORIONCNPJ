@@ -1,11 +1,11 @@
-BORION CNPJ 1.0.3 — validações
+BORION CNPJ 1.0.4 — validações
 
-- Sintaxe de js/app.js e js/config.js.
-- Ausência da janela manual Configurar Google Drive.
-- Ausência de campos de Client ID e link/ID da pasta no aplicativo.
-- Pasta Borion CNPJ criada automaticamente pela lógica do Drive.
-- Campo monetário com R$ e digitação em centavos.
-- Máscara automática de CPF e CNPJ.
-- Máscara automática de telefone.
-- Configurações com campos escuros no padrão Borion.
-- Modais de cheque, boleto, fornecedor e lote carregados sem erro de JavaScript.
+- Sintaxe JavaScript validada com Node.js.
+- Client ID presente.
+- Migração da base local 1.0.3 para 1.0.4.
+- Google Drive com current.json e snapshots automáticos.
+- Falha de chave antiga não bloqueia novos salvamentos.
+- Conta de cheque cadastrada somente em Configurações.
+- Seleção -- quando não existe conta.
+- Exportação e importação de cheques em JSON.
+- Máscara monetária e CPF/CNPJ preservadas.

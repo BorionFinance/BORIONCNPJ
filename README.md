@@ -1,71 +1,36 @@
-# BORION CNPJ 1.0.3
+# BORION CNPJ 1.0.4
 
-Sistema web desktop para **Cheques, Boletos e Fornecedores**, construído sobre a identidade visual oficial do **Borion Finance 7.6.2**.
+Sistema web desktop para Cheques, Boletos e Fornecedores, usando a identidade visual do Borion Finance 7.6.2.
 
-## Alterações da versão 1.0.3
+## Google Drive é a fonte oficial
 
-- Removida a janela de configuração manual do Google Drive.
-- Removidos os campos de Client ID e link/ID da pasta dentro do aplicativo.
-- Login exclusivamente pelo Google OAuth.
-- O Client ID é configurado somente em `js/config.js`.
-- A pasta `Borion CNPJ` é procurada ou criada automaticamente na raiz do Drive da conta logada.
-- Valores no padrão Borion: `0,00`, com digitação progressiva em centavos.
-- CPF e CNPJ formatados automaticamente durante a digitação.
-- Campos, selects e configurações corrigidos para o visual escuro oficial do Borion.
+Ao entrar com o Google, o sistema cria ou reutiliza `Borion CNPJ` na raiz do Drive da conta. Não existe tela manual para digitar pasta.
 
-## Configuração do Google OAuth
-
-Edite `js/config.js`:
-
-```js
-window.BORION_CONFIG = {
-  appName: 'Borion CNPJ',
-  version: '1.0.3',
-  googleClientId: 'SEU_CLIENT_ID.apps.googleusercontent.com',
-  driveRootFolderName: 'Borion CNPJ',
-  authorizedEmails: [],
-  desktopOnly: true
-};
-```
-
-O Client ID pode ficar no GitHub. **Nunca coloque Client Secret no site.**
-
-No Google Cloud:
-
-1. Ative a Google Drive API.
-2. Configure a tela de consentimento OAuth.
-3. Crie um OAuth Client ID do tipo **Aplicativo da Web**.
-4. Em **Origens JavaScript autorizadas**, adicione a origem do GitHub Pages, por exemplo:
-   `https://seuusuario.github.io`
-5. Adicione as contas de teste enquanto o aplicativo estiver em modo de teste.
-
-## Google Drive
-
-Depois do login, o Borion cria automaticamente:
+Estrutura principal:
 
 ```text
 Borion CNPJ/
 ├── Sistema/
-│   ├── Dados/
-│   │   └── current.json.borion
-│   ├── Backups/
-│   │   └── ANO/
-│   │       └── MM - Mês/
-│   └── Histórico/
-├── Cheques/
-│   └── ANO/
-│       └── MM - Mês/
-└── Boletos/
-    └── ANO/
-        └── MM - Mês/
+│   ├── Dados/current.json
+│   ├── Backups/ANO/MM - Mês/
+│   ├── Histórico/
+│   └── Operações/
+├── Cheques/ANO/MM - Mês/
+└── Boletos/ANO/MM - Mês/
 ```
 
-## Publicação no GitHub Pages
+Cada alteração é salva imediatamente no navegador. Cada sincronização cria um snapshot completo no Drive antes de atualizar `current.json`. Há também backup diário, mensal e manual. Se a internet cair, os dados permanecem no computador e entram novamente na fila.
 
-1. Extraia o ZIP.
-2. Envie o conteúdo extraído para a raiz do repositório.
-3. Abra `Settings > Pages`.
-4. Selecione `Deploy from a branch`.
-5. Escolha `main` e `/ (root)`.
-6. Salve e aguarde a publicação.
-7. Configure o Client ID em `js/config.js`.
+A versão 1.0.4 remove a dependência da chave de equipe para os novos dados compartilhados. A proteção é feita pelas permissões, autenticação e criptografia do Google Drive. Arquivos antigos criptografados são preservados para recuperação e nunca são apagados automaticamente.
+
+## Contas de cheque
+
+Banco, agência e conta são cadastrados somente em Configurações. No cheque aparece um selecionável. Sem conta cadastrada, o valor exibido é `--`.
+
+## Importação de cheques
+
+Em Backup existem os botões `Exportar cheques atuais` e `Importar arquivo de cheques`. O JSON leva cheques, fornecedores e contas, sem fotos, para que as imagens sejam adicionadas depois em Editar.
+
+## Publicação
+
+Extraia o ZIP e envie todo o conteúdo para a raiz do repositório do GitHub Pages. O Client ID já está em `js/config.js`. Não publique Client Secret.

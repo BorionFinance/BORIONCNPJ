@@ -1,11 +1,10 @@
-BORION CNPJ 1.0.3
+BORION CNPJ 1.0.4
 
-1. Extraia o ZIP.
-2. Abra js/config.js.
-3. Cole o Google OAuth Client ID em googleClientId.
-4. Envie todo o conteúdo extraído para a raiz do GitHub.
-5. Ative o GitHub Pages.
-6. Entre somente pelo botão Google.
+1. Extraia este ZIP.
+2. Envie todo o conteúdo extraído para a raiz do GitHub.
+3. Aguarde o GitHub Pages publicar.
+4. Entre com o Google.
 
-A pasta Borion CNPJ será criada automaticamente no Drive da conta logada.
-Não existe configuração manual de Client ID ou pasta dentro do aplicativo.
+A pasta Borion CNPJ será criada automaticamente no Drive.
+Os cheques já salvos no mesmo navegador são migrados automaticamente.
+Em Backup, use Exportar cheques atuais para gerar o JSON de importação sem fotos.

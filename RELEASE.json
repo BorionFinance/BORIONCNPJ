@@ -1,9 +1,9 @@
 {
   "app": "Borion CNPJ",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "baseVisual": "Borion Finance 7.6.2",
   "desktopOnly": true,
-  "storage": "Google Drive",
+  "storage": "Google Drive com snapshots locais e remotos",
   "driveRootFolder": "Borion CNPJ",
   "officialCssSha256": "824f0e807bcf39e66b8a35b6f807545c576de1078c064197c6ee36fe94edadd8"
 }

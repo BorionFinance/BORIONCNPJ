@@ -1,5 +1,5 @@
 /*
-  BORION CNPJ 1.0.3
+  BORION CNPJ 1.0.4
   Camada funcional sobre o CSS ORIGINAL do Borion Finance 7.6.2.
   A identidade visual, tokens, sidebar, topbar, botões, campos, tabelas,
   splash, boot e animações vêm de css/borion-7.6.2.css.
@@ -152,7 +152,7 @@ html[data-theme="light"] .search-box input,html[data-theme="light"] .filter-sele
 @media(max-width:1250px){.supplier-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.main{padding-left:25px;padding-right:25px}}
 
 
-/* BORION CNPJ 1.0.3 — campos oficiais, máscaras e configurações */
+/* BORION CNPJ 1.0.4 — campos oficiais, máscaras e configurações */
 .modal .field,
 #page-config .field{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
 .modal .field label,
