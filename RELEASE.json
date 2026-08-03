@@ -1,0 +1,7 @@
+{
+  "app": "Borion CNPJ",
+  "version": "1.0.0",
+  "baseVisual": "Borion Finance 7.6.2 Estavel",
+  "platform": "HTML / GitHub Pages / PC",
+  "modules": ["Cheques", "Boletos", "Fornecedores", "Alertas", "Backup", "Google Drive"]
+}

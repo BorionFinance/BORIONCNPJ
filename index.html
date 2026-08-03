@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#060a10">
+  <meta name="description" content="Borion CNPJ — controle de cheques e boletos com Google Drive.">
+  <title>Borion CNPJ</title>
+  <link rel="icon" href="assets/favicon-32.png">
+  <link rel="stylesheet" href="css/styles.css?v=1.0.0">
+</head>
+<body>
+  <div id="desktop-warning" class="desktop-warning" hidden>
+    <img src="assets/borion-emblem.png" alt="Borion">
+    <h1>Borion CNPJ</h1>
+    <p>Este sistema foi projetado exclusivamente para computador.</p>
+  </div>
+
+  <div id="boot" class="boot-screen">
+    <div class="boot-card">
+      <img src="assets/borion-watermark.png" alt="Borion">
+      <div class="boot-brand">BORION CNPJ</div>
+      <div class="boot-spinner"><span></span></div>
+      <h1>Preparando o Borion</h1>
+      <p id="boot-detail">Carregando os componentes essenciais</p>
+    </div>
+  </div>
+
+  <section id="gate" class="gate-wrap" hidden>
+    <div class="gate-box">
+      <div class="gate-logo">
+        <img src="assets/borion-emblem.png" alt="Borion CNPJ">
+        <div class="appname">BORION CNPJ</div>
+        <div class="appsub">Cheques e Boletos</div>
+      </div>
+      <div class="gate-card">
+        <h1>Entrar no Borion</h1>
+        <p>Use sua conta Google para acessar a pasta compartilhada da empresa.</p>
+        <button id="btn-google-login" class="btn btn-google btn-block">
+          <span class="google-g">G</span> Entrar com Google
+        </button>
+        <button id="btn-local-login" class="btn btn-outline btn-block">Testar em modo local</button>
+        <div id="gate-config-note" class="gate-note"></div>
+        <button id="btn-gate-config" class="link-btn">Configurar Google e pasta do Drive</button>
+      </div>
+      <div class="gate-security">Dados e documentos protegidos por chave da equipe.</div>
+    </div>
+  </section>
+
+  <div id="app" class="app-shell" hidden>
+    <aside class="sidebar">
+      <div class="sb-brand">
+        <img src="assets/borion-emblem.png" alt="Borion">
+        <div><b>BORION CNPJ</b><span>Cheques e Boletos</span></div>
+      </div>
+      <nav id="nav" class="sb-nav">
+        <button class="sb-item active" data-page="dashboard"><span>◈</span>Visão Geral</button>
+        <button class="sb-item" data-page="cheques"><span>▣</span>Cheques</button>
+        <button class="sb-item" data-page="boletos"><span>▤</span>Boletos</button>
+        <button class="sb-item" data-page="fornecedores"><span>◆</span>Fornecedores</button>
+        <button class="sb-item" data-page="alertas"><span>●</span>Alertas <em id="alert-count" hidden>0</em></button>
+        <div class="sb-separator"></div>
+        <button class="sb-item" data-page="backup"><span>⇩</span>Backup</button>
+        <button class="sb-item" data-page="config"><span>⚙</span>Configurações</button>
+      </nav>
+      <div class="sb-footer">
+        <div class="sync-card">
+          <span id="sync-dot" class="sync-dot local"></span>
+          <div><b id="sync-label">Modo local</b><small id="sync-detail">Salvamento neste navegador</small></div>
+        </div>
+        <button id="btn-logout" class="sb-logout">Sair</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1 id="page-title">Visão Geral</h1>
+          <p id="page-subtitle">Acompanhe cheques, boletos e próximos vencimentos.</p>
+        </div>
+        <div class="top-actions">
+          <div id="user-chip" class="user-chip"><span id="user-avatar">L</span><div><b id="user-name">Modo local</b><small id="user-email">Neste navegador</small></div></div>
+          <button id="btn-sync" class="icon-btn" title="Sincronizar agora">↻</button>
+        </div>
+      </header>
+
+      <div id="page-dashboard" class="page active"></div>
+      <div id="page-cheques" class="page"></div>
+      <div id="page-boletos" class="page"></div>
+      <div id="page-fornecedores" class="page"></div>
+      <div id="page-alertas" class="page"></div>
+      <div id="page-backup" class="page"></div>
+      <div id="page-config" class="page"></div>
+    </main>
+  </div>
+
+  <div id="modal-root"></div>
+  <div id="toast-root"></div>
+  <input id="hidden-file-input" type="file" hidden multiple>
+
+  <script src="js/config.js?v=1.0.0"></script>
+  <script src="vendor/tesseract/tesseract.min.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="js/app.js?v=1.0.0"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+BORION CNPJ HTML v1.0.0 — VALIDAÇÕES
+
+PASSOU:
+- Sintaxe completa do JavaScript validada pelo Node.js.
+- Inicialização da interface no navegador em modo local.
+- Navegação: Visão Geral, Cheques, Boletos, Fornecedores, Alertas, Backup e Configurações.
+- Cadastro completo de fornecedor.
+- Cadastro rápido de fornecedor dentro da janela de cheque.
+- Geração em lote SU 105120 até SU 105124.
+- Prazos 30, 45, 60 continuando para 75 e 90 dias.
+- Cadastro e listagem de cheque.
+- Abertura e cadastro de boleto.
+- Nenhum erro de console durante os testes automatizados de interface.
+- Todos os arquivos locais referenciados no HTML existem no pacote.
+
+DEPENDE DA CONFIGURAÇÃO DO USUÁRIO:
+- Login Google e sincronização real com Drive exigem OAuth Client ID e uma pasta compartilhada.
+- OCR de PDF usa PDF.js carregado pela internet.
+- A precisão do OCR depende da qualidade da foto e sempre exige conferência.
