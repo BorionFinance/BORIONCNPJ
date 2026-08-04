@@ -1,23 +1,24 @@
 {
   "app": "Borion CNPJ",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "baseVisual": "Borion Finance 7.7.12 — imagens oficiais; estrutura visual Borion",
   "desktopOnly": false,
-  "storage": "Google Drive como fonte oficial; descoberta automática da base válida em Sistema/Dados/current.json e arquivos compatíveis",
+  "storage": "Google Drive como fonte oficial; leitura binária correta do current.json e descoberta enxuta da pasta",
   "driveRootFolder": "Borion CNPJ",
   "pwa": true,
+  "title": "Correção da leitura do current.json e da criação de pastas no Drive",
   "features": [
-    "ID configurado tratado apenas como preferência, sem bloquear a descoberta automática",
-    "busca de current.json válido em todas as pastas Borion CNPJ acessíveis",
-    "inspeção de estruturas Sistema/Dados duplicadas e escolha da base com registros reais",
-    "base local vazia nunca substitui dados remotos; dados locais existentes podem recuperar o Drive",
-    "nenhuma pasta ou arquivo é apagado automaticamente durante a recuperação",
-    "texto de entrada simplificado para CARREGANDO . . .",
-    "verificação por releitura do current.json após cada gravação",
-    "PWA 1.0.18 com cache, service worker e manifest atualizados"
+    "download do Drive sempre binário: o current.json volta a ser lido no celular e no computador",
+    "verificação após gravar volta a funcionar, destravando o envio das alterações",
+    "descoberta em três etapas: pasta conhecida, pastas com o nome oficial e só então varredura limitada",
+    "varredura global por nome exato de arquivo, com teto de 40 leituras e 4 em paralelo",
+    "nenhuma pasta Borion CNPJ é criada durante a leitura — só na hora de gravar",
+    "cache de pastas por sessão e fila por nome: fim das pastas de mês duplicadas",
+    "token do Google renovado antes de vencer, em vez de quebrar no meio da sincronização",
+    "tela CARREGANDO com limite de 75 segundos e mensagem clara",
+    "PWA 1.0.19 com cache, service worker e manifest atualizados"
   ],
   "officialImageSource": "BORION_FINANCE_7.7.12_FIX_HUB_URL.zip",
-  "pwaCache": "borion-cnpj-v1.0.18",
-  "title": "Descoberta automática e recuperação segura da base do Drive",
+  "pwaCache": "borion-cnpj-v1.0.19",
   "driveRootFolderId": "preferencial; descoberta automática ativa"
 }
