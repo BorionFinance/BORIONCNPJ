@@ -1,4 +1,4 @@
-BORION CNPJ 1.0.10
+BORION CNPJ 1.0.11
 
 - Celular procura a pasta com o current.json de maior revisão.
 - Cache antigo da pasta não tem mais prioridade.

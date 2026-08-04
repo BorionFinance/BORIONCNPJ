@@ -1,0 +1,9 @@
+BORION CNPJ 1.0.11
+
+- Sincronização canônica entre PC e celular por BORION_CNPJ_CURRENT.json.
+- Após selecionar a conta Google aparece apenas Carregando e um spinner.
+- Notificações mobile sempre dentro da largura da tela.
+- Visão Geral limpa: cheques emitidos e depositados.
+- Calendário por dia e mês para conferir quantos cheques caem em cada data.
+- Ações de cheque e boleto movidas para suas respectivas abas.
+- Cache, PWA, manifest e versão atualizados.

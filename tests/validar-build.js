@@ -5,8 +5,8 @@ const index=fs.readFileSync('index.html','utf8');
 const app=fs.readFileSync('js/app.js','utf8');
 const config=fs.readFileSync('js/config.js','utf8');
 const css=fs.readFileSync('css/cnpj.css','utf8');
-assert(index.includes('1.0.10'),'index.html não está na versão 1.0.10');
-assert(config.includes("version: '1.0.10'"),'config.js não está na versão 1.0.10');
+assert(index.includes('1.0.11'),'index.html não está na versão 1.0.11');
+assert(config.includes("version: '1.0.11'"),'config.js não está na versão 1.0.11');
 assert(config.includes('946105310952-gp143h81mm3704lrq3877hsie49njgak.apps.googleusercontent.com'),'Client ID ausente');
 assert(app.includes("V104_LOCAL_STATE_KEY='borion_cnpj_state_v2'"),'salvamento local v2 ausente');
 assert(app.includes("'current.json'"),'current.json do Drive ausente');
@@ -31,10 +31,10 @@ assert(app.includes('renderChequesDesktopV105'),'visualização mobile de cheque
 assert(css.includes('.mobile-record-card'),'cartões mobile ausentes');
 assert(fs.existsSync('manifest.webmanifest'),'arquivo manifest ausente');
 assert(fs.existsSync('service-worker.js'),'service worker ausente');
-assert(index.includes('borion-cnpj-v110-emblem.png'),'emblema oficial v109 não referenciado');
-assert(index.includes('borion-cnpj-v110-apple-touch-icon.png'),'ícone mobile oficial v109 não referenciado');
-assert(fs.existsSync('borion-cnpj-v110-icon-192.png'),'ícone 192 oficial ausente');
-assert(fs.existsSync('borion-cnpj-v110-icon-512.png'),'ícone 512 oficial ausente');
-assert(fs.readFileSync('service-worker.js','utf8').includes("borion-cnpj-v1.0.10"),'cache PWA não está em 1.0.10');
+assert(index.includes('borion-cnpj-v111-emblem.png'),'emblema oficial v109 não referenciado');
+assert(index.includes('borion-cnpj-v111-apple-touch-icon.png'),'ícone mobile oficial v109 não referenciado');
+assert(fs.existsSync('borion-cnpj-v111-icon-192.png'),'ícone 192 oficial ausente');
+assert(fs.existsSync('borion-cnpj-v111-icon-512.png'),'ícone 512 oficial ausente');
+assert(fs.readFileSync('service-worker.js','utf8').includes("borion-cnpj-v1.0.11"),'cache PWA não está em 1.0.11');
 
-if(!process.exitCode) console.log('BORION CNPJ 1.0.10 validado com sucesso.');
+if(!process.exitCode) console.log('BORION CNPJ 1.0.11 validado com sucesso.');

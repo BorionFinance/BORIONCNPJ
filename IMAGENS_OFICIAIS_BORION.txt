@@ -1,4 +1,4 @@
-BORION CNPJ 1.0.10 — IMAGENS OFICIAIS
+BORION CNPJ 1.0.11 — IMAGENS OFICIAIS
 Fonte: BORION Finance 7.7.12
 
 apple-touch-icon.png <- icon-192.png | SHA-256 8f06dcf440e43ea0ec1598e1b281324378e90f1f2b18fdaa9cb7be921fc63e7c
@@ -6,13 +6,13 @@ borion-cnpj-apple-touch-icon.png <- icon-192.png | SHA-256 8f06dcf440e43ea0ec159
 borion-cnpj-favicon-32.png <- favicon-32.png | SHA-256 1dfb059d5c54731815938a3ca50efebfa8e6f8e9b20c0e1f36ffc45be865f1fd
 borion-cnpj-icon-192.png <- icon-192.png | SHA-256 8f06dcf440e43ea0ec1598e1b281324378e90f1f2b18fdaa9cb7be921fc63e7c
 borion-cnpj-icon-512.png <- icon-512-maskable.png | SHA-256 5cdd7f912562b289945109679deab649becebec5c2e4316bbe039ce1d7ba2674
-borion-cnpj-v110-apple-touch-icon.png <- icon-192.png | SHA-256 8f06dcf440e43ea0ec1598e1b281324378e90f1f2b18fdaa9cb7be921fc63e7c
-borion-cnpj-v110-emblem.png <- borion-emblem.png | SHA-256 cc6b9ba53d9045af1e9ff7f324f98c115409d7ea618e25e9c34b8ceb307f9915
-borion-cnpj-v110-favicon-32.png <- favicon-32.png | SHA-256 1dfb059d5c54731815938a3ca50efebfa8e6f8e9b20c0e1f36ffc45be865f1fd
-borion-cnpj-v110-icon-192.png <- icon-192.png | SHA-256 8f06dcf440e43ea0ec1598e1b281324378e90f1f2b18fdaa9cb7be921fc63e7c
-borion-cnpj-v110-icon-512.png <- icon-512-maskable.png | SHA-256 5cdd7f912562b289945109679deab649becebec5c2e4316bbe039ce1d7ba2674
-borion-cnpj-v110-watermark.png <- borion-watermark.png | SHA-256 dd0b126a07bb5df28feb7ec5eb38a16e2d350b7643eff5979b73fe3cfd69f5b1
-borion-cnpj-v110.ico <- borion.ico | SHA-256 d23741d36c15aef47b2cba03b24369fff900f208a030d41bcd88b40588957744
+borion-cnpj-v111-apple-touch-icon.png <- icon-192.png | SHA-256 8f06dcf440e43ea0ec1598e1b281324378e90f1f2b18fdaa9cb7be921fc63e7c
+borion-cnpj-v111-emblem.png <- borion-emblem.png | SHA-256 cc6b9ba53d9045af1e9ff7f324f98c115409d7ea618e25e9c34b8ceb307f9915
+borion-cnpj-v111-favicon-32.png <- favicon-32.png | SHA-256 1dfb059d5c54731815938a3ca50efebfa8e6f8e9b20c0e1f36ffc45be865f1fd
+borion-cnpj-v111-icon-192.png <- icon-192.png | SHA-256 8f06dcf440e43ea0ec1598e1b281324378e90f1f2b18fdaa9cb7be921fc63e7c
+borion-cnpj-v111-icon-512.png <- icon-512-maskable.png | SHA-256 5cdd7f912562b289945109679deab649becebec5c2e4316bbe039ce1d7ba2674
+borion-cnpj-v111-watermark.png <- borion-watermark.png | SHA-256 dd0b126a07bb5df28feb7ec5eb38a16e2d350b7643eff5979b73fe3cfd69f5b1
+borion-cnpj-v111.ico <- borion.ico | SHA-256 d23741d36c15aef47b2cba03b24369fff900f208a030d41bcd88b40588957744
 borion-emblem.png <- borion-emblem.png | SHA-256 cc6b9ba53d9045af1e9ff7f324f98c115409d7ea618e25e9c34b8ceb307f9915
 borion-watermark.png <- borion-watermark.png | SHA-256 dd0b126a07bb5df28feb7ec5eb38a16e2d350b7643eff5979b73fe3cfd69f5b1
 borion.ico <- borion.ico | SHA-256 d23741d36c15aef47b2cba03b24369fff900f208a030d41bcd88b40588957744

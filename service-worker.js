@@ -1,5 +1,5 @@
-const CACHE='borion-cnpj-v1.0.10';
-const CORE=['./','./index.html','./manifest.webmanifest?v=1.0.10','./css/borion-7.6.2.css?v=1.0.10','./css/cnpj.css?v=1.0.10','./js/config.js?v=1.0.10','./js/app.js?v=1.0.10','./borion-cnpj-v110-emblem.png','./borion-cnpj-v110-watermark.png','./borion-cnpj-v110-icon-192.png','./borion-cnpj-v110-icon-512.png','./borion-cnpj-v110-favicon-32.png','./borion-cnpj-v110-apple-touch-icon.png','./borion-cnpj-v110.ico'];
+const CACHE='borion-cnpj-v1.0.11';
+const CORE=['./','./index.html','./manifest.webmanifest?v=1.0.11','./css/borion-7.6.2.css?v=1.0.11','./css/cnpj.css?v=1.0.11','./js/config.js?v=1.0.11','./js/app.js?v=1.0.11','./borion-cnpj-v111-emblem.png','./borion-cnpj-v111-watermark.png','./borion-cnpj-v111-icon-192.png','./borion-cnpj-v111-icon-512.png','./borion-cnpj-v111-favicon-32.png','./borion-cnpj-v111-apple-touch-icon.png','./borion-cnpj-v111.ico'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('message',event=>{if(event.data==='SKIP_WAITING')self.skipWaiting()});

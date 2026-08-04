@@ -1,4 +1,4 @@
-BORION CNPJ 1.0.10
+BORION CNPJ 1.0.11
 
 1. Extraia este ZIP.
 2. Envie todo o conteúdo extraído para a raiz do GitHub.
