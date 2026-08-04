@@ -142,7 +142,7 @@ html[data-theme="light"] #borion_version_badge{background:rgba(255,255,255,.9);c
 .alert-list{display:flex;flex-direction:column;gap:9px}.alert-item{display:flex;align-items:center;gap:12px;padding:13px;border:1px solid rgba(255,255,255,.06);border-radius:13px;background:linear-gradient(180deg,rgba(18,28,38,.97),rgba(10,16,24,.97));box-shadow:var(--shadow-md)}.alert-icon{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:rgba(255,90,95,.09);color:#ff9ca0;border:1px solid rgba(255,90,95,.15)}.alert-item b{font-size:12px}.alert-item p{margin:3px 0 0;color:var(--muted);font-size:10px}.alert-item .alert-value{margin-left:auto;text-align:right}.alert-item .alert-value b{color:var(--gold-bright);display:block}.alert-item .alert-value small{color:var(--muted);font-size:9px}
 
 /* Toasts */
-.toast{position:fixed;right:18px;bottom:18px;z-index:2000;min-width:280px;max-width:400px;padding:12px 14px;border-radius:12px;background:linear-gradient(180deg,rgba(20,29,39,.98),rgba(9,14,20,.98));border:1px solid rgba(255,255,255,.10);box-shadow:0 18px 50px rgba(0,0,0,.45);font-size:11.5px;animation:toastIn .2s ease}.toast.ok{border-color:rgba(34,197,94,.25)}.toast.error{border-color:rgba(255,90,95,.30)}
+.toast{position:fixed;right:18px;bottom:18px;z-index:2000;min-width:280px;max-width:400px;padding:12px 14px;border-radius:12px;background:linear-gradient(180deg,rgba(20,29,39,.98),rgba(9,14,20,.98));border:1px solid rgba(255,255,255,.10);box-shadow:0 18px 50px rgba(0,0,0,.45);font-size:11.5px;transform:none;animation:cnpjToastInMobile .2s ease}.toast.ok{border-color:rgba(34,197,94,.25)}.toast.error{border-color:rgba(255,90,95,.30)}
 
 /* Tema claro reaproveita o tema oficial e corrige superfícies específicas */
 html[data-theme="light"] .panel,html[data-theme="light"] .kpi,html[data-theme="light"] .supplier-card,html[data-theme="light"] .config-section,html[data-theme="light"] .alert-item,html[data-theme="light"] .table-wrap{background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(247,241,230,.96));border-color:rgba(122,85,29,.14)}
@@ -389,6 +389,7 @@ html[data-theme="light"] .search-box input,html[data-theme="light"] .filter-sele
 }
 
 .mobile-menu-version{padding:12px 4px 2px;text-align:center;color:var(--muted-2);font-size:10px;letter-spacing:.03em}
+@keyframes cnpjToastInMobile{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* BORION CNPJ 1.0.11 — carregamento após Google */
 .account-loading[hidden]{display:none!important}
@@ -417,10 +418,10 @@ html[data-theme="light"] .search-box input,html[data-theme="light"] .filter-sele
   [data-dashboard-calendar-modal] .dashboard-calendar{display:block!important;margin-bottom:0}
 }
 
-/* BORION CNPJ 1.0.11 — notificações sempre dentro da tela */
+/* BORION CNPJ 1.0.12 — notificações sempre dentro da tela */
 @media(max-width:1099px){
   #toast-root{position:fixed!important;left:0!important;right:0!important;bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;z-index:2147483550!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:8px!important;padding:0 10px!important;pointer-events:none!important;box-sizing:border-box!important}
-  #toast-root .toast{position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;inset:auto!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;box-sizing:border-box!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:break-word!important;pointer-events:auto!important}
+  #toast-root .toast{position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;inset:auto!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;box-sizing:border-box!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:break-word!important;pointer-events:auto!important;transform:none!important;animation:cnpjToastInMobile .22s ease!important}
   .dashboard-clean-summary{grid-template-columns:1fr 1fr!important}.dashboard-clean-summary>div:first-child{grid-column:1/-1}.dashboard-two-lists{grid-template-columns:1fr!important}.calendar-grid,.calendar-week{gap:5px}.calendar-grid{padding-left:10px;padding-right:10px}.calendar-week{padding-left:10px;padding-right:10px}.calendar-day{min-height:42px;border-radius:10px}.calendar-day b{right:3px;bottom:3px;min-width:16px;height:16px;line-height:16px;font-size:8px}
   .main{padding-bottom:calc(94px + env(safe-area-inset-bottom,0px))!important}
   .sidebar{height:calc(68px + env(safe-area-inset-bottom,0px))!important;min-height:calc(68px + env(safe-area-inset-bottom,0px))!important;padding-bottom:env(safe-area-inset-bottom,0px)!important}
