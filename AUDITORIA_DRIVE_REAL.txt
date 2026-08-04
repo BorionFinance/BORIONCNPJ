@@ -1,0 +1,17 @@
+AUDITORIA DA PASTA EXPORTADA DO GOOGLE DRIVE
+
+A pasta recebida contém a base completa. Os dados não estão perdidos.
+
+Fonte oficial encontrada:
+Borion CNPJ / Sistema / Dados / current.json
+
+Resumo validado:
+- 7 cheques
+- 3 fornecedores
+- 2 contas de cheque
+- 8 imagens de cheques
+- revisão 35
+- arquivo espelho BORION_CNPJ_CURRENT.json idêntico ao current.json
+
+Diagnóstico:
+O defeito estava no aplicativo: a busca por uma pasta apenas pelo nome podia selecionar outra pasta homônima ou manter um ID local diferente entre navegador e PWA. A versão 1.0.17 usa o ID exato da pasta oficial e carrega o Drive antes de qualquer tentativa de envio.

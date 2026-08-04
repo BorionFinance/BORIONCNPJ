@@ -1,20 +1,22 @@
 {
   "app": "Borion CNPJ",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "baseVisual": "Borion Finance 7.7.12 — imagens oficiais; estrutura visual Borion",
   "desktopOnly": false,
   "storage": "Google Drive como fonte oficial em Borion CNPJ/Sistema/Dados/current.json; anexos vinculados após confirmação dos registros",
   "driveRootFolder": "Borion CNPJ",
   "pwa": true,
   "features": [
-    "current.json confirmado antes do upload de fotos, impedindo anexos órfãos sem cheques no celular",
-    "mesclagem segura: uma base remota vazia nunca apaga os registros locais do computador",
-    "leitura principal sem varredura infinita da pasta Sistema/Operações",
-    "reaproveitamento de fotos já existentes no Drive antes de criar nova cópia",
-    "fila de sincronização limitada, com erro visível e sem estado Salvando infinito",
-    "recuperação única por snapshots locais para preservar os 7 cheques existentes",
-    "PWA 1.0.16 com atualização de cache, service worker e manifest"
+    "pasta oficial fixada pelo ID confirmado no backup real da conta do pai",
+    "carregamento remoto determinístico de Sistema/Dados/current.json antes de qualquer envio",
+    "base local vazia nunca substitui a base remota com 7 cheques",
+    "sincronização limitada a no máximo duas passagens, sem repetição infinita",
+    "verificação por releitura do current.json após cada gravação",
+    "reaproveitamento das fotos já existentes no Google Drive",
+    "PWA 1.0.17 com cache, service worker e manifest atualizados"
   ],
   "officialImageSource": "BORION_FINANCE_7.7.12_FIX_HUB_URL.zip",
-  "pwaCache": "borion-cnpj-v1.0.16"
+  "pwaCache": "borion-cnpj-v1.0.17",
+  "title": "Sincronização determinística com a pasta oficial do Drive",
+  "driveRootFolderId": "1UR5lLsUeBtv9Cc8jYj70HWhySuvqko0-"
 }

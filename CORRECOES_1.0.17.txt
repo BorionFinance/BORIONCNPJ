@@ -1,0 +1,18 @@
+BORION CNPJ 1.0.17 — CORREÇÃO DEFINITIVA DA BASE DO DRIVE
+
+- Pasta oficial fixada pelo ID confirmado no backup exportado da conta do pai.
+- O aplicativo deixa de escolher pastas apenas pelo nome “Borion CNPJ”.
+- Celular e PWA carregam primeiro Sistema/Dados/current.json da pasta oficial.
+- Uma base local vazia nunca substitui a base remota com dados.
+- Abertura no celular não dispara gravação desnecessária.
+- Sincronização limitada a no máximo duas passagens; sem repetição infinita.
+- current.json é relido e validado depois de cada gravação.
+- Fotos já existentes no Drive são reaproveitadas pelos IDs salvos nos cheques.
+- PWA, cache, manifest e arquivos JS atualizados para 1.0.17.
+
+Auditoria do backup real recebido:
+- current.json válido
+- revisão 35
+- 7 cheques
+- 3 fornecedores
+- 8 imagens de cheques

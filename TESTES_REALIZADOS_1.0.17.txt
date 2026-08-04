@@ -1,0 +1,26 @@
+BORION CNPJ 1.0.17 — VALIDAÇÕES EXECUTADAS
+
+Pasta real exportada do Google Drive:
+- Sistema/Dados/current.json: JSON válido
+- BORION_CNPJ_CURRENT.json: idêntico ao arquivo oficial (SHA-256 igual)
+- 7 cheques encontrados
+- 3 fornecedores encontrados
+- 2 contas de cheque encontradas
+- 8 anexos vinculados e 8 imagens correspondentes na pasta Cheques
+- 13 operações antigas válidas
+- 36 backups preservados
+- revisão oficial: 35
+- ID da pasta oficial confirmado: 1UR5lLsUeBtv9Cc8jYj70HWhySuvqko0-
+
+Código:
+- sintaxe JavaScript validada com node --check
+- manifest e RELEASE.json validados
+- referências de versão, cache, service worker e scripts conferidas
+- teste lógico de seleção da pasta oficial aprovado
+- teste lógico de carga de 7 cheques em aparelho vazio aprovado
+- teste lógico de mesclagem sem exclusão aprovado
+- fila de sincronização limitada a duas passagens conferida
+- ausência de retry infinito conferida
+
+Limitação do ambiente:
+O login OAuth real na conta do pai e a gravação real no Google Drive só podem ser confirmados após a publicação no domínio autorizado. O pacote foi construído diretamente sobre a estrutura e o current.json exportados dessa conta.

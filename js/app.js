@@ -2,7 +2,7 @@
 'use strict';
 
 const CFG = window.BORION_CONFIG || {};
-const applyBorionVersion=()=>{const badge=document.getElementById('borion_version_badge');if(badge)badge.textContent=CFG.version||'1.0.16';};
+const applyBorionVersion=()=>{const badge=document.getElementById('borion_version_badge');if(badge)badge.textContent=CFG.version||'1.0.17';};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',applyBorionVersion,{once:true});else applyBorionVersion();
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const PAGE_META = {
@@ -96,7 +96,7 @@ function wireSmartInputs(root=document){
 
 function blankState(){
   return {
-    meta:{version:CFG.version||'1.0.16',createdAt:nowISO(),updatedAt:nowISO()},
+    meta:{version:CFG.version||'1.0.17',createdAt:nowISO(),updatedAt:nowISO()},
     settings:{companyName:'Borion CNPJ',rootFolderId:'',rootFolderName:CFG.driveRootFolderName||'Borion CNPJ',autoSync:true,keepOriginals:true,warningDays:7},
     fornecedores:[],cheques:[],boletos:[],audit:[],deleted:[]
   };
@@ -830,7 +830,7 @@ const V104_LOCAL_LAST_GOOD_KEY='borion_cnpj_state_v2_last_good';
 function migrateStateV104(raw){
   const base=blankState();
   const out=Object.assign(base,raw||{});
-  out.meta={...base.meta,...(raw?.meta||{}),version:CFG.version||'1.0.16'};
+  out.meta={...base.meta,...(raw?.meta||{}),version:CFG.version||'1.0.17'};
   out.settings={...base.settings,...(raw?.settings||{})};
   out.settings.chequeAccounts=Array.isArray(out.settings.chequeAccounts)?out.settings.chequeAccounts:[];
   out.settings.autoSync=out.settings.autoSync!==false;
@@ -999,7 +999,7 @@ Drive.createSnapshot=async function(structure,prefix='AUTO'){
   const folder=await Drive.monthFolder(structure.backups,todayISO());
   const stamp=nowISO().replace(/[:.]/g,'-');
   const name=`${prefix}_${todayISO()}_${stamp}_R${Number(App.state.meta.revision||0)}.json`;
-  await Drive.uploadJson(folder,name,{app:'Borion CNPJ',version:CFG.version||'1.0.16',kind:prefix,createdAt:nowISO(),user:App.user?.email||'',state:App.state});
+  await Drive.uploadJson(folder,name,{app:'Borion CNPJ',version:CFG.version||'1.0.17',kind:prefix,createdAt:nowISO(),user:App.user?.email||'',state:App.state});
   return name;
 };
 let driveRefreshTimer=0;
@@ -1266,7 +1266,7 @@ renderBoletos=function(){
 };
 function openMobileMore(){
   const install=App.installPrompt?'<button class="mobile-menu-link" data-mobile-install>Instalar no celular <span>›</span></button>':'';
-  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="importar">Importar arquivos <span>›</span></button><button class="mobile-menu-link" data-mobile-go="backup">Backup <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.16')}</div></div>`;
+  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="importar">Importar arquivos <span>›</span></button><button class="mobile-menu-link" data-mobile-go="backup">Backup <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.17')}</div></div>`;
   const modal=openModal({title:'Mais opções',subtitle:'Ferramentas do Borion CNPJ',body});$$('[data-mobile-go]',modal).forEach(b=>b.onclick=()=>{closeModal();setPage(b.dataset.mobileGo)});$('[data-mobile-refresh]',modal)?.addEventListener('click',async()=>{closeModal();try{await Drive.pull(true,true)}catch(e){toast(e.message,'error',6500)}});$('[data-mobile-logout]',modal).onclick=()=>{closeModal();logout()};$('[data-mobile-install]',modal)?.addEventListener('click',async()=>{await installPwa();closeModal()});
 }
 async function installPwa(){if(!App.installPrompt){toast('No navegador, use “Adicionar à tela inicial”.');return}App.installPrompt.prompt();await App.installPrompt.userChoice;App.installPrompt=null;}
@@ -1277,7 +1277,7 @@ let resizeTimer=0;window.addEventListener('resize',()=>{clearTimeout(resizeTimer
 
 
 // ---------- Versão 1.0.15: sincronização transacional entre PC, celular e Drive ----------
-const V115_VERSION='1.0.16';
+const V115_VERSION='1.0.17';
 const V115_CURRENT_FILE='current.json';
 const V115_ROOT_MIRROR='BORION_CNPJ_CURRENT.json';
 const V115_PENDING_PREFIX='borion_cnpj_pending_sync_v115_';
@@ -1628,7 +1628,7 @@ function flushPendingLocalNow(){
 
 
 // ---------- Versão 1.0.16: fonte oficial real no Drive e recuperação PC/celular ----------
-const V116_VERSION='1.0.16';
+const V116_VERSION='1.0.17';
 const V116_RECOVERY_PREFIX='borion_cnpj_recovery_v116_';
 const V116_LAST_REMOTE_PREFIX='borion_cnpj_last_remote_v116_';
 
@@ -1672,7 +1672,7 @@ async function v116RecoverLocalStateIfNeeded(){
       const rows=await new Promise((resolve,reject)=>{const r=App.db.transaction('snapshots').objectStore('snapshots').getAll();r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>reject(r.error)});
       for(const item of rows.slice(-80))add(item.state);
     }
-  }catch(e){console.warn('Recuperação local v1.0.16 não conseguiu ler snapshots',e)}
+  }catch(e){console.warn('Recuperação local v1.0.17 não conseguiu ler snapshots',e)}
   candidates.sort((a,b)=>stateRecordCount(b)-stateRecordCount(a)||String(stateUpdatedAt(b)).localeCompare(String(stateUpdatedAt(a)))||Number(b.meta?.revision||0)-Number(a.meta?.revision||0));
   const best=candidates[0];if(!best||stateRecordCount(best)===0)return false;
   App.state=v116CloneState(best);v115SetPending(true);await saveLocal('recuperacao-local-v116',false);return true;
@@ -1845,13 +1845,213 @@ Drive.login=async function(){
     const pulled=await this.pull(false,true);
     if(pulled?.needsPush||v115Pending()||v116PendingAttachmentCount(App.state)>0){
       showAccountLoading(true,'Confirmando os cheques no Google Drive');
-      try{await this.sync()}catch(e){console.error('Sincronização inicial v1.0.16',e)}
+      try{await this.sync()}catch(e){console.error('Sincronização inicial v1.0.17',e)}
     }
     showAccountLoading(false);showApp();startDriveRefreshLoop();
     if(v115Pending())updateSyncUI('error','Pendente no Drive','Clique em atualizar para tentar novamente');
   }catch(e){
     showAccountLoading(false);
     if(App.user&&stateRecordCount(App.state)>0){showApp();updateSyncUI('error','Falha ao atualizar','Dados locais preservados');startDriveRefreshLoop()}else showGate();
+    throw e;
+  }
+};
+
+
+// ---------- Versão 1.0.17: pasta oficial fixa e carregamento remoto determinístico ----------
+// O backup real da conta confirmou que os 7 cheques estão em Sistema/Dados/current.json.
+// Esta camada remove a ambiguidade entre pastas homônimas e impede uma base vazia de virar oficial.
+const V117_VERSION='1.0.17';
+const V117_CONFIGURED_ROOT_ID=String(CFG.driveRootFolderId||'').trim();
+const V117_ROOT_MIRROR='BORION_CNPJ_CURRENT.json';
+const v117ResolveRootFallback=Drive.resolveRoot.bind(Drive);
+
+function v117PrepareState(state,revision){
+  const out=v116CloneState(state);
+  out.meta.version=V117_VERSION;
+  out.meta.revision=Number(revision||0);
+  out.meta.updatedAt=nowISO();
+  out.meta.lastSyncedBy=App.user?.email||'';
+  out.settings.rootFolderId=App.drive.rootId||V117_CONFIGURED_ROOT_ID||out.settings.rootFolderId||'';
+  out.settings.rootFolderName=CFG.driveRootFolderName||'Borion CNPJ';
+  return out;
+}
+function v117ClearLegacyPending(){
+  localStorage.removeItem('borion_cnpj_pending_sync_v109');
+  localStorage.removeItem('borion_cnpj_pending_sync_v111_'+v115AccountKey());
+}
+Drive.getMetadataV117=async function(fileId){
+  if(!fileId)throw new Error('ID da pasta oficial não configurado.');
+  return this.api(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}?supportsAllDrives=true&fields=id,name,mimeType,trashed,parents,modifiedTime,capabilities(canEdit,canDownload)`);
+};
+Drive.resolveRoot=async function(forceScan=false){
+  if(V117_CONFIGURED_ROOT_ID){
+    if(!forceScan&&App.drive.rootId===V117_CONFIGURED_ROOT_ID)return App.drive.rootId;
+    let meta;
+    try{meta=await this.getMetadataV117(V117_CONFIGURED_ROOT_ID)}
+    catch(e){throw new Error('A conta Google conectada não consegue abrir a pasta oficial do Borion CNPJ. Confirme que entrou na conta do seu pai. '+(e.message||''))}
+    if(meta?.trashed)throw new Error('A pasta oficial do Borion CNPJ está na lixeira do Google Drive.');
+    if(meta?.mimeType!=='application/vnd.google-apps.folder')throw new Error('O ID configurado para o Borion CNPJ não aponta para uma pasta.');
+    App.drive.rootId=meta.id;
+    App.drive.lastRootScanAt=Date.now();
+    App.state.settings.rootFolderId=meta.id;
+    App.state.settings.rootFolderName=meta.name||CFG.driveRootFolderName||'Borion CNPJ';
+    localStorage.setItem(v115RootKey(),meta.id);
+    await saveLocal('pasta-oficial-v117',false);
+    return meta.id;
+  }
+  return v117ResolveRootFallback(forceScan);
+};
+
+Drive.readCanonicalV117=async function(structure){
+  const candidates=[];
+  const add=async(file,kind)=>{
+    const candidate=await this.readStateCandidate(file);
+    if(candidate)candidates.push({...candidate,kind});
+  };
+  for(const file of await this.listChildren(structure.data,V115_CURRENT_FILE))await add(file,'nested');
+  for(const file of await this.listChildren(structure.root,V117_ROOT_MIRROR))await add(file,'mirror');
+  candidates.sort(compareRemoteCandidates);
+  const best=candidates[0]||null;
+  if(best){
+    best.nestedFile=(await this.listChildren(structure.data,V115_CURRENT_FILE))[0]||null;
+    best.mirrorFile=(await this.listChildren(structure.root,V117_ROOT_MIRROR))[0]||null;
+  }
+  return best;
+};
+Drive.loadRemoteBundle=async function(structure){
+  const current=await this.readCanonicalV117(structure);
+  const state=current?.state?v116CloneState(current.state):null;
+  return {state,current,revision:Number(current?.revision??state?.meta?.revision??0),updatedAt:stateUpdatedAt(state),operationIds:operationIdsFromState(state||{}),operationCount:0};
+};
+Drive.writeCanonicalV117=async function(structure,state,current=null){
+  const payload={app:'Borion CNPJ',version:V117_VERSION,updatedAt:state.meta.updatedAt,revision:Number(state.meta.revision||0),user:App.user?.email||'',deviceId:v115DeviceId(),state};
+  const saved=await this.writeCurrentFiles(structure,payload,current);
+  await this.verifyCurrentV116(saved.nestedSaved,state,state.meta.revision);
+  App.drive.dataFileId=saved.nestedSaved.id;
+  App.drive.officialRevision=Number(state.meta.revision||0);
+  localStorage.setItem(v116LastRemoteKey(),v116StateSignature(state));
+  return saved;
+};
+
+Drive._pullOnceV117=async function(showMessage=false,forceRootScan=false){
+  updateSyncUI('busy','Abrindo base oficial','Lendo a pasta exata da conta do seu pai');
+  await this.resolveRoot(forceRootScan||!App.drive.rootId);
+  const structure=await this.ensureStructure();
+  const remote=await this.loadRemoteBundle(structure);
+  if(!remote.state){
+    updateSyncUI('error','Base oficial não encontrada','Sistema/Dados/current.json não foi localizado');
+    throw new Error('A pasta oficial foi aberta, mas o arquivo Sistema/Dados/current.json não foi encontrado ou está inválido. Nenhum dado local foi apagado.');
+  }
+  const local=v116CloneState(App.state);
+  const localPending=v115Pending()&&stateRecordCount(local)>0;
+  const next=localPending?this.mergeState(remote.state,local,'local'):v116CloneState(remote.state);
+  next.settings.rootFolderId=App.drive.rootId;
+  next.settings.rootFolderName=CFG.driveRootFolderName||'Borion CNPJ';
+  const changed=v116StateSignature(local)!==v116StateSignature(next);
+  const needsPush=localPending&&v116StateSignature(next)!==v116StateSignature(remote.state);
+  App.state=next;
+  App.drive.officialRevision=Number(remote.revision||0);
+  await saveLocal('carregado-da-pasta-oficial-v117',false);
+  renderAll();
+  if(needsPush)v115SetPending(true);else{v115SetPending(false);v117ClearLegacyPending()}
+  updateSyncUI('ok',needsPush?'Dados reunidos':'Sincronizado',`${stateActiveChequeCount(App.state)} cheque(s) · pasta oficial · revisão ${remote.revision||0}`);
+  if(showMessage)toast(changed?`${stateActiveChequeCount(App.state)} cheque(s) carregados da pasta oficial.`:'Este aparelho já está igual ao Google Drive.','ok',4200);
+  return {changed,needsPush,remote};
+};
+Drive.pull=function(showMessage=false,forceRootScan=false){
+  if(!App.drive.connected)return Promise.reject(new Error('Entre com o Google para atualizar.'));
+  if(this._pullPromise)return this._pullPromise;
+  this._pullPromise=this.runLocked('pull',()=>this._pullOnceV117(showMessage,forceRootScan)).finally(()=>{this._pullPromise=null});
+  return this._pullPromise;
+};
+
+Drive._syncOnceV117=async function(){
+  const dirtyAtStart=v115DirtySeq();
+  updateSyncUI('busy','Salvando no Drive','Confirmando os registros na pasta oficial');
+  await this.resolveRoot(!App.drive.rootId);
+  const structure=await this.ensureStructure();
+  const remote=await this.loadRemoteBundle(structure);
+  const local=v116CloneState(App.state);
+  if(!remote.state&&stateRecordCount(local)===0)throw new Error('A base oficial não existe e este aparelho não possui dados para criar uma nova.');
+  const merged=remote.state?this.mergeState(remote.state,local,'local'):local;
+  const firstRevision=Math.max(Number(merged.meta?.revision||0),Number(remote.revision||0),Number(App.drive.officialRevision||0))+1;
+  const firstState=v117PrepareState(merged,firstRevision);
+  const firstSaved=await this.writeCanonicalV117(structure,firstState,remote.current);
+  if(v115DirtySeq()===dirtyAtStart)App.state=firstState;else App.state=this.mergeState(firstState,App.state,'local');
+  await saveLocal('registros-confirmados-v117',false);
+  renderAll();
+
+  updateSyncUI('busy','Conferindo fotos','Reaproveitando arquivos que já estão no Drive');
+  const attachmentResult=await this.syncAttachments(structure);
+  const attachmentChanged=attachmentResult.uploaded>0||attachmentResult.reused>0||v116StateSignature(App.state)!==v116StateSignature(firstState);
+  if(attachmentChanged){
+    const secondState=v117PrepareState(App.state,firstRevision+1);
+    const dirtyBeforeSecond=v115DirtySeq();
+    await this.writeCanonicalV117(structure,secondState,{...remote.current,nestedFile:firstSaved.nestedSaved,mirrorFile:firstSaved.mirrorSaved});
+    if(v115DirtySeq()===dirtyBeforeSecond)App.state=secondState;else App.state=this.mergeState(secondState,App.state,'local');
+    await saveLocal('fotos-confirmadas-v117',false);
+    renderAll();
+  }
+
+  const clean=v115DirtySeq()===dirtyAtStart;
+  const pendingPhotos=v116PendingAttachmentCount(App.state);
+  if(clean&&pendingPhotos===0){v115SetPending(false);v117ClearLegacyPending()}
+  else v115SetPending(true);
+  if(pendingPhotos){
+    updateSyncUI('local','Dados salvos no Drive',`${stateActiveChequeCount(App.state)} cheque(s) · ${pendingPhotos} foto(s) ainda pendente(s)`);
+  }else if(clean){
+    updateSyncUI('ok','Salvo no Google Drive',`${stateActiveChequeCount(App.state)} cheque(s) · pasta oficial · revisão ${App.state.meta.revision||0}`);
+  }else{
+    updateSyncUI('local','Alteração local pendente','Toque em atualizar para confirmar a última mudança');
+  }
+  return {clean,pendingPhotos,attachmentResult};
+};
+Drive.sync=function(){
+  if(!App.drive.connected)return Promise.resolve(false);
+  this._syncRequested=true;
+  if(this._syncPromise)return this._syncPromise;
+  this._syncPromise=this.runLocked('sync',async()=>{
+    let result=null;
+    for(let pass=0;pass<2;pass++){
+      this._syncRequested=false;
+      result=await this._syncOnceV117();
+      if(!this._syncRequested&&result.clean)break;
+    }
+    return result;
+  }).catch(e=>{
+    v115SetPending(true);
+    updateSyncUI('error','Não salvo no Drive',String(e.message||e).slice(0,150));
+    throw e;
+  }).finally(()=>{this._syncPromise=null;this._syncRequested=false});
+  return this._syncPromise;
+};
+Drive.refreshNow=async function(showMessage=true){
+  const pulled=await this.pull(false,true);
+  if(pulled.needsPush||v115Pending())await this.sync();
+  if(showMessage)toast(`${stateActiveChequeCount(App.state)} cheque(s) confirmados na pasta oficial.`,v115Pending()?'local':'ok',4200);
+  return true;
+};
+Drive.login=async function(){
+  const clientId=this.clientId();if(!clientId)throw new Error('Google OAuth não configurado.');
+  const resp=await this.requestToken('select_account');
+  showAccountLoading(true,'Abrindo a pasta oficial da conta do seu pai');
+  try{
+    App.drive.token=resp.access_token;
+    const info=await this.api('https://www.googleapis.com/oauth2/v3/userinfo');
+    const allowed=(CFG.authorizedEmails||[]).map(x=>x.toLowerCase());
+    if(allowed.length&&!allowed.includes(String(info.email).toLowerCase()))throw new Error('Esta conta não está autorizada.');
+    let previous='';try{previous=JSON.parse(localStorage.getItem('borion_cnpj_last_user')||'{}').email||''}catch{}
+    App.user={name:info.name||info.email,email:info.email,picture:info.picture||''};
+    App.localMode=false;App.drive.connected=true;App.drive.rootId='';App.drive.lastRootScanAt=0;
+    loadAccountLocalState(info.email,previous);
+    localStorage.setItem('borion_cnpj_last_user',JSON.stringify(App.user));
+    const pulled=await this.pull(false,true);
+    if(pulled.needsPush)await this.sync();
+    showAccountLoading(false);showApp();startDriveRefreshLoop();
+    toast(`${stateActiveChequeCount(App.state)} cheque(s) carregados do Google Drive.`,'ok',4200);
+  }catch(e){
+    showAccountLoading(false);
+    if(App.user&&stateRecordCount(App.state)>0){showApp();updateSyncUI('error','Falha ao abrir o Drive','Dados locais preservados');startDriveRefreshLoop()}else showGate();
     throw e;
   }
 };
