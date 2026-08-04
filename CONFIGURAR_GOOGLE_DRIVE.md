@@ -1,4 +1,4 @@
-# Google Drive — Borion CNPJ 1.0.8
+# Google Drive — Borion CNPJ 1.0.9
 
 O Client ID já está configurado em `js/config.js`. A origem `https://cnpj.borionfinance.com.br` deve permanecer em Origens JavaScript autorizadas e a Google Drive API deve estar ativada.
 

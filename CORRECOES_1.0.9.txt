@@ -1,0 +1,7 @@
+BORION CNPJ 1.0.9
+
+- Drive é a fonte oficial compartilhada.
+- O celular procura o current.json mais recente e não usa resposta em cache.
+- Havendo pastas Borion CNPJ duplicadas, escolhe a que possui o current.json mais novo.
+- Atualiza ao entrar, ao voltar ao PWA, ao recuperar internet e a cada 12 segundos.
+- Barra inferior corrigida com safe-area, altura real e espaço no conteúdo.

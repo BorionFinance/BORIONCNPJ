@@ -1,4 +1,4 @@
-BORION CNPJ 1.0.8 — TESTES REALIZADOS
+BORION CNPJ 1.0.9 — TESTES REALIZADOS
 
 1. Sintaxe completa de js/app.js validada com Node.js.
 2. Sintaxe do service-worker.js validada com Node.js.
@@ -8,6 +8,6 @@ BORION CNPJ 1.0.8 — TESTES REALIZADOS
 6. Conferida análise de duplicidades para cheques, boletos, fornecedores, contas e IDs de anexos.
 7. Conferida política de importação: registros existentes são ignorados e não sobrescritos.
 8. Conferidos manifest, service worker, ícones e layout mobile em cartões.
-9. Conferida versão 1.0.8 em index, configuração, payloads do Drive e documentação.
+9. Conferida versão 1.0.9 em index, configuração, payloads do Drive e documentação.
 
 O login real e a sincronização remota dependem do domínio publicado, da API Google Drive ativa e das permissões OAuth da conta.
