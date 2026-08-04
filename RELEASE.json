@@ -1,16 +1,17 @@
 {
   "app": "Borion CNPJ",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "baseVisual": "Borion Finance 7.7.12 — imagens oficiais; estrutura visual Borion",
   "desktopOnly": false,
   "storage": "Google Drive como fonte oficial, current.json/BORION_CNPJ_CURRENT.json verificado após cada gravação",
   "driveRootFolder": "Borion CNPJ",
   "pwa": true,
   "features": [
-    "Corrigido bug real: a notificação (toast) do celular ficava jogada pra fora da tela por causa de uma animação antiga (transform:translate(-50%)) herdada do CSS original, feita para um layout diferente",
-    "Notificação do celular agora usa uma animação própria, sem esse deslocamento — mesma correção aplicada de leve na versão do computador",
-    "1.0.12: limpeza de 5 gerações mortas de Drive.sync/pull/login, correção do bug de closure no listener de retomada do app, calendário do dashboard virou botão no celular, CSS de largura mínima 1100px corrigido"
+    "Corrigido travamento real: a renovação de sessão do Google podia ficar esperando uma resposta que nunca chegava, prendendo o app em 'já está sincronizando' para sempre",
+    "Renovação silenciosa de sessão agora desiste em 12s (login manual tem 90s) e Drive.pull/Drive.sync têm um limite de segurança de 40s no total",
+    "1.0.13: corrigida notificação (toast) do celular que era empurrada pra fora da tela por uma animação antiga (transform:translate(-50%))",
+    "1.0.12: limpeza de 5 gerações mortas de Drive.sync/pull/login, calendário do dashboard virou botão no celular, CSS de largura mínima 1100px corrigido"
   ],
   "officialImageSource": "BORION_FINANCE_7.7.12_FIX_HUB_URL.zip",
-  "pwaCache": "borion-cnpj-v1.0.13"
+  "pwaCache": "borion-cnpj-v1.0.14"
 }
