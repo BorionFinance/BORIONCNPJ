@@ -1,22 +1,23 @@
 {
   "app": "Borion CNPJ",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "baseVisual": "Borion Finance 7.7.12 — imagens oficiais; estrutura visual Borion",
   "desktopOnly": false,
-  "storage": "Google Drive como fonte oficial em Borion CNPJ/Sistema/Dados/current.json; anexos vinculados após confirmação dos registros",
+  "storage": "Google Drive como fonte oficial; descoberta automática da base válida em Sistema/Dados/current.json e arquivos compatíveis",
   "driveRootFolder": "Borion CNPJ",
   "pwa": true,
   "features": [
-    "pasta oficial fixada pelo ID confirmado no backup real da conta do pai",
-    "carregamento remoto determinístico de Sistema/Dados/current.json antes de qualquer envio",
-    "base local vazia nunca substitui a base remota com 7 cheques",
-    "sincronização limitada a no máximo duas passagens, sem repetição infinita",
+    "ID configurado tratado apenas como preferência, sem bloquear a descoberta automática",
+    "busca de current.json válido em todas as pastas Borion CNPJ acessíveis",
+    "inspeção de estruturas Sistema/Dados duplicadas e escolha da base com registros reais",
+    "base local vazia nunca substitui dados remotos; dados locais existentes podem recuperar o Drive",
+    "nenhuma pasta ou arquivo é apagado automaticamente durante a recuperação",
+    "texto de entrada simplificado para CARREGANDO . . .",
     "verificação por releitura do current.json após cada gravação",
-    "reaproveitamento das fotos já existentes no Google Drive",
-    "PWA 1.0.17 com cache, service worker e manifest atualizados"
+    "PWA 1.0.18 com cache, service worker e manifest atualizados"
   ],
   "officialImageSource": "BORION_FINANCE_7.7.12_FIX_HUB_URL.zip",
-  "pwaCache": "borion-cnpj-v1.0.17",
-  "title": "Sincronização determinística com a pasta oficial do Drive",
-  "driveRootFolderId": "1UR5lLsUeBtv9Cc8jYj70HWhySuvqko0-"
+  "pwaCache": "borion-cnpj-v1.0.18",
+  "title": "Descoberta automática e recuperação segura da base do Drive",
+  "driveRootFolderId": "preferencial; descoberta automática ativa"
 }

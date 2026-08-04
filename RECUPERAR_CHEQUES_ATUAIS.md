@@ -1,9 +1,14 @@
-# Preservar os cheques já cadastrados
+# Recuperar os cheques existentes — versão 1.0.18
 
-Não limpe os dados do site e não troque o domínio.
+Não apague pastas do Google Drive e não limpe o navegador antes de confirmar a recuperação.
 
-Ao publicar a versão 1.0.11 no mesmo endereço, ela lê automaticamente a base local da 1.0.3 e migra os cheques, fornecedores e anexos locais.
+A versão 1.0.18 procura automaticamente a base válida, inclusive quando existem:
 
-Depois, abra **Backup** e use **Exportar cheques atuais** para gerar o arquivo JSON de importação sem fotos. As fotos podem ser adicionadas posteriormente em **Editar cheque**.
+- várias pastas chamadas `Borion CNPJ`;
+- mais de uma pasta `Sistema` ou `Dados`;
+- `current.json` em uma estrutura antiga;
+- espelho `BORION_CNPJ_CURRENT.json` na raiz;
+- cópias como `current (1).json`;
+- base antiga `current.json.borion`.
 
-Se o Google Drive estiver temporariamente indisponível, os registros continuam salvos no computador e entram novamente na fila de sincronização.
+Ao encontrar uma base válida, o aplicativo escolhe a que contém registros reais. Se o Drive não tiver base, mas o computador ainda possuir cheques locais, esses dados ficam preparados para recuperar o arquivo remoto sem apagá-los.

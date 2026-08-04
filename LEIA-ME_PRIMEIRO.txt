@@ -1,20 +1,31 @@
-BORION CNPJ 1.0.15 — CORREÇÃO DE SINCRONIZAÇÃO PC/CELULAR
+BORION CNPJ 1.0.18 — CORREÇÃO DE LEITURA DO GOOGLE DRIVE
 
-1. Extraia este ZIP.
-2. Envie todo o conteúdo extraído para a raiz do mesmo repositório do GitHub Pages.
-3. Aguarde a publicação terminar.
-4. No computador, abra o Borion CNPJ e entre com a conta Google do seu pai.
-5. Aguarde o indicador mostrar “Sincronizado” com a quantidade correta de cheques.
-6. No celular, feche completamente o PWA e abra de novo.
-7. Entre com a mesma conta Google e toque no indicador de sincronização uma vez.
+1. Não apague nenhuma pasta do Google Drive.
+2. Extraia este ZIP para uma pasta normal do computador.
+3. Para testar localmente, abra o arquivo index.html da pasta extraída. Não tente abrir o ZIP como se fosse uma pasta.
+4. Para usar no celular/PWA, envie todo o conteúdo extraído para a raiz do mesmo repositório do GitHub Pages.
+5. Aguarde a publicação terminar e confirme que a versão mostrada é 1.0.18.
+6. Feche completamente o PWA antigo no celular e abra de novo.
+7. Entre com a mesma conta Google usada no computador.
 
-A fonte oficial agora é:
+O que mudou:
+- O ID configurado não trava mais o aplicativo em uma pasta específica.
+- O Borion procura a base válida em todas as pastas Borion CNPJ acessíveis.
+- Se existirem pastas Sistema/Dados duplicadas, escolhe a que contém os registros reais.
+- Pastas vazias não vencem uma base com cheques.
+- Nenhuma pasta ou arquivo é apagado durante a procura.
+- A tela de entrada mostra apenas “CARREGANDO . . .”.
+
+Fonte preferencial:
 Borion CNPJ / Sistema / Dados / current.json
 
-O arquivo BORION_CNPJ_CURRENT.json na raiz é apenas um espelho de segurança.
-O arquivo current.json.borion antigo foi preservado para compatibilidade.
+Arquivos compatíveis para recuperação:
+- BORION_CNPJ_CURRENT.json
+- current (1).json
+- dados.json
+- borion-cnpj-dados.json
+- current.json.borion
 
 IMPORTANTE
-- Não apague a pasta Borion CNPJ do Drive.
-- Não limpe os dados do navegador do computador antes de confirmar que os 7 cheques apareceram no celular.
-- A versão exibida no rodapé/tela deve ser 1.0.15.
+- Não limpe os dados do navegador do computador antes de confirmar que os cheques apareceram no celular.
+- Não exclua pastas do Drive para “começar do zero”; isso pode eliminar a única cópia remota dos cheques e fotos.

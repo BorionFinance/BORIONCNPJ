@@ -1,0 +1,12 @@
+BORION CNPJ 1.0.18 — RECUPERAÇÃO AUTOMÁTICA DA BASE DO GOOGLE DRIVE
+
+- O ID informado em config.js deixou de ser uma trava; agora é apenas uma preferência.
+- O aplicativo procura automaticamente todos os current.json válidos acessíveis na conta conectada.
+- Pastas homônimas e estruturas Sistema/Dados duplicadas são inspecionadas antes de escolher a base.
+- A base com registros reais vence pastas vazias ou mais recentes.
+- Sistema/Dados/current.json tem prioridade sobre o arquivo espelho da raiz quando ambos são iguais.
+- Compatibilidade mantida com BORION_CNPJ_CURRENT.json, current (1).json, dados.json e current.json.borion.
+- Quando o Drive não possui base mas o aparelho ainda tem dados, o sistema prepara a recuperação sem apagá-los.
+- Nenhuma pasta ou arquivo é excluído automaticamente durante a procura.
+- A tela de entrada mostra somente “CARREGANDO . . .”.
+- PWA, cache, manifest, scripts e versão atualizados para 1.0.18.

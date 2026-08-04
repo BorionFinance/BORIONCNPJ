@@ -1,12 +1,19 @@
-# BORION CNPJ 1.0.11
+# BORION CNPJ 1.0.18
 
-Sistema web/PWA para Cheques, Boletos e Fornecedores, com visual completo no computador e consulta simplificada no celular.
+Sistema web/PWA para Cheques, Boletos e Fornecedores, com Google Drive como fonte compartilhada entre computador e celular.
 
-## Google Drive é a fonte oficial
+## Sincronização e recuperação
 
-Ao entrar com o Google, o sistema cria ou reutiliza `Borion CNPJ` na raiz do Drive da conta. Não existe tela manual para digitar pasta.
+A versão 1.0.18 não depende mais de um único ID fixo. Ao entrar com o Google, o aplicativo:
 
-Estrutura principal:
+1. verifica IDs conhecidos apenas como preferência;
+2. procura todas as pastas `Borion CNPJ` acessíveis;
+3. inspeciona estruturas `Sistema/Dados` duplicadas;
+4. procura arquivos `current.json` e espelhos compatíveis;
+5. escolhe a base válida com mais registros e maior revisão;
+6. preserva dados locais e remotos sem excluir pastas automaticamente.
+
+Estrutura preferencial:
 
 ```text
 Borion CNPJ/
@@ -15,36 +22,19 @@ Borion CNPJ/
 │   ├── Backups/ANO/MM - Mês/
 │   ├── Histórico/
 │   └── Operações/
+├── BORION_CNPJ_CURRENT.json
 ├── Cheques/ANO/MM - Mês/
 └── Boletos/ANO/MM - Mês/
 ```
 
-Cada alteração é salva imediatamente no navegador. Cada sincronização cria um snapshot completo no Drive antes de atualizar `current.json`. Há também backup diário, mensal e manual. Se a internet cair, os dados permanecem no computador e entram novamente na fila.
+## Segurança contra perda
 
-A versão 1.0.11 remove a dependência da chave de equipe para os novos dados compartilhados. A proteção é feita pelas permissões, autenticação e criptografia do Google Drive. Arquivos antigos criptografados são preservados para recuperação e nunca são apagados automaticamente.
-
-## Contas de cheque
-
-Banco, agência e conta são cadastrados somente em Configurações. No cheque aparece um selecionável. Sem conta cadastrada, o valor exibido é `--`.
-
-## Importar arquivos
-
-Existe um módulo próprio **Importar arquivos**, separado de perfil e configurações. Ele aceita um ou vários JSON/ZIP, mostra uma conferência antes de salvar e ignora cheques, boletos, fornecedores, contas e anexos já existentes. O módulo também mantém a exportação leve de cheques sem fotos.
+Cada alteração é salva primeiro no navegador. O `current.json` é relido depois da gravação para confirmar que o Drive recebeu os registros. Uma pasta vazia não substitui uma base remota com dados. Arquivos antigos e estruturas duplicadas são preservados para recuperação.
 
 ## Publicação
 
-Extraia o ZIP e envie todo o conteúdo para a raiz do repositório do GitHub Pages. O Client ID já está em `js/config.js`. Não publique Client Secret.
+Extraia o ZIP e envie todo o conteúdo para a raiz do repositório do GitHub Pages. Não publique Client Secret. O Google Client ID público permanece em `js/config.js`.
 
+## Teste local
 
-## Novidades 1.0.11
-- Menu próprio **Importar arquivos**.
-- Aceita um ou vários JSON/ZIP do Borion.
-- Analisa cheques, boletos, fornecedores, contas e anexos antes de salvar.
-- Duplicidades são ignoradas; registros existentes não são sobrescritos.
-- PWA responsivo para celular, com cartões simples para consulta.
-- Instalação pela tela inicial do Android/iPhone quando suportada pelo navegador.
-
-
-## Identidade visual 1.0.11
-
-Todas as imagens de marca, favicon, ícones do PWA, ícone do celular, emblema, marca-d’água e arquivo ICO foram substituídos pelos arquivos oficiais do Borion Finance 7.7.12. Os nomes dos arquivos e o cache foram renovados para impedir que o navegador reutilize a logo de outro aplicativo.
+Abra o `index.html` da pasta extraída. O login Google pode depender dos endereços autorizados no Google Cloud; a validação definitiva do PWA deve ser feita no domínio publicado.

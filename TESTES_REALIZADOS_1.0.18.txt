@@ -1,0 +1,17 @@
+BORION CNPJ 1.0.18 — VALIDAÇÕES EXECUTADAS
+
+- Sintaxe completa de js/app.js validada com node --check.
+- JSON de manifest.webmanifest e RELEASE.json validado.
+- Teste de seleção entre ID configurado vazio e pasta real com 7 cheques aprovado.
+- Teste de prioridade de Sistema/Dados/current.json sobre o espelho da raiz aprovado.
+- Teste de pasta vazia não virar base oficial aprovado.
+- Teste de celular vazio receber 7 cheques remotos aprovado.
+- Teste de mesclagem de alteração local sem apagar registros remotos aprovado.
+- Busca global por arquivos current/dados conferida no código.
+- Inspeção de pastas Sistema e Dados duplicadas conferida no código.
+- Texto antigo “Abrindo a pasta oficial da conta do seu pai” removido.
+- Texto único “CARREGANDO . . .” conferido.
+- Cache e service worker atualizados para borion-cnpj-v1.0.18.
+
+Limitação do ambiente:
+- O login OAuth e a leitura da conta Google real precisam ser confirmados no navegador do usuário, pois este ambiente não possui acesso à conta Google do pai.
