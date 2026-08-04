@@ -9,7 +9,7 @@
 <link rel="shortcut icon" href="borion-cnpj-v111.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="borion-cnpj-v111-favicon-32.png">
 <link rel="apple-touch-icon" href="borion-cnpj-v111-apple-touch-icon.png">
-<link rel="manifest" href="manifest.webmanifest?v=1.0.14">
+<link rel="manifest" href="manifest.webmanifest?v=1.0.15">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -21,10 +21,10 @@
   }catch(e){document.documentElement.setAttribute('data-theme','dark');}
 })();
 </script>
-<link rel="preload" href="css/borion-7.6.2.css?v=1.0.14" as="style">
+<link rel="preload" href="css/borion-7.6.2.css?v=1.0.15" as="style">
 <link rel="preload" href="borion-cnpj-v111-emblem.png" as="image" type="image/png">
-<link rel="stylesheet" href="css/borion-7.6.2.css?v=1.0.14">
-<link rel="stylesheet" href="css/cnpj.css?v=1.0.14">
+<link rel="stylesheet" href="css/borion-7.6.2.css?v=1.0.15">
+<link rel="stylesheet" href="css/cnpj.css?v=1.0.15">
 </head>
 <body class="borion-intro-active">
 
@@ -50,7 +50,7 @@
 })();
 </script>
 
-<div id="borion_version_badge" aria-label="Versão do Borion CNPJ">1.0.14</div>
+<div id="borion_version_badge" aria-label="Versão do Borion CNPJ">1.0.15</div>
 
 <div id="desktop-warning" class="desktop-warning" hidden>
   <img src="borion-cnpj-v111-emblem.png" alt="Borion CNPJ">
@@ -162,21 +162,31 @@
 <div id="toast-root"></div>
 <input id="hidden-file-input" type="file" hidden multiple>
 
-<script src="js/config.js?v=1.0.14"></script>
+<script src="js/config.js?v=1.0.15"></script>
 <script src="vendor/tesseract/tesseract.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="js/app.js?v=1.0.14"></script>
+<script src="js/app.js?v=1.0.15"></script>
 <script>
 if('serviceWorker' in navigator){
   window.addEventListener('load',async()=>{
     try{
-      const reg=await navigator.serviceWorker.register('./service-worker.js?v=1.0.14');
+      const reg=await navigator.serviceWorker.register('./service-worker.js?v=1.0.15',{updateViaCache:'none'});
+      if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
+      reg.addEventListener('updatefound',()=>{
+        const worker=reg.installing;
+        worker?.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller)worker.postMessage({type:'SKIP_WAITING'});});
+      });
       await reg.update();
+      const reloadKey='borion_cnpj_sw_reload_1_0_15';
       navigator.serviceWorker.addEventListener('controllerchange',()=>{
-        const key='borion_cnpj_sw_reload_1_0_8';
-        if(!sessionStorage.getItem(key)){sessionStorage.setItem(key,'1');location.reload();}
+        if(!sessionStorage.getItem(reloadKey)){sessionStorage.setItem(reloadKey,'1');location.reload();}
+      });
+      navigator.serviceWorker.addEventListener('message',event=>{
+        if(event.data?.type==='BORION_SW_ACTIVATED'&&event.data.version==='1.0.15'&&!sessionStorage.getItem(reloadKey)){
+          sessionStorage.setItem(reloadKey,'1');location.reload();
+        }
       });
     }catch(err){console.warn('Service Worker',err);}
   });

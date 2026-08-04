@@ -1,17 +1,21 @@
 {
   "app": "Borion CNPJ",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "baseVisual": "Borion Finance 7.7.12 — imagens oficiais; estrutura visual Borion",
   "desktopOnly": false,
-  "storage": "Google Drive como fonte oficial, current.json/BORION_CNPJ_CURRENT.json verificado após cada gravação",
+  "storage": "Google Drive como fonte oficial em Borion CNPJ/Sistema/Dados/current.json, com espelho na raiz e fila de operações",
   "driveRootFolder": "Borion CNPJ",
   "pwa": true,
   "features": [
-    "Corrigido travamento real: a renovação de sessão do Google podia ficar esperando uma resposta que nunca chegava, prendendo o app em 'já está sincronizando' para sempre",
-    "Renovação silenciosa de sessão agora desiste em 12s (login manual tem 90s) e Drive.pull/Drive.sync têm um limite de segurança de 40s no total",
-    "1.0.13: corrigida notificação (toast) do celular que era empurrada pra fora da tela por uma animação antiga (transform:translate(-50%))",
-    "1.0.12: limpeza de 5 gerações mortas de Drive.sync/pull/login, calendário do dashboard virou botão no celular, CSS de largura mínima 1100px corrigido"
+    "Sincronização refeita para usar Sistema/Dados/current.json como arquivo oficial, exatamente na estrutura já existente no Drive",
+    "Fila serial de sincronização: alterações feitas enquanto um envio está em andamento não são mais ignoradas",
+    "Operações append-only em Sistema/Operações evitam perda de registros quando PC e celular salvam quase ao mesmo tempo",
+    "Estado local separado por conta Google, evitando mistura de dados entre contas no mesmo navegador",
+    "Leitura compatível com current.json, BORION_CNPJ_CURRENT.json e current.json.borion legado",
+    "Gravação confirmada por releitura do current.json antes de mostrar Sincronizado",
+    "Backups passaram a ocorrer depois da confirmação dos dados e não bloqueiam mais a sincronização principal",
+    "PWA 1.0.15 força atualização de JavaScript/CSS e remove caches antigos no celular"
   ],
   "officialImageSource": "BORION_FINANCE_7.7.12_FIX_HUB_URL.zip",
-  "pwaCache": "borion-cnpj-v1.0.14"
+  "pwaCache": "borion-cnpj-v1.0.15"
 }

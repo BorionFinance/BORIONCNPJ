@@ -1,13 +1,15 @@
-BORION CNPJ 1.0.11 — TESTES REALIZADOS
+BORION CNPJ 1.0.15 — TESTES REALIZADOS
 
 1. Sintaxe completa de js/app.js validada com Node.js.
 2. Sintaxe do service-worker.js validada com Node.js.
 3. Manifesto PWA e RELEASE.json validados como JSON.
-4. Verificador do build confirmou Client ID, Drive, snapshots automático/diário/mensal, contas de cheque, máscaras e importação.
-5. Conferida presença do módulo próprio “Importar arquivos”.
-6. Conferida análise de duplicidades para cheques, boletos, fornecedores, contas e IDs de anexos.
-7. Conferida política de importação: registros existentes são ignorados e não sobrescritos.
-8. Conferidos manifest, service worker, ícones e layout mobile em cartões.
-9. Conferida versão 1.0.11 em index, configuração, payloads do Drive e documentação.
+4. Build validado para current.json oficial em Sistema/Dados e espelho na raiz.
+5. Fila de sincronização validada para não descartar alterações durante um envio em andamento.
+6. Confirmação pós-gravação validada por revisão e assinatura dos registros.
+7. Fila de operações validada para recuperação de gravações concorrentes entre aparelhos.
+8. Estado local por conta Google e migração da base local antiga conferidos.
+9. Backups automático, diário e mensal mantidos sem bloquear current.json.
+10. Cache PWA atualizado para 1.0.15 com network-first para JavaScript, CSS e navegação.
+11. Estrutura visual, importação, contas de cheque, máscaras e layout mobile preservados.
 
-O login real e a sincronização remota dependem do domínio publicado, da API Google Drive ativa e das permissões OAuth da conta.
+Observação: o login real depende do domínio publicado, da API Google Drive ativa e da autorização OAuth da conta.

@@ -1,10 +1,20 @@
-BORION CNPJ 1.0.11
+BORION CNPJ 1.0.15 — CORREÇÃO DE SINCRONIZAÇÃO PC/CELULAR
 
 1. Extraia este ZIP.
-2. Envie todo o conteúdo extraído para a raiz do GitHub.
-3. Aguarde o GitHub Pages publicar.
-4. Entre com o Google.
+2. Envie todo o conteúdo extraído para a raiz do mesmo repositório do GitHub Pages.
+3. Aguarde a publicação terminar.
+4. No computador, abra o Borion CNPJ e entre com a conta Google do seu pai.
+5. Aguarde o indicador mostrar “Sincronizado” com a quantidade correta de cheques.
+6. No celular, feche completamente o PWA e abra de novo.
+7. Entre com a mesma conta Google e toque no indicador de sincronização uma vez.
 
-A pasta Borion CNPJ será criada automaticamente no Drive.
-Os cheques já salvos no mesmo navegador são migrados automaticamente.
-Em Backup, use Exportar cheques atuais para gerar o JSON de importação sem fotos.
+A fonte oficial agora é:
+Borion CNPJ / Sistema / Dados / current.json
+
+O arquivo BORION_CNPJ_CURRENT.json na raiz é apenas um espelho de segurança.
+O arquivo current.json.borion antigo foi preservado para compatibilidade.
+
+IMPORTANTE
+- Não apague a pasta Borion CNPJ do Drive.
+- Não limpe os dados do navegador do computador antes de confirmar que os 7 cheques apareceram no celular.
+- A versão exibida no rodapé/tela deve ser 1.0.15.

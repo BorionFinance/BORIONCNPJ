@@ -1,0 +1,23 @@
+BORION CNPJ 1.0.15 — SINCRONIZAÇÃO PC/CELULAR
+
+PROBLEMA CORRIGIDO
+- Cheques cadastrados no computador podiam ficar apenas no armazenamento local.
+- Uma nova tentativa de sincronização era descartada quando outra já estava em andamento.
+- O celular podia procurar um arquivo canônico antigo em outra pasta e ignorar o current.json correto em Sistema/Dados.
+- Backups e anexos podiam bloquear a gravação principal.
+- O PWA podia continuar executando JavaScript antigo por causa do cache.
+
+COMO FUNCIONA AGORA
+1. O arquivo oficial é: Borion CNPJ / Sistema / Dados / current.json.
+2. Cada alteração fica marcada como pendente até ser gravada e relida do Google Drive.
+3. Se uma segunda alteração ocorrer durante o envio, ela entra na fila e é enviada logo depois.
+4. Cada sincronização também cria uma operação única em Sistema / Operações para proteger contra salvamentos simultâneos.
+5. O celular sempre força uma leitura do Drive ao entrar, ao voltar para o app, ao ficar online e periodicamente.
+6. O espelho BORION_CNPJ_CURRENT.json é mantido na raiz apenas como redundância.
+7. current.json.borion continua preservado para compatibilidade, mas não é mais a fonte principal entre aparelhos.
+
+PUBLICAÇÃO
+- Suba todos os arquivos desta versão no mesmo repositório/endereço.
+- No primeiro acesso pelo celular, aguarde a atualização automática para a versão 1.0.15.
+- Entre com a mesma conta Google do computador.
+- Toque no indicador de sincronização para forçar uma conferência completa.
