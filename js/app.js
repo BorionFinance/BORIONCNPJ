@@ -2,7 +2,7 @@
 'use strict';
 
 const CFG = window.BORION_CONFIG || {};
-const applyBorionVersion=()=>{const badge=document.getElementById('borion_version_badge');if(badge)badge.textContent=CFG.version||'1.0.19';};
+const applyBorionVersion=()=>{const badge=document.getElementById('borion_version_badge');if(badge)badge.textContent=CFG.version||'1.0.20';};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',applyBorionVersion,{once:true});else applyBorionVersion();
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const PAGE_META = {
@@ -96,7 +96,7 @@ function wireSmartInputs(root=document){
 
 function blankState(){
   return {
-    meta:{version:CFG.version||'1.0.19',createdAt:nowISO(),updatedAt:nowISO()},
+    meta:{version:CFG.version||'1.0.20',createdAt:nowISO(),updatedAt:nowISO()},
     settings:{companyName:'Borion CNPJ',rootFolderId:'',rootFolderName:CFG.driveRootFolderName||'Borion CNPJ',autoSync:true,keepOriginals:true,warningDays:7},
     fornecedores:[],cheques:[],boletos:[],audit:[],deleted:[]
   };
@@ -739,7 +739,7 @@ openFornecedor=function(id=''){const existing=id?active(App.state.fornecedores).
 renderFornecedores=function(){const root=$('#page-fornecedores');if(!root)return;let list=active(App.state.fornecedores).filter(x=>!App.search.fornecedores||normalize([x.nome,x.fantasia,x.cpfCnpj,x.telefone,x.email].join(' ')).includes(normalize(App.search.fornecedores))).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));root.innerHTML=`<div class="page-toolbar"><div class="toolbar-left"><div class="search-box"><input value="${esc(App.search.fornecedores)}" placeholder="Buscar nome, CPF/CNPJ, telefone..." data-search-fornecedores></div></div><div class="toolbar-right"><button class="btn btn-primary" onclick="Borion.newFornecedor()">＋ Novo fornecedor</button></div></div>${list.length?`<div class="supplier-grid">${list.map(x=>{const ch=active(App.state.cheques).filter(c=>c.fornecedorId===x.id),bo=active(App.state.boletos).filter(b=>b.fornecedorId===x.id),all=[...ch,...bo],total=all.reduce((s,r)=>s+Number(r.valor||0),0),open=[...ch.filter(r=>!['Compensado','Cancelado'].includes(r.status)),...bo.filter(r=>!['Pago','Cancelado'].includes(r.status))].reduce((s,r)=>s+Number(r.valor||0),0);return`<div class="supplier-card ${x.status==='Inativo'?'supplier-inactive':''}"><div class="supplier-top"><div class="supplier-avatar">${esc(initials(x.nome))}</div><button class="action-btn" onclick="Borion.editFornecedor('${x.id}')">Editar</button></div><h3>${esc(x.nome)}</h3><div class="fantasy">${esc(x.fantasia||x.tipo||'Fornecedor')} · ${esc(x.status||'Ativo')}</div><div class="supplier-meta"><div><span>CPF/CNPJ</span><b>${esc(x.cpfCnpj||'—')}</b></div><div><span>Telefone</span><b>${esc(x.telefone||x.whatsapp||'—')}</b></div><div><span>Em aberto</span><b>${brl(open)}</b></div><div><span>Total histórico</span><b>${brl(total)}</b></div></div><button class="btn btn-outline btn-sm btn-block" onclick="Borion.viewFornecedor('${x.id}')">Ver resumo e histórico</button></div>`}).join('')}</div>`:`<div class="panel"><div class="empty"><div class="orb">◆</div><b>Nenhum fornecedor cadastrado</b><p>Cadastre uma pessoa ou empresa para selecionar rapidamente.</p><button class="btn btn-primary" onclick="Borion.newFornecedor()">Novo fornecedor</button></div></div>`}`;$('[data-search-fornecedores]',root).oninput=e=>{App.search.fornecedores=e.target.value;renderFornecedores()}};
 viewFornecedor=function(id){const x=supplierById(id);if(!x)return;const cheques=active(App.state.cheques).filter(c=>c.fornecedorId===id),boletos=active(App.state.boletos).filter(b=>b.fornecedorId===id),rows=[...cheques.map(r=>({...r,_type:'Cheque',_date:r.dataBom})),...boletos.map(r=>({...r,_type:'Boleto',_date:r.vencimento}))].sort((a,b)=>String(b._date).localeCompare(String(a._date))),sum=a=>a.reduce((s,r)=>s+Number(r.valor||0),0),openCh=cheques.filter(r=>!['Compensado','Cancelado'].includes(r.status)),doneCh=cheques.filter(r=>r.status==='Compensado'),returned=cheques.filter(r=>r.status==='Devolvido'),openBo=boletos.filter(r=>!['Pago','Cancelado'].includes(r.status));const body=`<div class="mini-kpis"><div><span>Total movimentado</span><b>${brl(sum(rows))}</b></div><div><span>Em aberto</span><b>${brl(sum([...openCh,...openBo]))}</b></div><div><span>Compensado/pago</span><b>${brl(sum([...doneCh,...boletos.filter(r=>r.status==='Pago')]))}</b></div><div><span>Devolvidos</span><b>${returned.length}</b></div></div><div class="detail-box"><h4>Dados</h4>${[['Razão social / nome',x.nome],['Nome fantasia',x.fantasia],['CPF/CNPJ',x.cpfCnpj],['Telefone',x.telefone||x.whatsapp],['E-mail',x.email],['Endereço',[x.endereco,x.cidade,x.uf].filter(Boolean).join(' · ')]].map(([a,b])=>`<div class="detail-row"><span>${a}</span><b>${esc(b||'—')}</b></div>`).join('')}</div><div style="height:12px"></div>${rows.length?`<div class="table-wrap"><table><thead><tr><th>Tipo</th><th>Número/documento</th><th>Data</th><th>Valor</th><th>Status</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r._type}</td><td>${esc(r.numero||r.documento||'—')}</td><td>${fmtDate(r._date)}</td><td class="money">${brl(r.valor)}</td><td><span class="badge ${statusClass(r.status)}">${esc(r.status)}</span></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty"><b>Sem movimentações</b></div>'}`;openModal({title:x.nome,subtitle:`${rows.length} movimentação(ões) vinculada(s)`,body,size:'large'})};
 
-openCheque=function(id=''){const existing=id?active(App.state.cheques).find(x=>x.id===id):null,x=existing||{tipo:'Emitido',status:'Em aberto',dataEmissao:todayISO(),dataBom:todayISO(),attachments:[]},temp=[],removed=[];const statuses=['Em preparação','Emitido','Entregue','Em aberto','Compensado','Devolvido','Reapresentado','Cancelado'];const body=`<div class="form-grid cols-3">${selectField('tipo','Tipo',['Emitido','Recebido'],x.tipo)}${field('numero','Número do cheque',x.numero||'','text','required')}${field('valor','Valor',x.valor||'','number','step="0.01" min="0"')}${supplierOptions(x.fornecedorId||'')}${field('pessoa','Nome livre (opcional)',x.pessoa||'')}${field('cpfCnpj','CPF/CNPJ',x.cpfCnpj||'')}${field('banco','Banco / conta',x.banco||'')}${field('agencia','Agência',x.agencia||'')}${field('conta','Conta',x.conta||'')}${field('cmc7','CMC7',x.cmc7||'')}${field('dataEmissao','Data de emissão/recebimento',x.dataEmissao||todayISO(),'date')}${field('dataEntrega','Data de entrega',x.dataEntrega||'','date')}${field('dataBom','Bom para / vencimento',x.dataBom||todayISO(),'date')}${field('dataCompensacao','Data de compensação',x.dataCompensacao||'','date')}${selectField('status','Status',statuses,x.status)}${field('lote','Lote',x.lote||'')}${textArea('observacoes','Observações',x.observacoes||'')}${existingAttachmentsHtml(x)}${attachmentDropHtml('image/*,.pdf')}</div>`;const modal=openModal({title:existing?'Editar cheque':'Novo cheque',subtitle:'Os dados, fotos e PDFs serão sincronizados com o Google Drive.',body,saveLabel:existing?'Salvar alterações':'Cadastrar cheque',onSave:async modal=>{const v=formDataObj(modal);if(!v.numero.trim())throw new Error('Informe o número do cheque.');const dup=active(App.state.cheques).find(c=>c.id!==existing?.id&&normalize(c.numero)===normalize(v.numero)&&c.banco===v.banco);if(dup&&!confirm(`Já existe o cheque ${dup.numero}. Deseja salvar mesmo assim?`))return;const oldStatus=existing?.status||'',item=existing||{id:uid(),createdAt:nowISO(),attachments:[]};Object.assign(item,v,{valor:Number(v.valor)||0});item.attachments=(item.attachments||[]).filter(a=>!removed.some(r=>r.id===a.id));for(const r of removed){try{await deleteAttachmentLocal(r.id)}catch{}if(r.driveFileId&&App.drive.connected)Drive.deleteFile(r.driveFileId).catch(()=>{})}recordTouch(item);await attachFiles(item,temp,'frente');if(!existing)App.state.cheques.push(item);logAudit(existing?'Cheque atualizado':'Cheque cadastrado',`${item.numero} · ${brl(item.valor)}`,'Cheque',item.id);if(oldStatus&&oldStatus!==item.status)logAudit('Status do cheque alterado',`${oldStatus} → ${item.status}`,'Cheque',item.id);scheduleSave();closeModal();renderAll();toast('Cheque salvo; sincronização com o Drive agendada.');},onDelete:existing?async()=>{existing.deleted=true;recordTouch(existing);logAudit('Cheque excluído',existing.numero,'Cheque',existing.id);scheduleSave();closeModal();renderAll()}:null});wireQuickSupplier(modal);wireExistingRemovals(modal,x,removed);wireSupplierMasks(modal);wireDropZone(modal,files=>{files.filter(f=>f.type.startsWith('image/')||f.type==='application/pdf'||f.name.toLowerCase().endsWith('.pdf')).forEach(file=>temp.push({file,url:URL.createObjectURL(file),role:temp.some(t=>t.role==='frente')?'verso':'frente'}));renderTempFiles(modal,temp);if(temp.length){const p=$('[data-scan-progress]',modal);p.hidden=false;p.innerHTML='Arquivo pronto. <button type="button" class="action-btn" data-scan-now>Ler primeiro arquivo e sugerir dados</button>';$('[data-scan-now]',modal).onclick=()=>scanIntoForm(modal,temp[0].file,'cheque').catch(e=>toast(e.message,'error',6000))}})};
+openCheque=function(id=''){const existing=id?active(App.state.cheques).find(x=>x.id===id):null,x=existing||{tipo:'Emitido',status:'Em aberto',dataEmissao:todayISO(),dataBom:todayISO(),attachments:[]},temp=[],removed=[];const statuses=['Em preparação','Emitido','Entregue','Em aberto','Compensado','Devolvido','Reapresentado','Cancelado'];const body=`<div class="form-grid cols-3">${selectField('tipo','Tipo',['Emitido','Recebido'],x.tipo)}${field('numero','Número do cheque',x.numero||'','text','required')}${field('valor','Valor',x.valor||'','number','step="0.01" min="0"')}${supplierOptions(x.fornecedorId||'')}${field('pessoa','Nome livre (opcional)',x.pessoa||'')}${field('cpfCnpj','CPF/CNPJ',x.cpfCnpj||'')}${field('banco','Banco / conta',x.banco||'')}${field('agencia','Agência',x.agencia||'')}${field('conta','Conta',x.conta||'')}${field('cmc7','CMC7',x.cmc7||'')}${field('dataEmissao','Data de emissão/recebimento',x.dataEmissao||todayISO(),'date')}${field('dataBom','Bom para / vencimento',x.dataBom||todayISO(),'date')}${field('dataCompensacao','Data de compensação',x.dataCompensacao||'','date')}${selectField('status','Status',statuses,x.status)}${field('lote','Lote',x.lote||'')}${textArea('observacoes','Observações',x.observacoes||'')}${existingAttachmentsHtml(x)}${attachmentDropHtml('image/*,.pdf')}</div>`;const modal=openModal({title:existing?'Editar cheque':'Novo cheque',subtitle:'Os dados, fotos e PDFs serão sincronizados com o Google Drive.',body,saveLabel:existing?'Salvar alterações':'Cadastrar cheque',onSave:async modal=>{const v=formDataObj(modal);if(!v.numero.trim())throw new Error('Informe o número do cheque.');const dup=active(App.state.cheques).find(c=>c.id!==existing?.id&&normalize(c.numero)===normalize(v.numero)&&c.banco===v.banco);if(dup&&!confirm(`Já existe o cheque ${dup.numero}. Deseja salvar mesmo assim?`))return;const oldStatus=existing?.status||'',item=existing||{id:uid(),createdAt:nowISO(),attachments:[]};Object.assign(item,v,{valor:Number(v.valor)||0});item.attachments=(item.attachments||[]).filter(a=>!removed.some(r=>r.id===a.id));for(const r of removed){try{await deleteAttachmentLocal(r.id)}catch{}if(r.driveFileId&&App.drive.connected)Drive.deleteFile(r.driveFileId).catch(()=>{})}recordTouch(item);await attachFiles(item,temp,'frente');if(!existing)App.state.cheques.push(item);logAudit(existing?'Cheque atualizado':'Cheque cadastrado',`${item.numero} · ${brl(item.valor)}`,'Cheque',item.id);if(oldStatus&&oldStatus!==item.status)logAudit('Status do cheque alterado',`${oldStatus} → ${item.status}`,'Cheque',item.id);scheduleSave();closeModal();renderAll();toast('Cheque salvo; sincronização com o Drive agendada.');},onDelete:existing?async()=>{existing.deleted=true;recordTouch(existing);logAudit('Cheque excluído',existing.numero,'Cheque',existing.id);scheduleSave();closeModal();renderAll()}:null});wireQuickSupplier(modal);wireExistingRemovals(modal,x,removed);wireSupplierMasks(modal);wireDropZone(modal,files=>{files.filter(f=>f.type.startsWith('image/')||f.type==='application/pdf'||f.name.toLowerCase().endsWith('.pdf')).forEach(file=>temp.push({file,url:URL.createObjectURL(file),role:temp.some(t=>t.role==='frente')?'verso':'frente'}));renderTempFiles(modal,temp);if(temp.length){const p=$('[data-scan-progress]',modal);p.hidden=false;p.innerHTML='Arquivo pronto. <button type="button" class="action-btn" data-scan-now>Ler primeiro arquivo e sugerir dados</button>';$('[data-scan-now]',modal).onclick=()=>scanIntoForm(modal,temp[0].file,'cheque').catch(e=>toast(e.message,'error',6000))}})};
 
 openLote=function(){let rows=[];const body=`<div class="form-grid cols-3">${selectField('tipo','Tipo',['Emitido','Recebido'],'Emitido')}${field('primeiroNumero','Primeiro número','SU 105120','','required')}${field('quantidade','Quantidade','5','number','min="1" max="120"')}${supplierOptions('')}${field('banco','Banco / conta','')}${field('valor','Valor padrão','','number','step="0.01" min="0"')}${field('dataBase','Data base',todayISO(),'date')}${field('prazos','Prazos em dias','30, 45, 60','text','full')}${field('nomeLote','Nome do lote','Lote '+new Date().toLocaleDateString('pt-BR'),'text','full')}${textArea('observacoes','Observações','')}</div><div class="lote-actions"><button type="button" class="btn btn-outline btn-sm" data-lote-regerar>Regerar grade</button><button type="button" class="btn btn-outline btn-sm" data-lote-add>Adicionar linha</button><span class="muted" data-lote-total></span></div><div class="table-wrap lote-grid"><table><thead><tr><th>Número</th><th>Prazo</th><th>Data</th><th>Valor</th><th></th></tr></thead><tbody data-lote-rows></tbody></table></div>`;const modal=openModal({title:'Gerar cheques em lote',subtitle:'Confira e edite cada número, prazo, data e valor antes de salvar.',body,size:'large',saveLabel:'Gerar cheques confirmados',onSave:async modal=>{const v=formDataObj(modal),current=readRows();if(!current.length)throw new Error('A grade está vazia.');const nums=current.map(r=>normalize(r.numero));if(new Set(nums).size!==nums.length)throw new Error('Existem números repetidos na grade.');const existingNumbers=new Set(active(App.state.cheques).map(c=>normalize(c.numero)));const found=current.find(r=>existingNumbers.has(normalize(r.numero)));if(found&&!confirm(`O cheque ${found.numero} já existe. Continuar mesmo assim?`))return;for(const r of current){const item={id:uid(),tipo:v.tipo,status:'Em aberto',numero:r.numero,fornecedorId:v.fornecedorId,pessoa:'',cpfCnpj:'',banco:v.banco,valor:Number(r.valor)||0,dataEmissao:v.dataBase,dataBom:r.data,lote:v.nomeLote,observacoes:v.observacoes,attachments:[],createdAt:nowISO()};recordTouch(item);App.state.cheques.push(item)}logAudit('Lote de cheques criado',`${current.length} cheques · ${v.nomeLote}`,'Lote','');scheduleSave();closeModal();App.chequeTab=v.tipo==='Emitido'?'emitidos':'recebidos';setPage('cheques');toast(`${current.length} cheques gerados e enviados à fila do Drive.`)}});wireQuickSupplier(modal);
   const tbody=$('[data-lote-rows]',modal),total=$('[data-lote-total]',modal);function readRows(){return $$('tr',tbody).map(tr=>({numero:$('[data-r-num]',tr).value.trim(),prazo:Number($('[data-r-days]',tr).value)||0,data:$('[data-r-date]',tr).value,valor:moneyInputNumber($('[data-r-value]',tr).value)})).filter(r=>r.numero)}function draw(data){rows=data;tbody.innerHTML=data.map((r,i)=>`<tr><td><input data-r-num value="${esc(r.numero)}"></td><td><input data-r-days type="number" value="${r.prazo}" min="0"></td><td><input data-r-date type="date" value="${esc(r.data)}"></td><td><div class="money-field compact"><span>R$</span><input data-r-value data-money type="text" inputmode="numeric" value="${esc(moneyDisplay(r.valor))}"></div></td><td><button type="button" class="action-btn danger-text" data-r-remove="${i}">Excluir</button></td></tr>`).join('');wireSmartInputs(tbody);$$('[data-r-days]',tbody).forEach((el,i)=>el.oninput=()=>{const base=$('[name="dataBase"]',modal).value||todayISO();$('[data-r-date]',el.closest('tr')).value=addDays(base,el.value)});$$('[data-r-remove]',tbody).forEach(b=>b.onclick=()=>{const arr=readRows();arr.splice(Number(b.dataset.rRemove),1);draw(arr)});$$('input',tbody).forEach(i=>i.oninput=updateTotal);updateTotal()}function updateTotal(){const a=readRows();total.textContent=`${a.length} cheque(s) · total ${brl(a.reduce((s,r)=>s+r.valor,0))}`}
@@ -830,7 +830,7 @@ const V104_LOCAL_LAST_GOOD_KEY='borion_cnpj_state_v2_last_good';
 function migrateStateV104(raw){
   const base=blankState();
   const out=Object.assign(base,raw||{});
-  out.meta={...base.meta,...(raw?.meta||{}),version:CFG.version||'1.0.19'};
+  out.meta={...base.meta,...(raw?.meta||{}),version:CFG.version||'1.0.20'};
   out.settings={...base.settings,...(raw?.settings||{})};
   out.settings.chequeAccounts=Array.isArray(out.settings.chequeAccounts)?out.settings.chequeAccounts:[];
   out.settings.autoSync=out.settings.autoSync!==false;
@@ -999,7 +999,7 @@ Drive.createSnapshot=async function(structure,prefix='AUTO'){
   const folder=await Drive.monthFolder(structure.backups,todayISO());
   const stamp=nowISO().replace(/[:.]/g,'-');
   const name=`${prefix}_${todayISO()}_${stamp}_R${Number(App.state.meta.revision||0)}.json`;
-  await Drive.uploadJson(folder,name,{app:'Borion CNPJ',version:CFG.version||'1.0.19',kind:prefix,createdAt:nowISO(),user:App.user?.email||'',state:App.state});
+  await Drive.uploadJson(folder,name,{app:'Borion CNPJ',version:CFG.version||'1.0.20',kind:prefix,createdAt:nowISO(),user:App.user?.email||'',state:App.state});
   return name;
 };
 let driveRefreshTimer=0;
@@ -1036,7 +1036,7 @@ openCheque=function(id=''){
   const existing=id?active(App.state.cheques).find(x=>x.id===id):null;
   const x=existing||{tipo:'Emitido',status:'Em aberto',dataEmissao:todayISO(),dataBom:todayISO(),valor:'',attachments:[],contaId:''};
   const temp=[],removed=[];
-  const body=`<div class="form-grid cols-3">${selectField('tipo','Tipo',['Emitido','Recebido'],x.tipo)}${field('numero','Número do cheque',x.numero||'')}${field('valor','Valor',x.valor||'')}${supplierOptions(x.fornecedorId||'')}${field('pessoa','Nome livre (opcional)',x.pessoa||'')}${field('cpfCnpj','CPF/CNPJ',x.cpfCnpj||'')}${chequeAccountSelectField('contaId','Conta de cheque',x.contaId||'')}${field('cmc7','CMC7',x.cmc7||'')}${field('dataEmissao','Data de emissão/recebimento',x.dataEmissao||todayISO(),'date')}${field('dataEntrega','Data de entrega',x.dataEntrega||'','date')}${field('dataBom','Bom para / vencimento',x.dataBom||todayISO(),'date')}${field('dataCompensacao','Data de compensação',x.dataCompensacao||'','date')}${selectField('status','Status',['Em preparação','Emitido','Entregue','Em aberto','Compensado','Devolvido','Reapresentado','Cancelado'],x.status)}${field('lote','Lote',x.lote||'')}${textArea('observacoes','Observações',x.observacoes||'')}${existingAttachmentsHtml(x)}${attachmentDropHtml('image/*,.pdf')}</div>`;
+  const body=`<div class="form-grid cols-3">${selectField('tipo','Tipo',['Emitido','Recebido'],x.tipo)}${field('numero','Número do cheque',x.numero||'')}${field('valor','Valor',x.valor||'')}${supplierOptions(x.fornecedorId||'')}${field('pessoa','Nome livre (opcional)',x.pessoa||'')}${field('cpfCnpj','CPF/CNPJ',x.cpfCnpj||'')}${chequeAccountSelectField('contaId','Conta de cheque',x.contaId||'')}${field('cmc7','CMC7',x.cmc7||'')}${field('dataEmissao','Data de emissão/recebimento',x.dataEmissao||todayISO(),'date')}${field('dataBom','Bom para / vencimento',x.dataBom||todayISO(),'date')}${field('dataCompensacao','Data de compensação',x.dataCompensacao||'','date')}${selectField('status','Status',['Em preparação','Emitido','Entregue','Em aberto','Compensado','Devolvido','Reapresentado','Cancelado'],x.status)}${field('lote','Lote',x.lote||'')}${textArea('observacoes','Observações',x.observacoes||'')}${existingAttachmentsHtml(x)}${attachmentDropHtml('image/*,.pdf')}</div>`;
   const modal=openModal({title:existing?'Editar cheque':'Novo cheque',subtitle:'A conta é selecionada entre as cadastradas em Configurações.',body,saveLabel:existing?'Salvar alterações':'Cadastrar cheque',onSave:async modal=>{const v=formDataObj(modal);if(!v.numero.trim())throw new Error('Informe o número do cheque.');if(v.cpfCnpj&&!docValid(v.cpfCnpj))throw new Error('CPF/CNPJ inválido.');const item=existing||{id:uid(),createdAt:nowISO(),attachments:[]};Object.assign(item,v,{valor:Number(v.valor)||0,contaId:v.contaId||''});delete item.banco;delete item.agencia;delete item.conta;item.attachments=(item.attachments||[]).filter(a=>!removed.some(r=>r.id===a.id));for(const r of removed){try{await deleteAttachmentLocal(r.id)}catch{}if(r.driveFileId&&App.drive.connected)Drive.deleteFile(r.driveFileId).catch(()=>{})}recordTouch(item);await attachFiles(item,temp,'frente');if(!existing)App.state.cheques.push(item);logAudit(existing?'Cheque atualizado':'Cheque cadastrado',`${item.numero} · ${brl(item.valor)}`,'Cheque',item.id);await saveLocal(existing?'cheque-editado':'cheque-cadastrado');if(App.drive.connected)scheduleSync();closeModal();renderAll();toast('Cheque salvo neste computador e enviado à fila do Drive.');},onDelete:existing?async()=>{existing.deleted=true;recordTouch(existing);logAudit('Cheque excluído',existing.numero,'Cheque',existing.id);scheduleSave();closeModal();renderAll()}:null});
   wireQuickSupplier(modal);wireExistingRemovals(modal,x,removed);
   wireDropZone(modal,files=>{files.filter(f=>f.type.startsWith('image/')||f.type==='application/pdf'||f.name.toLowerCase().endsWith('.pdf')).forEach(file=>temp.push({file,url:URL.createObjectURL(file),role:'frente'}));renderTempFiles(modal,temp);if(temp.length){const progress=$('[data-scan-progress]',modal);progress.hidden=false;progress.innerHTML='Arquivo pronto. <button type="button" class="action-btn" data-scan-now>Ler primeiro arquivo e sugerir dados</button>'; $('[data-scan-now]',modal).onclick=()=>scanIntoForm(modal,temp[0].file,'cheque').catch(e=>toast(e.message,'error',6000));}});
@@ -1266,7 +1266,7 @@ renderBoletos=function(){
 };
 function openMobileMore(){
   const install=App.installPrompt?'<button class="mobile-menu-link" data-mobile-install>Instalar no celular <span>›</span></button>':'';
-  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="importar">Importar arquivos <span>›</span></button><button class="mobile-menu-link" data-mobile-go="backup">Backup <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.19')}</div></div>`;
+  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="importar">Importar arquivos <span>›</span></button><button class="mobile-menu-link" data-mobile-go="backup">Backup <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.20')}</div></div>`;
   const modal=openModal({title:'Mais opções',subtitle:'Ferramentas do Borion CNPJ',body});$$('[data-mobile-go]',modal).forEach(b=>b.onclick=()=>{closeModal();setPage(b.dataset.mobileGo)});$('[data-mobile-refresh]',modal)?.addEventListener('click',async()=>{closeModal();try{await Drive.pull(true,true)}catch(e){toast(e.message,'error',6500)}});$('[data-mobile-logout]',modal).onclick=()=>{closeModal();logout()};$('[data-mobile-install]',modal)?.addEventListener('click',async()=>{await installPwa();closeModal()});
 }
 async function installPwa(){if(!App.installPrompt){toast('No navegador, use “Adicionar à tela inicial”.');return}App.installPrompt.prompt();await App.installPrompt.userChoice;App.installPrompt=null;}
@@ -1277,7 +1277,7 @@ let resizeTimer=0;window.addEventListener('resize',()=>{clearTimeout(resizeTimer
 
 
 // ---------- Versão 1.0.15: sincronização transacional entre PC, celular e Drive ----------
-const V115_VERSION='1.0.19';
+const V115_VERSION='1.0.20';
 const V115_CURRENT_FILE='current.json';
 const V115_ROOT_MIRROR='BORION_CNPJ_CURRENT.json';
 const V115_PENDING_PREFIX='borion_cnpj_pending_sync_v115_';
@@ -1628,7 +1628,7 @@ function flushPendingLocalNow(){
 
 
 // ---------- Versão 1.0.16: fonte oficial real no Drive e recuperação PC/celular ----------
-const V116_VERSION='1.0.19';
+const V116_VERSION='1.0.20';
 const V116_RECOVERY_PREFIX='borion_cnpj_recovery_v116_';
 const V116_LAST_REMOTE_PREFIX='borion_cnpj_last_remote_v116_';
 
@@ -1672,7 +1672,7 @@ async function v116RecoverLocalStateIfNeeded(){
       const rows=await new Promise((resolve,reject)=>{const r=App.db.transaction('snapshots').objectStore('snapshots').getAll();r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>reject(r.error)});
       for(const item of rows.slice(-80))add(item.state);
     }
-  }catch(e){console.warn('Recuperação local v1.0.19 não conseguiu ler snapshots',e)}
+  }catch(e){console.warn('Recuperação local v1.0.20 não conseguiu ler snapshots',e)}
   candidates.sort((a,b)=>stateRecordCount(b)-stateRecordCount(a)||String(stateUpdatedAt(b)).localeCompare(String(stateUpdatedAt(a)))||Number(b.meta?.revision||0)-Number(a.meta?.revision||0));
   const best=candidates[0];if(!best||stateRecordCount(best)===0)return false;
   App.state=v116CloneState(best);v115SetPending(true);await saveLocal('recuperacao-local-v116',false);return true;
@@ -1845,7 +1845,7 @@ Drive.login=async function(){
     const pulled=await this.pull(false,true);
     if(pulled?.needsPush||v115Pending()||v116PendingAttachmentCount(App.state)>0){
       showAccountLoading(true,'Confirmando os cheques no Google Drive');
-      try{await this.sync()}catch(e){console.error('Sincronização inicial v1.0.19',e)}
+      try{await this.sync()}catch(e){console.error('Sincronização inicial v1.0.20',e)}
     }
     showAccountLoading(false);showApp();startDriveRefreshLoop();
     if(v115Pending())updateSyncUI('error','Pendente no Drive','Clique em atualizar para tentar novamente');
@@ -1857,11 +1857,11 @@ Drive.login=async function(){
 };
 
 
-// ---------- Versão 1.0.19: descoberta automática da base real e recuperação segura ----------
+// ---------- Versão 1.0.20: descoberta automática da base real e recuperação segura ----------
 // O ID configurado passa a ser apenas uma preferência. O aplicativo procura a base válida,
 // inclusive quando existem pastas Sistema/Dados duplicadas, e nunca escolhe uma pasta vazia
 // apenas porque ela foi modificada mais recentemente.
-const V118_VERSION='1.0.19';
+const V118_VERSION='1.0.20';
 const V118_PREFERRED_ROOT_ID=String(CFG.driveRootFolderId||'').trim();
 const V118_ROOT_MIRROR='BORION_CNPJ_CURRENT.json';
 const V118_FOLDER_MIME='application/vnd.google-apps.folder';
@@ -2229,8 +2229,8 @@ renderCheques=function(){
 };
 
 
-// ---------- Versão 1.0.19: leitura binária correta, token estável e descoberta enxuta ----------
-const V119_VERSION='1.0.19';
+// ---------- Versão 1.0.20: leitura binária correta, token estável e descoberta enxuta ----------
+const V119_VERSION='1.0.20';
 const V119_EXACT_DATA_NAMES=['current.json','BORION_CNPJ_CURRENT.json','dados.json','borion-cnpj-dados.json','current.json.borion'];
 const V119_MAX_GLOBAL_READS=40;
 const V119_MAX_FILE_BYTES=12*1024*1024;
@@ -2251,7 +2251,7 @@ async function v119MapLimit(items,limit,task){
   return out;
 }
 
-/* CORREÇÃO PRINCIPAL 1.0.19
+/* CORREÇÃO PRINCIPAL 1.0.20
    Drive.api devolvia res.json() sempre que o Content-Type era application/json.
    Como o current.json é gravado justamente com mimeType application/json, o alt=media
    voltava um OBJETO já convertido e o TextDecoder().decode(objeto) estourava TypeError.
@@ -2608,6 +2608,340 @@ window.Borion={
   organizePhotos:()=>Organizer.open(),exportBackup,importBackup,exportChequesImport,importChequesFile,selectImportFiles,previewImportFiles,installPwa,newChequeAccount:()=>openChequeAccount(),editChequeAccount:openChequeAccount,saveDriveConfig,prepareDrive,reconnectGoogle,refreshFromDrive:()=>Drive.pull(true,true),driveBackup:()=>Drive.manualBackup(),
   dashboardMonthMove,dashboardSelectDate,openDashboardCalendar
 };
+
+
+// ---------- Versão 1.0.20: ordenação por coluna, visão geral enxuta e menu reorganizado ----------
+const V120_COLLATOR=new Intl.Collator('pt-BR',{numeric:true,sensitivity:'base'});
+App.sort=App.sort||{cheques:{key:'',dir:0},fornecedor:{key:'',dir:0}};
+
+function v120CycleSort(scope,key,kind){
+  const state=App.sort[scope]||(App.sort[scope]={key:'',dir:0});
+  if(state.key!==key){state.key=key;state.dir=kind==='text'?1:-1;}
+  else if(state.dir===(kind==='text'?1:-1))state.dir=kind==='text'?-1:1;
+  else {state.key='';state.dir=0;}
+  return state;
+}
+function v120SortArrow(scope,key){
+  const state=App.sort[scope]||{};
+  if(state.key!==key)return '<i class="sort-arrow">⇅</i>';
+  return `<i class="sort-arrow active">${state.dir===1?'▲':'▼'}</i>`;
+}
+function v120Head(scope,key,label,kind='text'){
+  const state=App.sort[scope]||{};
+  return `<th class="${state.key===key?'sorted':''}"><span class="sort-head" data-sort-key="${key}" data-sort-kind="${kind}" role="button" tabindex="0">${esc(label)}${v120SortArrow(scope,key)}</span></th>`;
+}
+function v120PlainHead(label){return `<th>${esc(label)}</th>`}
+function v120ApplySort(scope,items,accessors,fallback){
+  const state=App.sort[scope]||{};
+  if(!state.key||!state.dir||!accessors[state.key])return items.slice().sort(fallback);
+  const {get,kind}=accessors[state.key];
+  return items.slice().sort((a,b)=>{
+    const va=get(a),vb=get(b);
+    let cmp;
+    if(kind==='number')cmp=(Number(va)||0)-(Number(vb)||0);
+    else if(kind==='date')cmp=String(va||'').localeCompare(String(vb||''));
+    else cmp=V120_COLLATOR.compare(String(va??''),String(vb??''));
+    return cmp*state.dir;
+  });
+}
+function v120WireSort(root,scope,rerender){
+  $$('.sort-head',root).forEach(el=>{
+    const fire=()=>{v120CycleSort(scope,el.dataset.sortKey,el.dataset.sortKind||'text');rerender()};
+    el.onclick=fire;
+    el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fire()}};
+  });
+}
+
+/* ----- Cheques: cabeçalhos clicáveis e mês corrente por padrão ----- */
+const V120_CHEQUE_SORT={
+  tipo:{kind:'text',get:x=>x.tipo||''},
+  numero:{kind:'text',get:x=>x.numero||''},
+  parte:{kind:'text',get:x=>supplierById(x.fornecedorId)?.nome||x.pessoa||''},
+  conta:{kind:'text',get:x=>accountLabelForCheque(x)||''},
+  valor:{kind:'number',get:x=>Number(x.valor||0)},
+  emissao:{kind:'date',get:x=>x.dataEmissao||''},
+  bomPara:{kind:'date',get:x=>x.dataBom||''},
+  status:{kind:'text',get:x=>x.status||''},
+  imagem:{kind:'number',get:x=>(x.attachments||[]).length}
+};
+const v120ChequeFallback=(a,b)=>String(b.dataEmissao||b.createdAt).localeCompare(String(a.dataEmissao||a.createdAt));
+function v120ChequeMonths(){
+  return [...new Set(active(App.state.cheques).map(x=>String(x.dataEmissao||x.dataBom||'').slice(0,7)).filter(Boolean))].sort().reverse();
+}
+function v120MonthOptions(selected){
+  const months=v120ChequeMonths(),current=todayISO().slice(0,7);
+  if(!months.includes(current))months.unshift(current);
+  return `<option value="">Todos os meses</option>${months.map(m=>`<option value="${m}" ${selected===m?'selected':''}>${m.split('-').reverse().join('/')}</option>`).join('')}`;
+}
+function v120FilterCheques(){
+  let items=active(App.state.cheques).filter(x=>chequeMatches(x,App.search.cheques));
+  if(App.chequeTab==='emitidos')items=items.filter(x=>x.tipo==='Emitido');
+  if(App.chequeTab==='recebidos')items=items.filter(x=>x.tipo==='Recebido');
+  if(App.chequeTab==='abertos')items=items.filter(x=>!['Compensado','Cancelado'].includes(x.status));
+  if(App.filters.chequeSupplier)items=items.filter(x=>x.fornecedorId===App.filters.chequeSupplier);
+  if(App.filters.chequeStatus)items=items.filter(x=>x.status===App.filters.chequeStatus);
+  if(App.filters.chequeMonth)items=items.filter(x=>String(x.dataEmissao||x.dataBom||'').slice(0,7)===App.filters.chequeMonth);
+  return v120ApplySort('cheques',items,V120_CHEQUE_SORT,v120ChequeFallback);
+}
+function v120ChequeToolbar(){
+  return `<div class="page-toolbar"><div class="toolbar-left"><div class="search-box"><input value="${esc(App.search.cheques)}" placeholder="Buscar número, fornecedor, conta..." data-search-cheques></div><select class="filter-select" data-filter-ch-supplier>${optionsForSuppliers(App.filters.chequeSupplier)}</select><select class="filter-select" data-filter-ch-status><option value="">Todos os status</option>${['Em preparação','Emitido','Entregue','Em aberto','Compensado','Devolvido','Reapresentado','Cancelado'].map(s=>`<option ${App.filters.chequeStatus===s?'selected':''}>${s}</option>`).join('')}</select><select class="filter-select" data-filter-ch-month>${v120MonthOptions(App.filters.chequeMonth)}</select></div><div class="toolbar-right"><button class="btn btn-outline" onclick="Borion.organizePhotos()">Fotos em massa</button><button class="btn btn-outline" onclick="Borion.newLote()">Cheques em lote</button><button class="btn btn-primary" onclick="Borion.newCheque()">＋ Novo cheque</button></div></div>`;
+}
+function v120ChequeTabs(){
+  return `<div class="tabs tabs-inline">${[['todos','Todos'],['emitidos','Emitidos'],['recebidos','Recebidos'],['abertos','Em aberto']].map(([v,l])=>`<button class="tab ${App.chequeTab===v?'active':''}" onclick="Borion.chequeTab('${v}')">${l}</button>`).join('')}</div>`;
+}
+function v120WireChequeFilters(root){
+  $('[data-search-cheques]',root).oninput=e=>{App.search.cheques=e.target.value;renderCheques()};
+  $('[data-filter-ch-supplier]',root)&&($('[data-filter-ch-supplier]',root).onchange=e=>{App.filters.chequeSupplier=e.target.value;renderCheques()});
+  $('[data-filter-ch-status]',root)&&($('[data-filter-ch-status]',root).onchange=e=>{App.filters.chequeStatus=e.target.value;renderCheques()});
+  $('[data-filter-ch-month]',root)&&($('[data-filter-ch-month]',root).onchange=e=>{App.filters.chequeMonth=e.target.value;renderCheques()});
+}
+renderCheques=function(){
+  const root=$('#page-cheques');if(!root)return;
+  const items=v120FilterCheques();
+  const total=items.reduce((s,x)=>s+Number(x.valor||0),0);
+  if(isMobileView()){
+    root.innerHTML=`<div class="mobile-list-head"><div class="search-box"><input value="${esc(App.search.cheques)}" placeholder="Buscar cheque ou fornecedor" data-search-cheques></div><button class="mobile-add" onclick="Borion.newCheque()">＋</button></div><div class="mobile-filter-row"><select class="filter-select" data-filter-ch-month>${v120MonthOptions(App.filters.chequeMonth)}</select><select class="filter-select" data-filter-ch-status><option value="">Todos os status</option>${['Em preparação','Emitido','Entregue','Em aberto','Compensado','Devolvido','Reapresentado','Cancelado'].map(s=>`<option ${App.filters.chequeStatus===s?'selected':''}>${s}</option>`).join('')}</select></div>${v120ChequeTabs().replace('tabs tabs-inline','tabs mobile-tabs')}<div class="mobile-total-strip"><span>${items.length} cheque(s)</span><b>${brl(total)}</b></div><div class="mobile-record-list">${items.length?items.map(x=>{const party=supplierById(x.fornecedorId)?.nome||x.pessoa||'—';return`<button class="mobile-record-card" onclick="Borion.viewCheque('${x.id}')"><div class="mobile-record-top"><div><span class="eyebrow">${esc(x.tipo)} · ${esc(accountLabelForCheque(x))}</span><h3>${esc(x.numero||'Sem número')}</h3></div><span class="badge ${statusClass(x.status)}">${esc(x.status)}</span></div><div class="mobile-record-party">${esc(party)}</div><div class="mobile-record-bottom"><div><span>Bom para</span><b>${fmtDate(x.dataBom)}</b></div><div class="mobile-record-value">${brl(x.valor)}</div></div>${(x.attachments||[]).length?`<div class="mobile-file-count">▣ ${x.attachments.length} arquivo(s)</div>`:''}</button>`}).join(''):'<div class="empty"><b>Nenhum cheque encontrado</b></div>'}</div>`;
+    v120WireChequeFilters(root);
+    const tabs=$('.mobile-tabs',root);
+    if(tabs&&!$('[data-mobile-cheque-actions]',root))tabs.insertAdjacentHTML('afterend','<div class="mobile-tab-actions" data-mobile-cheque-actions><button class="btn btn-outline" onclick="Borion.newLote()">Gerar lote</button><button class="btn btn-outline" onclick="Borion.organizePhotos()">Organizar fotos</button></div>');
+    return;
+  }
+  const head=`<tr>${v120Head('cheques','tipo','Tipo')}${v120Head('cheques','numero','Número')}${v120Head('cheques','parte','Entregue por / para')}${v120Head('cheques','conta','Conta')}${v120Head('cheques','valor','Valor','number')}${v120Head('cheques','emissao','Emissão','date')}${v120Head('cheques','bomPara','Bom para','date')}${v120Head('cheques','status','Status')}${v120Head('cheques','imagem','Imagem','number')}${v120PlainHead('Ações')}</tr>`;
+  root.innerHTML=`${v120ChequeToolbar()}${v120ChequeTabs()}${items.length?`<div class="table-wrap"><table class="sortable-table"><thead>${head}</thead><tbody>${items.map(x=>{const sup=supplierById(x.fornecedorId);return`<tr><td><span class="badge ${x.tipo==='Recebido'?'received':'open'}">${esc(x.tipo)}</span></td><td><b>${esc(x.numero||'—')}</b>${x.lote?`<div class="muted">${esc(x.lote)}</div>`:''}</td><td>${esc(sup?.nome||x.pessoa||'—')}</td><td>${esc(accountLabelForCheque(x))}</td><td class="money">${brl(x.valor)}</td><td>${fmtDate(x.dataEmissao)}</td><td class="${daysUntil(x.dataBom)<0&&!['Compensado','Cancelado'].includes(x.status)?'danger-text':''}">${fmtDate(x.dataBom)}</td><td><span class="badge ${statusClass(x.status)}">${esc(x.status)}</span></td><td>${(x.attachments||[]).length?`<button class="action-btn" onclick="Borion.viewCheque('${x.id}')">Visualizar (${x.attachments.length})</button>`:'<span class="muted">Sem foto</span>'}</td><td><div class="actions"><button class="action-btn" onclick="Borion.viewCheque('${x.id}')">Abrir</button><button class="action-btn" onclick="Borion.editCheque('${x.id}')">Editar</button></div></td></tr>`}).join('')}</tbody><tfoot><tr><td colspan="4">${items.length} cheque(s) no filtro atual</td><td class="money">${brl(total)}</td><td colspan="5"></td></tr></tfoot></table></div>`:'<div class="panel"><div class="empty"><b>Nenhum cheque encontrado</b></div></div>'}`;
+  v120WireChequeFilters(root);
+  v120WireSort(root,'cheques',renderCheques);
+};
+
+/* ----- Visão geral: sem calendário gigante, com totais do mês e da semana ----- */
+App.dashboardDates=Array.isArray(App.dashboardDates)?App.dashboardDates:[];
+function v120WeekRange(base=new Date()){
+  const d=new Date(base.getFullYear(),base.getMonth(),base.getDate());
+  const start=new Date(d);start.setDate(d.getDate()-d.getDay());
+  const end=new Date(start);end.setDate(start.getDate()+6);
+  const iso=x=>`${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`;
+  return {start:iso(start),end:iso(end)};
+}
+dashboardSelectDate=function(date){
+  const list=App.dashboardDates;
+  const index=list.indexOf(date);
+  if(index>=0)list.splice(index,1);else list.push(date);
+  list.sort();
+  App.dashboardDate=list.length===1?list[0]:'';
+  renderDashboard();refreshDashboardCalendarModal();
+  $('#btn-dashboard-calendar')?.classList.toggle('has-date',list.length>0);
+};
+function v120ClearDashboardDates(){
+  App.dashboardDates.length=0;App.dashboardDate='';
+  renderDashboard();refreshDashboardCalendarModal();
+  $('#btn-dashboard-calendar')?.classList.remove('has-date');
+}
+dashboardCalendar=function(month,emitted,deposited){
+  const [y,m]=month.split('-').map(Number),first=new Date(y,m-1,1),last=new Date(y,m,0),offset=first.getDay();
+  const counts=new Map();
+  for(const x of emitted){const d=chequeDashboardDate(x,false);if(d?.startsWith(month))counts.set(d,(counts.get(d)||0)+1)}
+  for(const x of deposited){const d=chequeDashboardDate(x,true);if(d?.startsWith(month))counts.set(d,(counts.get(d)||0)+1)}
+  const cells=[];for(let i=0;i<offset;i++)cells.push('<span class="calendar-day empty-day"></span>');
+  for(let day=1;day<=last.getDate();day++){
+    const date=`${month}-${String(day).padStart(2,'0')}`,count=counts.get(date)||0;
+    cells.push(`<button class="calendar-day ${App.dashboardDates.includes(date)?'selected':''} ${count?'has-items':''}" onclick="Borion.dashboardSelectDate('${date}')"><span>${day}</span>${count?`<b>${count}</b>`:''}</button>`);
+  }
+  return `<section class="panel dashboard-calendar"><div class="panel-head"><button class="calendar-nav" onclick="Borion.dashboardMonthMove(-1)" aria-label="Mês anterior">‹</button><div><div class="panel-title">${dashboardMonthLabel(month)}</div><p class="muted">Toque nos dias que quiser somar. Toque de novo para tirar.</p></div><button class="calendar-nav" onclick="Borion.dashboardMonthMove(1)" aria-label="Próximo mês">›</button></div><div class="calendar-week"><span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span></div><div class="calendar-grid">${cells.join('')}</div>${App.dashboardDates.length?`<button class="action-btn calendar-clear" onclick="Borion.clearDashboardDates()">Ver o mês inteiro</button>`:''}</section>`;
+};
+dashboardMonthMove=function(delta){
+  const [y,m]=App.dashboardMonth.split('-').map(Number);const d=new Date(y,m-1+delta,1);
+  App.dashboardMonth=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+  App.dashboardDates.length=0;App.dashboardDate='';
+  renderDashboard();refreshDashboardCalendarModal();
+};
+openDashboardCalendar=function(){
+  openModal({title:'Selecionar dias',subtitle:'Toque em um ou vários dias para somar. Use “Ver o mês inteiro” para limpar.',body:`<div data-dashboard-calendar-modal>${dashboardCalendarMarkup()}</div>`,size:'small'});
+};
+renderDashboard=function(){
+  const root=$('#page-dashboard');if(!root)return;
+  const all=active(App.state.cheques);
+  const emittedAll=all.filter(x=>x.tipo==='Emitido');
+  const depositedAll=all.filter(chequeDepositado);
+  const picked=App.dashboardDates;
+  const dateMatch=(x,dep)=>{const d=chequeDashboardDate(x,dep);return picked.length?picked.includes(d):String(d||'').startsWith(App.dashboardMonth)};
+  const emitted=emittedAll.filter(x=>dateMatch(x,false)).sort((a,b)=>String(chequeDashboardDate(a,false)).localeCompare(String(chequeDashboardDate(b,false))));
+  const deposited=depositedAll.filter(x=>dateMatch(x,true)).sort((a,b)=>String(chequeDashboardDate(a,true)).localeCompare(String(chequeDashboardDate(b,true))));
+  const sum=arr=>arr.reduce((t,x)=>t+Number(x.valor||0),0);
+  const monthCheques=emittedAll.filter(x=>String(chequeDashboardDate(x,false)||'').startsWith(App.dashboardMonth));
+  const week=v120WeekRange();
+  const weekCheques=emittedAll.filter(x=>{const d=chequeDashboardDate(x,false);return d&&d>=week.start&&d<=week.end});
+  const selection=picked.length?(picked.length===1?fmtDate(picked[0]):`${picked.length} dias selecionados`):dashboardMonthLabel(App.dashboardMonth);
+  root.innerHTML=`<div class="dashboard-totals">
+    <div class="total-card"><span>Cheques que caem no mês</span><b>${brl(sum(monthCheques))}</b><small>${monthCheques.length} cheque(s) · ${esc(dashboardMonthLabel(App.dashboardMonth))}</small></div>
+    <div class="total-card week"><span>Cheques da semana</span><b>${brl(sum(weekCheques))}</b><small>${weekCheques.length} cheque(s) · ${fmtDate(week.start)} a ${fmtDate(week.end)}</small></div>
+    <div class="total-card"><span>Depositados no mês</span><b>${brl(sum(depositedAll.filter(x=>String(chequeDashboardDate(x,true)||'').startsWith(App.dashboardMonth))))}</b><small>${depositedAll.filter(x=>String(chequeDashboardDate(x,true)||'').startsWith(App.dashboardMonth)).length} cheque(s)</small></div>
+  </div>
+  <div class="dashboard-clean-summary"><div><span>Seleção atual</span><b>${esc(selection)}</b>${picked.length?'<button class="action-btn" onclick="Borion.clearDashboardDates()">Ver o mês inteiro</button>':''}</div><div><span>Cheques que caem</span><b>${emitted.length}</b><small>${brl(sum(emitted))}</small></div><div><span>Cheques depositados</span><b>${deposited.length}</b><small>${brl(sum(deposited))}</small></div></div>
+  <div class="dashboard-two-lists"><section class="panel"><div class="panel-head"><div><div class="panel-title">Cheques emitidos</div><p class="muted">${emitted.length} cheque(s) · ${brl(sum(emitted))}</p></div></div><div class="panel-body">${dashboardRows(emitted,false)}</div></section><section class="panel"><div class="panel-head"><div><div class="panel-title">Cheques depositados</div><p class="muted">${deposited.length} cheque(s) · ${brl(sum(deposited))}</p></div></div><div class="panel-body">${dashboardRows(deposited,true)}</div></section></div>`;
+};
+
+/* ----- Fornecedores: histórico ordenável ----- */
+const V120_FORNECEDOR_SORT={
+  tipo:{kind:'text',get:r=>r._type||''},
+  numero:{kind:'text',get:r=>r.numero||r.documento||''},
+  data:{kind:'date',get:r=>r._date||''},
+  valor:{kind:'number',get:r=>Number(r.valor||0)},
+  status:{kind:'text',get:r=>r.status||''}
+};
+viewFornecedor=function(id){
+  const x=supplierById(id);if(!x)return;
+  const cheques=active(App.state.cheques).filter(c=>c.fornecedorId===id),boletos=active(App.state.boletos).filter(b=>b.fornecedorId===id);
+  const base=[...cheques.map(r=>({...r,_type:'Cheque',_date:r.dataBom})),...boletos.map(r=>({...r,_type:'Boleto',_date:r.vencimento}))];
+  const sum=a=>a.reduce((s,r)=>s+Number(r.valor||0),0);
+  const openCh=cheques.filter(r=>!['Compensado','Cancelado'].includes(r.status)),doneCh=cheques.filter(r=>r.status==='Compensado'),returned=cheques.filter(r=>r.status==='Devolvido'),openBo=boletos.filter(r=>!['Pago','Cancelado'].includes(r.status));
+  App.sort.fornecedor={key:'',dir:0};
+  const tableHtml=()=>{
+    const rows=v120ApplySort('fornecedor',base,V120_FORNECEDOR_SORT,(a,b)=>String(b._date).localeCompare(String(a._date)));
+    if(!rows.length)return '<div class="empty"><b>Sem movimentações</b></div>';
+    return `<div class="table-wrap"><table class="sortable-table"><thead><tr>${v120Head('fornecedor','tipo','Tipo')}${v120Head('fornecedor','numero','Número/documento')}${v120Head('fornecedor','data','Data','date')}${v120Head('fornecedor','valor','Valor','number')}${v120Head('fornecedor','status','Status')}</tr></thead><tbody>${rows.map(r=>`<tr><td>${r._type}</td><td>${esc(r.numero||r.documento||'—')}</td><td>${fmtDate(r._date)}</td><td class="money">${brl(r.valor)}</td><td><span class="badge ${statusClass(r.status)}">${esc(r.status)}</span></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="3">${rows.length} movimentação(ões)</td><td class="money">${brl(sum(rows))}</td><td></td></tr></tfoot></table></div>`;
+  };
+  const body=`<div class="mini-kpis"><div><span>Total movimentado</span><b>${brl(sum(base))}</b></div><div><span>Em aberto</span><b>${brl(sum([...openCh,...openBo]))}</b></div><div><span>Compensado/pago</span><b>${brl(sum([...doneCh,...boletos.filter(r=>r.status==='Pago')]))}</b></div><div><span>Devolvidos</span><b>${returned.length}</b></div></div><div class="detail-box"><h4>Dados</h4>${[['Razão social / nome',x.nome],['Nome fantasia',x.fantasia],['CPF/CNPJ',x.cpfCnpj],['Telefone',x.telefone||x.whatsapp],['E-mail',x.email],['Endereço',[x.endereco,x.cidade,x.uf].filter(Boolean).join(' · ')]].map(([a,b])=>`<div class="detail-row"><span>${a}</span><b>${esc(b||'—')}</b></div>`).join('')}</div><div style="height:12px"></div><div data-fornecedor-historico>${tableHtml()}</div>`;
+  const modal=openModal({title:x.nome,subtitle:`${base.length} movimentação(ões) vinculada(s)`,body,size:'large'});
+  const rewire=()=>{const holder=$('[data-fornecedor-historico]',modal);if(!holder)return;holder.innerHTML=tableHtml();v120WireSort(holder,'fornecedor',rewire)};
+  v120WireSort(modal,'fornecedor',rewire);
+};
+
+/* ----- Visualizador: várias fotos lado a lado ----- */
+showViewer=async function(record,type){
+  const atts=record.attachments||[];
+  const party=supplierById(record.fornecedorId)?.nome||record.pessoa||record.beneficiario||'—';
+  const history=App.state.audit.filter(a=>a.entityId===record.id).sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));
+  const multi=atts.length>1;
+  const viewerHtml=multi
+    ? `<div class="document-viewer-multi" data-doc-multi>${atts.map((a,i)=>`<figure class="doc-tile" data-doc-tile="${i}"><div class="doc-tile-body"><div class="muted">Carregando…</div></div><figcaption>${esc(a.role||'documento')}</figcaption></figure>`).join('')}</div>`
+    : `<div class="document-viewer" data-doc-viewer>${atts.length?'<div class="muted">Carregando documento...</div>':'<div class="empty"><div class="orb">▣</div><b>Sem documento anexado</b></div>'}</div>`;
+  const details=[['Número / documento',record.numero||record.documento],['Fornecedor / pessoa',party],['Valor',brl(record.valor)],['Emissão',fmtDate(record.dataEmissao||record.dataCadastro)],['Bom para / vencimento',fmtDate(record.dataBom||record.vencimento)],['Status',record.status],['Conta',type==='Cheque'?accountLabelForCheque(record):record.banco],['Lote',record.lote]].filter(r=>r[1]&&r[1]!=='—');
+  const body=`<div class="viewer-layout ${multi?'viewer-multi':''}"><div>${viewerHtml}</div><div class="viewer-side"><div class="detail-box"><h4>${esc(type)}</h4>${details.map(([a,b])=>`<div class="detail-row"><span>${esc(a)}</span><b>${esc(b)}</b></div>`).join('')}</div><div class="detail-box"><h4>Documentos</h4>${atts.length?atts.map((a,i)=>`<div class="detail-row"><span>${esc(a.role||'documento')}</span><b><button class="action-btn" data-open-att="${i}">${esc(a.name)}</button></b></div>`).join(''):'<div class="muted">Nenhum anexo.</div>'}</div><div class="detail-box timeline"><h4>Histórico</h4>${history.length?history.map(a=>`<div class="timeline-item"><b>${esc(a.action)}</b><span>${esc(a.detail||'')}</span><small>${fmtDateTime(a.createdAt)} · ${esc(a.user||'')}</small></div>`).join(''):'<div class="muted">Sem alterações registradas.</div>'}</div><button class="btn btn-outline" data-edit-record>Editar registro</button><button class="btn btn-outline" data-download-current ${atts.length?'':'disabled'}>Baixar documento aberto</button></div></div>`;
+  const modal=openModal({title:type==='Cheque'?`Cheque ${record.numero||''}`:(record.documento||record.beneficiario||'Boleto'),subtitle:multi?`${atts.length} documentos lado a lado.`:'Documento e histórico dentro do Borion.',body,size:'large'});
+  let current=0;const urls=[];
+  const revokeAll=()=>{urls.forEach(u=>{try{URL.revokeObjectURL(u)}catch{}});urls.length=0};
+  const fillTile=async(index)=>{
+    const tile=$(`[data-doc-tile="${index}"] .doc-tile-body`,modal);if(!tile)return;
+    try{
+      const blob=await attachmentBlob(atts[index]);const url=URL.createObjectURL(blob);urls.push(url);
+      tile.innerHTML=blob.type==='application/pdf'?`<iframe src="${url}" title="PDF"></iframe>`:`<img src="${url}" alt="${esc(atts[index].name)}" data-zoom="${index}">`;
+      const img=$('[data-zoom]',tile);if(img)img.onclick=()=>{current=index;window.open(url,'_blank')};
+    }catch(e){tile.innerHTML=`<div class="empty"><b>Não foi possível abrir</b><p>${esc(e.message)}</p></div>`}
+  };
+  const openSingle=async index=>{
+    current=index;const att=atts[index];if(!att)return;
+    const viewer=$('[data-doc-viewer]',modal);if(!viewer)return;
+    viewer.innerHTML='<div class="muted">Abrindo documento...</div>';
+    try{
+      const blob=await attachmentBlob(att);revokeAll();const url=URL.createObjectURL(blob);urls.push(url);
+      viewer.innerHTML=blob.type==='application/pdf'?`<iframe src="${url}" title="PDF"></iframe>`:`<img src="${url}" alt="${esc(att.name)}">`;
+    }catch(e){viewer.innerHTML=`<div class="empty"><b>Não foi possível abrir</b><p>${esc(e.message)}</p></div>`}
+  };
+  $$('[data-open-att]',modal).forEach(b=>b.onclick=()=>{const i=Number(b.dataset.openAtt);if(multi){current=i;$(`[data-doc-tile="${i}"]`,modal)?.scrollIntoView({behavior:'smooth',block:'nearest'})}else openSingle(i)});
+  $('[data-edit-record]',modal).onclick=()=>{revokeAll();closeModal();type==='Cheque'?openCheque(record.id):openBoleto(record.id)};
+  $('[data-download-current]',modal)?.addEventListener('click',async()=>{const att=atts[current];if(!att)return;downloadBlob(await attachmentBlob(att),att.name)});
+  if(multi){for(let i=0;i<atts.length;i++)await fillTile(i)}
+  else if(atts.length)openSingle(0);
+};
+
+/* ----- Gravação: a tela muda na hora, o Drive vai atrás ----- */
+scheduleSave=function(sync=true){
+  clearTimeout(App.saveTimer);
+  renderAll();
+  App.saveTimer=setTimeout(async()=>{
+    try{await saveLocal('alteracao-local-v120')}catch(e){console.warn(e)}
+    if(sync&&App.state.settings.autoSync!==false&&App.drive.connected)scheduleSync();
+  },60);
+};
+Drive.forceSave=async function(){
+  if(!App.drive.connected){toast('Entre com o Google para salvar no Drive.','error',5000);return false}
+  v115MarkDirty();
+  try{
+    await saveLocal('forcar-salvamento-v120',false);
+    this._v119Discovery=null;this._v118Discovery=null;this.clearFolderCache();
+    await this.sync();
+    const pendentes=v116PendingAttachmentCount(App.state);
+    toast(pendentes?`Dados salvos. Ainda faltam ${pendentes} foto(s) — toque de novo em alguns segundos.`:`Tudo salvo no Google Drive · ${stateActiveChequeCount(App.state)} cheque(s) · revisão ${App.state.meta.revision||0}.`,pendentes?'local':'ok',6000);
+    renderConfig();
+    return true;
+  }catch(e){toast('Não foi possível forçar o salvamento: '+(e.message||e),'error',7000);throw e}
+};
+
+/* ----- Configurações concentra backup e importação ----- */
+const v120RenderConfigBase=renderConfig;
+renderConfig=function(){
+  v120RenderConfigBase();
+  const root=$('#page-config');if(!root)return;
+  const grid=$('.settings-grid',root)||root;
+  const last=App.lastImportAnalysis;
+  const pendentes=v116PendingAttachmentCount(App.state);
+  grid.insertAdjacentHTML('beforeend',`
+  <section class="settings-card full-width">
+    <div class="settings-card-head"><div class="settings-icon">⇩</div><div><h3>Backup e salvamento</h3><p>Backups no Drive, exportação externa e salvamento forçado.</p></div></div>
+    <div class="settings-split">
+      <div class="config-section">
+        <h3>Salvamento forçado</h3>
+        <p>Reenvia todos os cheques, boletos e fotos ao Google Drive e confere se chegou tudo. Use quando quiser ter certeza.</p>
+        <div class="status-line"><span class="sync-dot ${App.drive.connected?(pendentes?'local':'ok'):'error'}"></span><div><b>${App.drive.connected?(pendentes?`${pendentes} foto(s) pendente(s)`:'Tudo confirmado'):'Drive desconectado'}</b><small>${stateActiveChequeCount(App.state)} cheque(s) · revisão ${esc(String(App.state.meta.revision||0))}</small></div></div>
+        <button class="btn btn-primary btn-block" onclick="Borion.forceSave()">Forçar salvamento agora</button>
+      </div>
+      <div class="config-section">
+        <h3>Backup no Google Drive</h3>
+        <p>Cria um snapshot em Sistema / Backups / ano / mês.</p>
+        <small class="muted">Último backup: ${esc(App.state.settings.lastDriveBackupDate||'ainda não criado')}</small>
+        <button class="btn btn-outline btn-block" onclick="Borion.driveBackup()">Criar backup no Drive agora</button>
+      </div>
+      <div class="config-section">
+        <h3>Exportação externa</h3>
+        <p>ZIP descriptografado para pendrive ou outra pasta.</p>
+        <button class="btn btn-outline btn-block" onclick="Borion.exportBackup()">Exportar ZIP completo</button>
+        <button class="btn btn-outline btn-block" onclick="Borion.importBackup()">Restaurar ZIP</button>
+      </div>
+      <div class="config-section">
+        <h3>Chave da equipe</h3>
+        <p>Importada uma única vez em cada computador novo.</p>
+        <button class="btn btn-outline btn-block" onclick="Borion.exportTeamKey()">Exportar chave</button>
+        <button class="btn btn-outline btn-block" onclick="Borion.importTeamKey()">Importar chave</button>
+      </div>
+    </div>
+  </section>
+  <section class="settings-card full-width">
+    <div class="settings-card-head"><div class="settings-icon">⇧</div><div><h3>Importar arquivos</h3><p>JSON e ZIP do Borion. Duplicidades são conferidas e ignoradas antes de salvar.</p></div></div>
+    <div class="settings-split">
+      <div class="config-section">
+        <h3>Importar</h3>
+        <p>Selecione um ou vários arquivos exportados pelo Borion CNPJ.</p>
+        <button class="btn btn-primary btn-block" onclick="Borion.selectImportFiles()">Selecionar arquivos</button>
+        <small class="muted">Nenhum registro existente é sobrescrito.</small>
+      </div>
+      <div class="config-section">
+        <h3>Exportações rápidas</h3>
+        <p>Leve os cheques para outro aparelho sem as fotos.</p>
+        <button class="btn btn-outline btn-block" onclick="Borion.exportChequesImport()">Exportar cheques atuais</button>
+      </div>
+      ${last?`<div class="config-section"><h3>Última importação</h3><p>${esc(last.files?.join(' · ')||'Arquivo importado')}</p><small class="muted">${last.cheques||0} cheque(s), ${last.boletos||0} boleto(s), ${last.fornecedores||0} fornecedor(es) · ${last.duplicates||0} duplicado(s) · ${fmtDateTime(last.at)}</small></div>`:''}
+    </div>
+  </section>`);
+};
+
+/* ----- Menu do celular sem Backup e Importar soltos ----- */
+openMobileMore=function(){
+  const install=App.installPrompt?'<button class="mobile-menu-link" data-mobile-install>Instalar no celular <span>›</span></button>':'';
+  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-force>Forçar salvamento <span>⇧</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.20')}</div></div>`;
+  const modal=openModal({title:'Mais opções',subtitle:'Ferramentas do Borion CNPJ',body});
+  $$('[data-mobile-go]',modal).forEach(b=>b.onclick=()=>{closeModal();setPage(b.dataset.mobileGo)});
+  $('[data-mobile-refresh]',modal)?.addEventListener('click',async()=>{closeModal();try{await Drive.pull(true,true)}catch(e){toast(e.message,'error',6500)}});
+  $('[data-mobile-force]',modal)?.addEventListener('click',async()=>{closeModal();try{await Drive.forceSave()}catch(e){console.warn(e)}});
+  $('[data-mobile-logout]',modal).onclick=()=>{closeModal();logout()};
+  $('[data-mobile-install]',modal)?.addEventListener('click',async()=>{await installPwa();closeModal()});
+};
+
+// Mês corrente já filtrado na abertura, no computador e no celular.
+if(!App.filters.chequeMonth)App.filters.chequeMonth=todayISO().slice(0,7);
+
+Object.assign(window.Borion,{
+  dashboardSelectDate,openDashboardCalendar,clearDashboardDates:v120ClearDashboardDates,
+  viewFornecedor,forceSave:()=>Drive.forceSave().catch(e=>console.warn(e))
+});
 
 $('#nav').addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(b)setPage(b.dataset.page)});
 $('#mobile-more')?.addEventListener('click',openMobileMore);

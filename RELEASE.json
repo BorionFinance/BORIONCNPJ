@@ -1,24 +1,26 @@
 {
   "app": "Borion CNPJ",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "baseVisual": "Borion Finance 7.7.12 — imagens oficiais; estrutura visual Borion",
   "desktopOnly": false,
   "storage": "Google Drive como fonte oficial; leitura binária correta do current.json e descoberta enxuta da pasta",
   "driveRootFolder": "Borion CNPJ",
   "pwa": true,
-  "title": "Correção da leitura do current.json e da criação de pastas no Drive",
+  "title": "Ordenação por coluna, visão geral enxuta e menu reorganizado",
   "features": [
-    "download do Drive sempre binário: o current.json volta a ser lido no celular e no computador",
-    "verificação após gravar volta a funcionar, destravando o envio das alterações",
-    "descoberta em três etapas: pasta conhecida, pastas com o nome oficial e só então varredura limitada",
-    "varredura global por nome exato de arquivo, com teto de 40 leituras e 4 em paralelo",
-    "nenhuma pasta Borion CNPJ é criada durante a leitura — só na hora de gravar",
-    "cache de pastas por sessão e fila por nome: fim das pastas de mês duplicadas",
-    "token do Google renovado antes de vencer, em vez de quebrar no meio da sincronização",
-    "tela CARREGANDO com limite de 75 segundos e mensagem clara",
-    "PWA 1.0.19 com cache, service worker e manifest atualizados"
+    "campo Data de entrega removido do cheque; emissão já vem com o dia atual",
+    "visão geral sem o calendário grande: só o calendário do topo, com seleção de um ou vários dias",
+    "totais novos na visão geral: soma do mês, soma da semana com quantidade e depositados do mês",
+    "cheques abrem já filtrados no mês corrente, no computador e no celular",
+    "cabeçalhos da tabela de cheques clicáveis: 1º clique ordena, 2º inverte, 3º volta ao padrão",
+    "mesma ordenação no histórico de cheques dentro do fornecedor",
+    "rodapé com a soma dos cheques do filtro atual, e faixa de total no celular",
+    "cheque com duas ou mais fotos mostra os documentos lado a lado no computador e no celular",
+    "alteração aparece na tela na hora; o envio ao Drive acontece depois, em segundo plano",
+    "botão Forçar salvamento em Configurações e no menu Mais do celular",
+    "Backup e Importar arquivos passaram para dentro de Configurações"
   ],
   "officialImageSource": "BORION_FINANCE_7.7.12_FIX_HUB_URL.zip",
-  "pwaCache": "borion-cnpj-v1.0.19",
+  "pwaCache": "borion-cnpj-v1.0.20",
   "driveRootFolderId": "preferencial; descoberta automática ativa"
 }
