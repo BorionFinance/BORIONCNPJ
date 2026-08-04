@@ -49,7 +49,7 @@ body::before{
   content:"";
   position:fixed;
   inset:0;
-  background-image:url("../borion-watermark.png");
+  background-image:url("../borion-cnpj-v108-watermark.png");
   background-size:min(44vw, 560px);
   background-position:center 54%;
   background-repeat:no-repeat;

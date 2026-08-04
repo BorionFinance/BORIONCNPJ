@@ -1,5 +1,5 @@
-const CACHE='borion-cnpj-v1.0.7';
-const CORE=['./','./index.html','./manifest.webmanifest','./css/borion-7.6.2.css?v=1.0.7','./css/cnpj.css?v=1.0.7','./js/config.js?v=1.0.7','./js/app.js?v=1.0.7','./borion-emblem.png','./borion-watermark.png','./borion-cnpj-icon-192.png','./borion-cnpj-icon-512.png','./borion-cnpj-favicon-32.png'];
+const CACHE='borion-cnpj-v1.0.8';
+const CORE=['./','./index.html','./manifest.webmanifest?v=1.0.8','./css/borion-7.6.2.css?v=1.0.8','./css/cnpj.css?v=1.0.8','./js/config.js?v=1.0.8','./js/app.js?v=1.0.8','./borion-cnpj-v108-emblem.png','./borion-cnpj-v108-watermark.png','./borion-cnpj-v108-icon-192.png','./borion-cnpj-v108-icon-512.png','./borion-cnpj-v108-favicon-32.png','./borion-cnpj-v108-apple-touch-icon.png','./borion-cnpj-v108.ico'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',event=>{

@@ -1,15 +1,19 @@
 {
   "app": "Borion CNPJ",
-  "version": "1.0.7",
-  "baseVisual": "Borion Finance 7.6.2",
+  "version": "1.0.8",
+  "baseVisual": "Borion Finance 7.7.12 — imagens oficiais; estrutura visual Borion",
   "desktopOnly": false,
   "storage": "Google Drive com snapshots locais e remotos",
   "driveRootFolder": "Borion CNPJ",
   "officialCssSha256": "824f0e807bcf39e66b8a35b6f807545c576de1078c064197c6ee36fe94edadd8",
   "pwa": true,
   "features": [
+    "Imagens oficiais do Borion Finance 7.7.12 em desktop e celular",
+    "PWA, manifest, ícones e cache atualizados para 1.0.8",
     "Importação de JSON/ZIP com conferência de duplicidades",
     "PWA mobile em cartões",
     "Google Drive com snapshots e backups"
-  ]
+  ],
+  "officialImageSource": "BORION_FINANCE_7.7.12_FIX_HUB_URL.zip",
+  "pwaCache": "borion-cnpj-v1.0.8"
 }

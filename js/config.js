@@ -5,7 +5,7 @@
 */
 window.BORION_CONFIG = {
   appName: 'Borion CNPJ',
-  version: '1.0.5',
+  version: '1.0.8',
   googleClientId: '946105310952-gp143h81mm3704lrq3877hsie49njgak.apps.googleusercontent.com',
   driveRootFolderName: 'Borion CNPJ',
   authorizedEmails: [],

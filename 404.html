@@ -6,10 +6,10 @@
 <title>Borion CNPJ</title>
 <meta name="description" content="Borion CNPJ — controle de cheques, boletos e fornecedores com Google Drive.">
 <meta name="theme-color" content="#060a10">
-<link rel="shortcut icon" href="borion.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="borion-cnpj-favicon-32.png">
-<link rel="apple-touch-icon" href="borion-cnpj-apple-touch-icon.png">
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="shortcut icon" href="borion-cnpj-v108.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="borion-cnpj-v108-favicon-32.png">
+<link rel="apple-touch-icon" href="borion-cnpj-v108-apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest?v=1.0.8">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -21,15 +21,15 @@
   }catch(e){document.documentElement.setAttribute('data-theme','dark');}
 })();
 </script>
-<link rel="preload" href="css/borion-7.6.2.css?v=1.0.5" as="style">
-<link rel="preload" href="borion-emblem.png" as="image" type="image/png">
-<link rel="stylesheet" href="css/borion-7.6.2.css?v=1.0.5">
-<link rel="stylesheet" href="css/cnpj.css?v=1.0.5">
+<link rel="preload" href="css/borion-7.6.2.css?v=1.0.8" as="style">
+<link rel="preload" href="borion-cnpj-v108-emblem.png" as="image" type="image/png">
+<link rel="stylesheet" href="css/borion-7.6.2.css?v=1.0.8">
+<link rel="stylesheet" href="css/cnpj.css?v=1.0.8">
 </head>
 <body class="borion-intro-active">
 
 <div id="borion-intro-splash" role="status" aria-live="polite" aria-label="Carregando Borion CNPJ">
-  <img src="borion-emblem.png" alt="Borion CNPJ">
+  <img src="borion-cnpj-v108-emblem.png" alt="Borion CNPJ">
   <div class="splash-num">R$ 0,00</div>
   <div class="splash-tag">Carregando</div>
 </div>
@@ -50,17 +50,17 @@
 })();
 </script>
 
-<div id="borion_version_badge" aria-label="Versão do Borion CNPJ">1.0.5</div>
+<div id="borion_version_badge" aria-label="Versão do Borion CNPJ">1.0.8</div>
 
 <div id="desktop-warning" class="desktop-warning" hidden>
-  <img src="borion-emblem.png" alt="Borion CNPJ">
+  <img src="borion-cnpj-v108-emblem.png" alt="Borion CNPJ">
   <h1>Borion CNPJ</h1>
   <p>Este sistema foi projetado exclusivamente para computador.</p>
 </div>
 
 <div id="boot" class="borion-boot" role="status" aria-live="polite" aria-atomic="true">
   <div class="borion-boot-card">
-    <div class="borion-boot-logo-wrap"><img class="borion-boot-logo" src="borion-watermark.png" alt="Borion CNPJ"></div>
+    <div class="borion-boot-logo-wrap"><img class="borion-boot-logo" src="borion-cnpj-v108-watermark.png" alt="Borion CNPJ"></div>
     <div class="borion-boot-brand">BORION CNPJ</div>
     <div class="borion-boot-spinner" aria-hidden="true"><span></span></div>
     <h1>Preparando o Borion</h1>
@@ -73,7 +73,7 @@
 <section id="gate" class="gate-wrap" hidden>
   <div class="gate-box">
     <div class="gate-logo">
-      <img src="borion-emblem.png" alt="Borion CNPJ">
+      <img src="borion-cnpj-v108-emblem.png" alt="Borion CNPJ">
       <div class="appname">Borion CNPJ</div>
     </div>
     <div class="gate-card">
@@ -92,7 +92,7 @@
 <div id="app" class="shell" hidden>
   <aside class="sidebar" id="borion_sidebar">
     <div class="sb-logo">
-      <img src="borion-emblem.png" alt="Borion CNPJ">
+      <img src="borion-cnpj-v108-emblem.png" alt="Borion CNPJ">
       <div class="name">BORION CNPJ</div>
     </div>
     <nav id="nav" class="sb-nav" aria-label="Menu principal">
@@ -154,14 +154,25 @@
 <div id="toast-root"></div>
 <input id="hidden-file-input" type="file" hidden multiple>
 
-<script src="js/config.js?v=1.0.5"></script>
+<script src="js/config.js?v=1.0.8"></script>
 <script src="vendor/tesseract/tesseract.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="js/app.js?v=1.0.5"></script>
+<script src="js/app.js?v=1.0.8"></script>
 <script>
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=1.0.7').catch(console.warn));}
+if('serviceWorker' in navigator){
+  window.addEventListener('load',async()=>{
+    try{
+      const reg=await navigator.serviceWorker.register('./service-worker.js?v=1.0.8');
+      await reg.update();
+      navigator.serviceWorker.addEventListener('controllerchange',()=>{
+        const key='borion_cnpj_sw_reload_1_0_8';
+        if(!sessionStorage.getItem(key)){sessionStorage.setItem(key,'1');location.reload();}
+      });
+    }catch(err){console.warn('Service Worker',err);}
+  });
+}
 </script>
 </body>
 </html>

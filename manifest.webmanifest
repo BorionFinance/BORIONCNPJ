@@ -10,17 +10,18 @@
   "orientation": "any",
   "icons": [
     {
-      "src": "borion-cnpj-icon-192.png",
+      "src": "borion-cnpj-v108-icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "borion-cnpj-icon-512.png",
+      "src": "borion-cnpj-v108-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
   ],
-  "id": "./?app=borion-cnpj"
+  "id": "./?app=borion-cnpj",
+  "version": "1.0.8"
 }

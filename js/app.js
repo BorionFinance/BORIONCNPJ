@@ -2,6 +2,8 @@
 'use strict';
 
 const CFG = window.BORION_CONFIG || {};
+const applyBorionVersion=()=>{const badge=document.getElementById('borion_version_badge');if(badge)badge.textContent=CFG.version||'1.0.8';};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',applyBorionVersion,{once:true});else applyBorionVersion();
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const PAGE_META = {
   dashboard:['Visão Geral','Acompanhe cheques, boletos e próximos vencimentos.'],
@@ -88,7 +90,7 @@ function wireSmartInputs(root=document){
 
 function blankState(){
   return {
-    meta:{version:CFG.version||'1.0.5',createdAt:nowISO(),updatedAt:nowISO()},
+    meta:{version:CFG.version||'1.0.8',createdAt:nowISO(),updatedAt:nowISO()},
     settings:{companyName:'Borion CNPJ',rootFolderId:'',rootFolderName:CFG.driveRootFolderName||'Borion CNPJ',autoSync:true,keepOriginals:true,warningDays:7},
     fornecedores:[],cheques:[],boletos:[],audit:[],deleted:[]
   };
@@ -820,14 +822,14 @@ renderConfig=function(){
 
 
 
-// ---------- Versão 1.0.5: Drive resiliente, redundância e contas de cheque ----------
+// ---------- Versão 1.0.8: Drive resiliente, redundância e contas de cheque ----------
 const V104_LOCAL_STATE_KEY='borion_cnpj_state_v2';
 const V104_LOCAL_LAST_GOOD_KEY='borion_cnpj_state_v2_last_good';
 
 function migrateStateV104(raw){
   const base=blankState();
   const out=Object.assign(base,raw||{});
-  out.meta={...base.meta,...(raw?.meta||{}),version:'1.0.7'};
+  out.meta={...base.meta,...(raw?.meta||{}),version:CFG.version||'1.0.8'};
   out.settings={...base.settings,...(raw?.settings||{})};
   out.settings.chequeAccounts=Array.isArray(out.settings.chequeAccounts)?out.settings.chequeAccounts:[];
   out.settings.autoSync=out.settings.autoSync!==false;
@@ -1016,7 +1018,7 @@ Drive.createSnapshot=async function(structure,prefix='AUTO'){
   const folder=await Drive.monthFolder(structure.backups,todayISO());
   const stamp=nowISO().replace(/[:.]/g,'-');
   const name=`${prefix}_${todayISO()}_${stamp}_R${Number(App.state.meta.revision||0)}.json`;
-  await Drive.uploadJson(folder,name,{app:'Borion CNPJ',version:'1.0.7',kind:prefix,createdAt:nowISO(),user:App.user?.email||'',state:App.state});
+  await Drive.uploadJson(folder,name,{app:'Borion CNPJ',version:CFG.version||'1.0.8',kind:prefix,createdAt:nowISO(),user:App.user?.email||'',state:App.state});
   return name;
 };
 Drive.sync=async function(){
@@ -1030,7 +1032,7 @@ Drive.sync=async function(){
     await Drive.syncAttachments(structure);
     App.state.meta.updatedAt=nowISO();
     await Drive.createSnapshot(structure,'AUTO');
-    const currentPayload={app:'Borion CNPJ',version:'1.0.7',updatedAt:nowISO(),revision:Number(App.state.meta.revision||0),state:App.state};
+    const currentPayload={app:'Borion CNPJ',version:CFG.version||'1.0.8',updatedAt:nowISO(),revision:Number(App.state.meta.revision||0),state:App.state};
     const currentFile=await Drive.findChild(structure.data,'current.json');
     const saved=await Drive.uploadJson(structure.data,'current.json',currentPayload,currentFile?.id||'');
     App.drive.dataFileId=saved.id;
@@ -1156,7 +1158,7 @@ renderConfig=function(){
 
 
 
-// ---------- Versão 1.0.5: importação segura e PWA mobile ----------
+// ---------- Versão 1.0.8: importação segura e PWA mobile ----------
 App.installPrompt=null;
 App.lastImportAnalysis=null;
 const isMobileView=()=>window.matchMedia('(max-width: 900px)').matches;
