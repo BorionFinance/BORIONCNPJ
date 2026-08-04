@@ -1,4 +1,4 @@
-BORION CNPJ 1.0.9
+BORION CNPJ 1.0.10
 
 - Drive é a fonte oficial compartilhada.
 - O celular procura o current.json mais recente e não usa resposta em cache.

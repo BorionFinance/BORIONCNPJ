@@ -1,20 +1,20 @@
 {
   "app": "Borion CNPJ",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "baseVisual": "Borion Finance 7.7.12 — imagens oficiais; estrutura visual Borion",
   "desktopOnly": false,
-  "storage": "Google Drive com snapshots locais e remotos",
+  "storage": "Google Drive como fonte oficial, current.json verificado após cada gravação",
   "driveRootFolder": "Borion CNPJ",
-  "officialCssSha256": "824f0e807bcf39e66b8a35b6f807545c576de1078c064197c6ee36fe94edadd8",
   "pwa": true,
   "features": [
-    "Sincronização PC → celular pelo current.json mais novo do Google Drive",
-    "Detecção da pasta Borion CNPJ oficial mesmo quando existem pastas duplicadas",
-    "Atualização ao abrir, retomar, recuperar internet e a cada 12 segundos",
-    "Barra inferior mobile com safe-area e altura integral",
-    "PWA, cache e versão atualizados para 1.0.9",
-    "Imagens oficiais do Borion Finance 7.7.12"
+    "Escolha da pasta oficial pela maior revisão do current.json, sem favorecer cache antigo do celular",
+    "Marcação da pasta oficial por appProperties do Google Drive",
+    "Verificação de leitura após upload antes de declarar Sincronizado",
+    "Importação só confirma sucesso depois de gravar no Drive",
+    "Pull ao abrir, retomar e a cada 15 segundos",
+    "Barra móvel com cinco colunas, selo de versão removido do rodapé e conteúdo protegido",
+    "Cache PWA renovado para 1.0.10"
   ],
   "officialImageSource": "BORION_FINANCE_7.7.12_FIX_HUB_URL.zip",
-  "pwaCache": "borion-cnpj-v1.0.9"
+  "pwaCache": "borion-cnpj-v1.0.10"
 }
