@@ -5,8 +5,9 @@
   splash, boot e animações vêm de css/borion-7.6.2.css.
 */
 [hidden]{display:none!important}
-html,body{min-width:1100px}
+@media(min-width:1100px){html,body{min-width:1100px}}
 body{overflow-x:auto}
+@media(max-width:1099px){html,body{overflow-x:hidden!important}}
 body.borion-intro-active{overflow:hidden}
 #app{position:relative;z-index:1}
 .page{display:none;animation:cardIn .25s ease}
@@ -406,6 +407,15 @@ html[data-theme="light"] .search-box input,html[data-theme="light"] .filter-sele
 .calendar-day{position:relative;min-height:48px;border:1px solid rgba(255,255,255,.055);border-radius:12px;background:rgba(255,255,255,.018);color:var(--text);cursor:pointer}.calendar-day:hover{border-color:rgba(214,174,91,.25)}.calendar-day.empty-day{border-color:transparent;background:transparent;pointer-events:none}.calendar-day.has-items{background:linear-gradient(180deg,rgba(214,174,91,.09),rgba(214,174,91,.025));border-color:rgba(214,174,91,.18)}.calendar-day.selected{border-color:var(--gold);box-shadow:0 0 0 1px rgba(214,174,91,.18) inset;background:linear-gradient(180deg,rgba(214,174,91,.18),rgba(214,174,91,.05))}.calendar-day span{font-size:12px}.calendar-day b{position:absolute;right:5px;bottom:5px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--gold);color:#111820;font-size:9px;line-height:18px;text-align:center}.calendar-clear{display:block;margin:0 auto 14px}
 .dashboard-two-lists{display:grid;grid-template-columns:1fr 1fr;gap:14px}.dashboard-cheque-list{display:flex;flex-direction:column}.dashboard-cheque-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 0;border:0;border-bottom:1px solid rgba(255,255,255,.055);background:transparent;color:var(--text);text-align:left;cursor:pointer}.dashboard-cheque-row:last-child{border-bottom:0}.dashboard-cheque-row>div:last-child{text-align:right}.dashboard-cheque-row span,.dashboard-cheque-row b{display:block;font-size:13px}.dashboard-cheque-row small{display:block;margin-top:4px;color:var(--muted);font-size:9.5px}.dashboard-empty{padding:30px 14px!important}
 .mobile-tab-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}.mobile-tab-actions .btn{min-width:0;padding-left:8px!important;padding-right:8px!important}
+
+/* BORION CNPJ 1.0.12 — calendário do dashboard sai do meio da tela no celular e vira um botão no topo */
+#btn-dashboard-calendar{display:none}
+@media(max-width:1099px){
+  .dashboard-calendar{display:none!important}
+  #btn-dashboard-calendar{display:flex!important}
+  #btn-dashboard-calendar.has-date{color:var(--gold-bright)!important;border-color:rgba(214,174,91,.4)!important}
+  [data-dashboard-calendar-modal] .dashboard-calendar{display:block!important;margin-bottom:0}
+}
 
 /* BORION CNPJ 1.0.11 — notificações sempre dentro da tela */
 @media(max-width:1099px){

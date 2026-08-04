@@ -1,20 +1,19 @@
 {
   "app": "Borion CNPJ",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "baseVisual": "Borion Finance 7.7.12 — imagens oficiais; estrutura visual Borion",
   "desktopOnly": false,
-  "storage": "Google Drive como fonte oficial, current.json verificado após cada gravação",
+  "storage": "Google Drive como fonte oficial, current.json/BORION_CNPJ_CURRENT.json verificado após cada gravação",
   "driveRootFolder": "Borion CNPJ",
   "pwa": true,
   "features": [
-    "Escolha da pasta oficial pela maior revisão do current.json, sem favorecer cache antigo do celular",
-    "Marcação da pasta oficial por appProperties do Google Drive",
-    "Verificação de leitura após upload antes de declarar Sincronizado",
-    "Importação só confirma sucesso depois de gravar no Drive",
-    "Pull ao abrir, retomar e a cada 15 segundos",
-    "Barra móvel com cinco colunas, selo de versão removido do rodapé e conteúdo protegido",
-    "Cache PWA renovado para 1.0.11"
+    "Limpeza de código: removidas 5 gerações antigas e mortas de Drive.sync/pull/login que ficavam sobrepostas sem uso",
+    "Corrigido bug real de closure: os listeners de foco/retomada do app ficavam presos numa versão antiga da atualização",
+    "Botão 'Atualizar agora' do topo agora sempre mostra uma notificação clara (cheques carregados, já atualizado, ou erro)",
+    "Corrigido CSS que forçava o layout inteiro em largura de computador (1100px) mesmo no celular",
+    "Calendário do dashboard: no celular vira um botão compacto no topo direito, que abre um popup só quando tocado",
+    "Atualização automática do Drive a cada 10 segundos, com nova varredura forçada ao voltar ao app"
   ],
   "officialImageSource": "BORION_FINANCE_7.7.12_FIX_HUB_URL.zip",
-  "pwaCache": "borion-cnpj-v1.0.11"
+  "pwaCache": "borion-cnpj-v1.0.12"
 }
