@@ -9,7 +9,7 @@
 <link rel="shortcut icon" href="borion-cnpj-v111.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="borion-cnpj-v111-favicon-32.png">
 <link rel="apple-touch-icon" href="borion-cnpj-v111-apple-touch-icon.png">
-<link rel="manifest" href="manifest.webmanifest?v=1.0.20">
+<link rel="manifest" href="manifest.webmanifest?v=1.0.21">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -21,10 +21,10 @@
   }catch(e){document.documentElement.setAttribute('data-theme','dark');}
 })();
 </script>
-<link rel="preload" href="css/borion-7.6.2.css?v=1.0.20" as="style">
+<link rel="preload" href="css/borion-7.6.2.css?v=1.0.21" as="style">
 <link rel="preload" href="borion-cnpj-v111-emblem.png" as="image" type="image/png">
-<link rel="stylesheet" href="css/borion-7.6.2.css?v=1.0.20">
-<link rel="stylesheet" href="css/cnpj.css?v=1.0.20">
+<link rel="stylesheet" href="css/borion-7.6.2.css?v=1.0.21">
+<link rel="stylesheet" href="css/cnpj.css?v=1.0.21">
 </head>
 <body class="borion-intro-active">
 
@@ -50,7 +50,7 @@
 })();
 </script>
 
-<div id="borion_version_badge" aria-label="Versão do Borion CNPJ">1.0.20</div>
+<div id="borion_version_badge" aria-label="Versão do Borion CNPJ">1.0.21</div>
 
 <div id="desktop-warning" class="desktop-warning" hidden>
   <img src="borion-cnpj-v111-emblem.png" alt="Borion CNPJ">
@@ -140,7 +140,6 @@
           </div>
           <span class="clock-label">JSON, fotos, PDFs e backups</span>
         </div>
-        <button id="btn-dashboard-calendar" class="bell-btn sync-top-btn" type="button" title="Selecionar um dia" aria-label="Selecionar um dia" onclick="Borion.openDashboardCalendar()">📅</button>
         <button id="btn-sync" class="bell-btn sync-top-btn" type="button" title="Atualizar agora" aria-label="Atualizar agora">↻</button>
       </div>
     </header>
@@ -160,12 +159,12 @@
 <div id="toast-root"></div>
 <input id="hidden-file-input" type="file" hidden multiple>
 
-<script src="js/config.js?v=1.0.20"></script>
+<script src="js/config.js?v=1.0.21"></script>
 <script src="vendor/tesseract/tesseract.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="js/app.js?v=1.0.20"></script>
+<script src="js/app.js?v=1.0.21"></script>
 <script>
 // Limpeza única das versões antigas do PWA. Não apaga dados locais nem login.
 (async()=>{
@@ -173,7 +172,7 @@
     const key='borion_cnpj_cache_migration_1_0_18';
     if(!localStorage.getItem(key)){
       const names=await caches.keys();
-      await Promise.all(names.filter(name=>name.startsWith('borion-cnpj-v')&&name!=='borion-cnpj-v1.0.20').map(name=>caches.delete(name)));
+      await Promise.all(names.filter(name=>name.startsWith('borion-cnpj-v')&&name!=='borion-cnpj-v1.0.21').map(name=>caches.delete(name)));
       localStorage.setItem(key,'1');
     }
   }catch(e){console.warn('Limpeza de cache antigo',e)}
@@ -182,7 +181,7 @@
 if('serviceWorker' in navigator){
   window.addEventListener('load',async()=>{
     try{
-      const reg=await navigator.serviceWorker.register('./service-worker.js?v=1.0.20',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./service-worker.js?v=1.0.21',{updateViaCache:'none'});
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
       reg.addEventListener('updatefound',()=>{
         const worker=reg.installing;
@@ -194,7 +193,7 @@ if('serviceWorker' in navigator){
         if(!sessionStorage.getItem(reloadKey)){sessionStorage.setItem(reloadKey,'1');location.reload();}
       });
       navigator.serviceWorker.addEventListener('message',event=>{
-        if(event.data?.type==='BORION_SW_ACTIVATED'&&event.data.version==='1.0.20'&&!sessionStorage.getItem(reloadKey)){
+        if(event.data?.type==='BORION_SW_ACTIVATED'&&event.data.version==='1.0.21'&&!sessionStorage.getItem(reloadKey)){
           sessionStorage.setItem(reloadKey,'1');location.reload();
         }
       });

@@ -1,26 +1,21 @@
 {
   "app": "Borion CNPJ",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "baseVisual": "Borion Finance 7.7.12 — imagens oficiais; estrutura visual Borion",
   "desktopOnly": false,
   "storage": "Google Drive como fonte oficial; leitura binária correta do current.json e descoberta enxuta da pasta",
   "driveRootFolder": "Borion CNPJ",
   "pwa": true,
-  "title": "Ordenação por coluna, visão geral enxuta e menu reorganizado",
+  "title": "Visão geral só de cheques emitidos, com faixa de mês no topo",
   "features": [
-    "campo Data de entrega removido do cheque; emissão já vem com o dia atual",
-    "visão geral sem o calendário grande: só o calendário do topo, com seleção de um ou vários dias",
-    "totais novos na visão geral: soma do mês, soma da semana com quantidade e depositados do mês",
-    "cheques abrem já filtrados no mês corrente, no computador e no celular",
-    "cabeçalhos da tabela de cheques clicáveis: 1º clique ordena, 2º inverte, 3º volta ao padrão",
-    "mesma ordenação no histórico de cheques dentro do fornecedor",
-    "rodapé com a soma dos cheques do filtro atual, e faixa de total no celular",
-    "cheque com duas ou mais fotos mostra os documentos lado a lado no computador e no celular",
-    "alteração aparece na tela na hora; o envio ao Drive acontece depois, em segundo plano",
-    "botão Forçar salvamento em Configurações e no menu Mais do celular",
-    "Backup e Importar arquivos passaram para dentro de Configurações"
+    "visão geral mostra apenas cheques emitidos, no computador e no celular",
+    "faixa de mês no topo da visão geral: setas para trocar de mês rápido",
+    "clicar no nome do mês abre o calendário para escolher um ou vários dias",
+    "linha de apoio mostra a última atualização ou os dias selecionados",
+    "botão de calendário duplicado removido da barra superior",
+    "PWA 1.0.21 com cache, service worker e manifest atualizados"
   ],
   "officialImageSource": "BORION_FINANCE_7.7.12_FIX_HUB_URL.zip",
-  "pwaCache": "borion-cnpj-v1.0.20",
+  "pwaCache": "borion-cnpj-v1.0.21",
   "driveRootFolderId": "preferencial; descoberta automática ativa"
 }

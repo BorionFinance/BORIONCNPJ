@@ -2,7 +2,7 @@
 'use strict';
 
 const CFG = window.BORION_CONFIG || {};
-const applyBorionVersion=()=>{const badge=document.getElementById('borion_version_badge');if(badge)badge.textContent=CFG.version||'1.0.20';};
+const applyBorionVersion=()=>{const badge=document.getElementById('borion_version_badge');if(badge)badge.textContent=CFG.version||'1.0.21';};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',applyBorionVersion,{once:true});else applyBorionVersion();
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const PAGE_META = {
@@ -96,7 +96,7 @@ function wireSmartInputs(root=document){
 
 function blankState(){
   return {
-    meta:{version:CFG.version||'1.0.20',createdAt:nowISO(),updatedAt:nowISO()},
+    meta:{version:CFG.version||'1.0.21',createdAt:nowISO(),updatedAt:nowISO()},
     settings:{companyName:'Borion CNPJ',rootFolderId:'',rootFolderName:CFG.driveRootFolderName||'Borion CNPJ',autoSync:true,keepOriginals:true,warningDays:7},
     fornecedores:[],cheques:[],boletos:[],audit:[],deleted:[]
   };
@@ -830,7 +830,7 @@ const V104_LOCAL_LAST_GOOD_KEY='borion_cnpj_state_v2_last_good';
 function migrateStateV104(raw){
   const base=blankState();
   const out=Object.assign(base,raw||{});
-  out.meta={...base.meta,...(raw?.meta||{}),version:CFG.version||'1.0.20'};
+  out.meta={...base.meta,...(raw?.meta||{}),version:CFG.version||'1.0.21'};
   out.settings={...base.settings,...(raw?.settings||{})};
   out.settings.chequeAccounts=Array.isArray(out.settings.chequeAccounts)?out.settings.chequeAccounts:[];
   out.settings.autoSync=out.settings.autoSync!==false;
@@ -999,7 +999,7 @@ Drive.createSnapshot=async function(structure,prefix='AUTO'){
   const folder=await Drive.monthFolder(structure.backups,todayISO());
   const stamp=nowISO().replace(/[:.]/g,'-');
   const name=`${prefix}_${todayISO()}_${stamp}_R${Number(App.state.meta.revision||0)}.json`;
-  await Drive.uploadJson(folder,name,{app:'Borion CNPJ',version:CFG.version||'1.0.20',kind:prefix,createdAt:nowISO(),user:App.user?.email||'',state:App.state});
+  await Drive.uploadJson(folder,name,{app:'Borion CNPJ',version:CFG.version||'1.0.21',kind:prefix,createdAt:nowISO(),user:App.user?.email||'',state:App.state});
   return name;
 };
 let driveRefreshTimer=0;
@@ -1266,7 +1266,7 @@ renderBoletos=function(){
 };
 function openMobileMore(){
   const install=App.installPrompt?'<button class="mobile-menu-link" data-mobile-install>Instalar no celular <span>›</span></button>':'';
-  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="importar">Importar arquivos <span>›</span></button><button class="mobile-menu-link" data-mobile-go="backup">Backup <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.20')}</div></div>`;
+  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="importar">Importar arquivos <span>›</span></button><button class="mobile-menu-link" data-mobile-go="backup">Backup <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.21')}</div></div>`;
   const modal=openModal({title:'Mais opções',subtitle:'Ferramentas do Borion CNPJ',body});$$('[data-mobile-go]',modal).forEach(b=>b.onclick=()=>{closeModal();setPage(b.dataset.mobileGo)});$('[data-mobile-refresh]',modal)?.addEventListener('click',async()=>{closeModal();try{await Drive.pull(true,true)}catch(e){toast(e.message,'error',6500)}});$('[data-mobile-logout]',modal).onclick=()=>{closeModal();logout()};$('[data-mobile-install]',modal)?.addEventListener('click',async()=>{await installPwa();closeModal()});
 }
 async function installPwa(){if(!App.installPrompt){toast('No navegador, use “Adicionar à tela inicial”.');return}App.installPrompt.prompt();await App.installPrompt.userChoice;App.installPrompt=null;}
@@ -1277,7 +1277,7 @@ let resizeTimer=0;window.addEventListener('resize',()=>{clearTimeout(resizeTimer
 
 
 // ---------- Versão 1.0.15: sincronização transacional entre PC, celular e Drive ----------
-const V115_VERSION='1.0.20';
+const V115_VERSION='1.0.21';
 const V115_CURRENT_FILE='current.json';
 const V115_ROOT_MIRROR='BORION_CNPJ_CURRENT.json';
 const V115_PENDING_PREFIX='borion_cnpj_pending_sync_v115_';
@@ -1628,7 +1628,7 @@ function flushPendingLocalNow(){
 
 
 // ---------- Versão 1.0.16: fonte oficial real no Drive e recuperação PC/celular ----------
-const V116_VERSION='1.0.20';
+const V116_VERSION='1.0.21';
 const V116_RECOVERY_PREFIX='borion_cnpj_recovery_v116_';
 const V116_LAST_REMOTE_PREFIX='borion_cnpj_last_remote_v116_';
 
@@ -1672,7 +1672,7 @@ async function v116RecoverLocalStateIfNeeded(){
       const rows=await new Promise((resolve,reject)=>{const r=App.db.transaction('snapshots').objectStore('snapshots').getAll();r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>reject(r.error)});
       for(const item of rows.slice(-80))add(item.state);
     }
-  }catch(e){console.warn('Recuperação local v1.0.20 não conseguiu ler snapshots',e)}
+  }catch(e){console.warn('Recuperação local v1.0.21 não conseguiu ler snapshots',e)}
   candidates.sort((a,b)=>stateRecordCount(b)-stateRecordCount(a)||String(stateUpdatedAt(b)).localeCompare(String(stateUpdatedAt(a)))||Number(b.meta?.revision||0)-Number(a.meta?.revision||0));
   const best=candidates[0];if(!best||stateRecordCount(best)===0)return false;
   App.state=v116CloneState(best);v115SetPending(true);await saveLocal('recuperacao-local-v116',false);return true;
@@ -1845,7 +1845,7 @@ Drive.login=async function(){
     const pulled=await this.pull(false,true);
     if(pulled?.needsPush||v115Pending()||v116PendingAttachmentCount(App.state)>0){
       showAccountLoading(true,'Confirmando os cheques no Google Drive');
-      try{await this.sync()}catch(e){console.error('Sincronização inicial v1.0.20',e)}
+      try{await this.sync()}catch(e){console.error('Sincronização inicial v1.0.21',e)}
     }
     showAccountLoading(false);showApp();startDriveRefreshLoop();
     if(v115Pending())updateSyncUI('error','Pendente no Drive','Clique em atualizar para tentar novamente');
@@ -1857,11 +1857,11 @@ Drive.login=async function(){
 };
 
 
-// ---------- Versão 1.0.20: descoberta automática da base real e recuperação segura ----------
+// ---------- Versão 1.0.21: descoberta automática da base real e recuperação segura ----------
 // O ID configurado passa a ser apenas uma preferência. O aplicativo procura a base válida,
 // inclusive quando existem pastas Sistema/Dados duplicadas, e nunca escolhe uma pasta vazia
 // apenas porque ela foi modificada mais recentemente.
-const V118_VERSION='1.0.20';
+const V118_VERSION='1.0.21';
 const V118_PREFERRED_ROOT_ID=String(CFG.driveRootFolderId||'').trim();
 const V118_ROOT_MIRROR='BORION_CNPJ_CURRENT.json';
 const V118_FOLDER_MIME='application/vnd.google-apps.folder';
@@ -2229,8 +2229,8 @@ renderCheques=function(){
 };
 
 
-// ---------- Versão 1.0.20: leitura binária correta, token estável e descoberta enxuta ----------
-const V119_VERSION='1.0.20';
+// ---------- Versão 1.0.21: leitura binária correta, token estável e descoberta enxuta ----------
+const V119_VERSION='1.0.21';
 const V119_EXACT_DATA_NAMES=['current.json','BORION_CNPJ_CURRENT.json','dados.json','borion-cnpj-dados.json','current.json.borion'];
 const V119_MAX_GLOBAL_READS=40;
 const V119_MAX_FILE_BYTES=12*1024*1024;
@@ -2251,7 +2251,7 @@ async function v119MapLimit(items,limit,task){
   return out;
 }
 
-/* CORREÇÃO PRINCIPAL 1.0.20
+/* CORREÇÃO PRINCIPAL 1.0.21
    Drive.api devolvia res.json() sempre que o Content-Type era application/json.
    Como o current.json é gravado justamente com mimeType application/json, o alt=media
    voltava um OBJETO já convertido e o TextDecoder().decode(objeto) estourava TypeError.
@@ -2610,7 +2610,7 @@ window.Borion={
 };
 
 
-// ---------- Versão 1.0.20: ordenação por coluna, visão geral enxuta e menu reorganizado ----------
+// ---------- Versão 1.0.21: ordenação por coluna, visão geral enxuta e menu reorganizado ----------
 const V120_COLLATOR=new Intl.Collator('pt-BR',{numeric:true,sensitivity:'base'});
 App.sort=App.sort||{cheques:{key:'',dir:0},fornecedor:{key:'',dir:0}};
 
@@ -2926,7 +2926,7 @@ renderConfig=function(){
 /* ----- Menu do celular sem Backup e Importar soltos ----- */
 openMobileMore=function(){
   const install=App.installPrompt?'<button class="mobile-menu-link" data-mobile-install>Instalar no celular <span>›</span></button>':'';
-  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-force>Forçar salvamento <span>⇧</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.20')}</div></div>`;
+  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-force>Forçar salvamento <span>⇧</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.21')}</div></div>`;
   const modal=openModal({title:'Mais opções',subtitle:'Ferramentas do Borion CNPJ',body});
   $$('[data-mobile-go]',modal).forEach(b=>b.onclick=()=>{closeModal();setPage(b.dataset.mobileGo)});
   $('[data-mobile-refresh]',modal)?.addEventListener('click',async()=>{closeModal();try{await Drive.pull(true,true)}catch(e){toast(e.message,'error',6500)}});
@@ -2937,6 +2937,53 @@ openMobileMore=function(){
 
 // Mês corrente já filtrado na abertura, no computador e no celular.
 if(!App.filters.chequeMonth)App.filters.chequeMonth=todayISO().slice(0,7);
+
+
+// ---------- Versão 1.0.21: visão geral só de cheques emitidos e faixa de mês no topo ----------
+function v121DashboardStrip(){
+  const picked=App.dashboardDates;
+  const sub=picked.length
+    ? (picked.length===1?`Dia ${fmtDate(picked[0])} selecionado`:`${picked.length} dias selecionados`)
+    : (App.state.meta?.updatedAt?`Atualizado em ${fmtDateTime(App.state.meta.updatedAt)}`:'Toque no mês para escolher dias');
+  return `<div class="dashboard-month-strip">
+    <div class="month-nav-wrap">
+      <div class="month-nav">
+        <button type="button" onclick="Borion.dashboardMonthMove(-1)" aria-label="Mês anterior">‹</button>
+        <button type="button" class="mlabel month-pick" onclick="Borion.openDashboardCalendar()" title="Escolher um ou mais dias">${esc(dashboardMonthLabel(App.dashboardMonth))}</button>
+        <button type="button" onclick="Borion.dashboardMonthMove(1)" aria-label="Próximo mês">›</button>
+      </div>
+      <span class="clock-label">${esc(sub)}</span>
+    </div>
+    ${picked.length?'<button class="action-btn" onclick="Borion.clearDashboardDates()">Ver o mês inteiro</button>':''}
+  </div>`;
+}
+
+// O calendário conta apenas os cheques emitidos.
+dashboardCalendarMarkup=function(){
+  return dashboardCalendar(App.dashboardMonth,active(App.state.cheques).filter(x=>x.tipo==='Emitido'),[]);
+};
+
+renderDashboard=function(){
+  const root=$('#page-dashboard');if(!root)return;
+  const emittedAll=active(App.state.cheques).filter(x=>x.tipo==='Emitido');
+  const picked=App.dashboardDates;
+  const dateOf=x=>chequeDashboardDate(x,false);
+  const emitted=emittedAll
+    .filter(x=>{const d=dateOf(x);return picked.length?picked.includes(d):String(d||'').startsWith(App.dashboardMonth)})
+    .sort((a,b)=>String(dateOf(a)).localeCompare(String(dateOf(b))));
+  const sum=arr=>arr.reduce((t,x)=>t+Number(x.valor||0),0);
+  const monthCheques=emittedAll.filter(x=>String(dateOf(x)||'').startsWith(App.dashboardMonth));
+  const week=v120WeekRange();
+  const weekCheques=emittedAll.filter(x=>{const d=dateOf(x);return d&&d>=week.start&&d<=week.end});
+  const selection=picked.length?(picked.length===1?fmtDate(picked[0]):`${picked.length} dias selecionados`):dashboardMonthLabel(App.dashboardMonth);
+  root.innerHTML=`${v121DashboardStrip()}
+  <div class="dashboard-totals">
+    <div class="total-card"><span>Cheques que caem no mês</span><b>${brl(sum(monthCheques))}</b><small>${monthCheques.length} cheque(s) · ${esc(dashboardMonthLabel(App.dashboardMonth))}</small></div>
+    <div class="total-card week"><span>Cheques da semana</span><b>${brl(sum(weekCheques))}</b><small>${weekCheques.length} cheque(s) · ${fmtDate(week.start)} a ${fmtDate(week.end)}</small></div>
+    <div class="total-card"><span>Seleção atual</span><b>${brl(sum(emitted))}</b><small>${emitted.length} cheque(s) · ${esc(selection)}</small></div>
+  </div>
+  <section class="panel dashboard-single-list"><div class="panel-head"><div><div class="panel-title">Cheques emitidos</div><p class="muted">${emitted.length} cheque(s) · ${brl(sum(emitted))} em ${esc(selection)}</p></div></div><div class="panel-body">${dashboardRows(emitted,false)}</div></section>`;
+};
 
 Object.assign(window.Borion,{
   dashboardSelectDate,openDashboardCalendar,clearDashboardDates:v120ClearDashboardDates,

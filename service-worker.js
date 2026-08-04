@@ -1,5 +1,5 @@
-const VERSION='1.0.20';
-const CACHE='borion-cnpj-v1.0.20';
+const VERSION='1.0.21';
+const CACHE='borion-cnpj-v1.0.21';
 const CORE=[
   './','./index.html',
   `./manifest.webmanifest?v=${VERSION}`,
