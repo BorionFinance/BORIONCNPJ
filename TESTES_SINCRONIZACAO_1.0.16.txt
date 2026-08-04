@@ -1,0 +1,12 @@
+VALIDAÇÕES DA VERSÃO 1.0.16
+
+- Sintaxe JavaScript validada com Node.js.
+- Build estático validado pelo teste existente do projeto.
+- Verificação de versão em config, index, manifest, service worker e release.
+- Verificação estrutural: current.json é escrito antes de syncAttachments.
+- Verificação estrutural: pull usa merge e não substitui uma base local não vazia por uma base remota vazia.
+- Verificação estrutural: a leitura recorrente de Sistema/Operações foi removida do fluxo principal.
+- Verificação estrutural: retries imediatos limitados e status de erro finalizado.
+- Simulação lógica coberta pelo teste tests/testar-sync-v116.js.
+
+O teste real com a conta Google do pai depende da publicação no domínio e da autorização OAuth dessa conta.

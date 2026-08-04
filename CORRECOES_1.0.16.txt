@@ -1,0 +1,26 @@
+BORION CNPJ 1.0.16 — CORREÇÃO DA SINCRONIZAÇÃO PC/CELULAR
+
+CAUSA REAL DO BUG
+- O PWA e o navegador usam o mesmo código, porém cada instalação possui seu próprio localStorage e IndexedDB.
+- Os registros dos cheques ficam no arquivo Sistema/Dados/current.json.
+- As fotos ficam separadas na pasta Cheques/ano/mês.
+- A versão anterior enviava as fotos antes de confirmar o current.json. Se a etapa final falhasse, as fotos apareciam no Drive, mas o celular não encontrava nenhum cheque.
+- Na abertura, uma base remota vazia também podia substituir temporariamente a base local do computador.
+- A fila de Operações podia crescer e ser relida repetidamente, deixando a tela em “Salvando” por tempo indefinido.
+
+CORREÇÕES
+1. O current.json passou a ser gravado e relido antes do envio das fotos.
+2. A base local nunca é descartada porque o Drive está vazio; as duas bases são mescladas por ID e data de alteração.
+3. O celular lê exclusivamente Sistema/Dados/current.json como fonte oficial.
+4. Fotos já existentes são reaproveitadas pelo nome antes de qualquer novo upload.
+5. Operações antigas ficam preservadas, mas não são mais varridas em toda abertura.
+6. A sincronização tem no máximo duas passagens imediatas e sai do estado de carregamento em caso de erro.
+7. O status agora diferencia “Salvo no Google Drive”, “Dados sincronizados / fotos pendentes” e “Não salvo no Drive”.
+8. Recuperação única procura snapshots locais se uma atualização anterior tiver deixado a base visível vazia.
+9. Cache, service worker, manifest e arquivos do PWA atualizados para 1.0.16.
+
+RECUPERAÇÃO DOS 7 CHEQUES
+- Publicar todos os arquivos da versão 1.0.16.
+- Abrir primeiro no computador onde os 7 cheques aparecem.
+- Entrar com a conta Google do pai e aguardar “Salvo no Google Drive · 7 cheque(s)”.
+- Depois abrir o celular. Ele fará a leitura do mesmo current.json e mostrará os mesmos 7 cheques.
