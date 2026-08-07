@@ -5,10 +5,10 @@
 */
 window.BORION_CONFIG = {
   appName: 'Borion CNPJ',
-  version: '1.0.23',
+  version: '1.0.24',
   googleClientId: '946105310952-gp143h81mm3704lrq3877hsie49njgak.apps.googleusercontent.com',
   driveRootFolderName: 'Borion CNPJ',
-  // ID preferencial conhecido. A versão 1.0.23 não depende dele: se estiver incorreto,
+  // ID preferencial conhecido. A versão 1.0.24 não depende dele: se estiver incorreto,
   // procura automaticamente a base válida na conta Google conectada.
   driveRootFolderId: '1UR5lLsUeBtv9Cc8jYj70HWhySuvqko0-',
   authorizedEmails: [],

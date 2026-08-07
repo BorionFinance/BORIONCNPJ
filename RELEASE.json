@@ -1,23 +1,20 @@
 {
   "app": "Borion CNPJ",
-  "version": "1.0.23",
-  "baseVisual": "Borion Finance 7.7.12 — imagens oficiais; estrutura visual Borion",
-  "desktopOnly": false,
-  "storage": "Google Drive como fonte oficial; edição local imediata com sincronização posterior",
+  "version": "1.0.24",
+  "storage": "Google Drive como fonte oficial; edição local confirmada antes da sincronização",
   "driveRootFolder": "Borion CNPJ",
   "pwa": true,
-  "title": "Edição transacional: dados e fotos não voltam ao valor antigo",
+  "title": "Correção estrutural do editor e anexos",
   "features": [
-    "corrigida condição de corrida entre janela de edição e atualização automática do Google Drive",
-    "número do cheque e demais campos são reaplicados ao registro vivo pelo ID no instante do salvamento",
-    "edições de cheque, boleto, fornecedor e conta de cheque são persistidas localmente antes de fechar a janela",
-    "atualização automática do Drive é adiada enquanto existe formulário de edição aberto",
-    "pull iniciado durante uma edição preserva alterações locais em vez de sobrescrevê-las",
-    "Fotos em massa salva todas as associações visíveis, sem filtrar apenas cheques confirmados",
-    "anexos são preparados antes do commit e vinculados ao cheque atual pelo ID",
-    "PWA 1.0.23 com todos os query strings e service worker atualizados"
+    "a camada de edição agora executa dentro do mesmo escopo do núcleo do aplicativo",
+    "o editor resolve o cheque pelo ID real e substitui o registro vivo no commit",
+    "o Borion relê o armazenamento local e só mostra sucesso se o novo número estiver realmente persistido",
+    "anexos só são considerados salvos depois da confirmação dos IDs no JSON local",
+    "pull automático do Google Drive é pausado enquanto existe formulário de edição aberto",
+    "um pull que já estava em andamento não pode deixar a memória com o número antigo após o commit",
+    "fornecedor, boleto e conta de cheque usam o mesmo mecanismo de persistência confirmada",
+    "fotos em massa persistem todas as associações visíveis e verificam cada cheque",
+    "PWA e cache atualizados para 1.0.24"
   ],
-  "officialImageSource": "BORION_FINANCE_7.7.12_FIX_HUB_URL.zip",
-  "pwaCache": "borion-cnpj-v1.0.23",
-  "driveRootFolderId": "preferencial; descoberta automática ativa"
+  "pwaCache": "borion-cnpj-v1.0.24"
 }

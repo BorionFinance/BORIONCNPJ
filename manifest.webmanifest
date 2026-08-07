@@ -2,7 +2,7 @@
   "name": "Borion CNPJ",
   "short_name": "Borion CNPJ",
   "description": "Cheques, boletos, fornecedores e documentos sincronizados com o Google Drive.",
-  "start_url": "./?v=1.0.23",
+  "start_url": "./?v=1.0.24",
   "scope": "./",
   "display": "standalone",
   "background_color": "#060a10",
@@ -23,5 +23,5 @@
     }
   ],
   "id": "./?app=borion-cnpj",
-  "version": "1.0.23"
+  "version": "1.0.24"
 }
