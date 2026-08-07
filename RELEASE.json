@@ -1,22 +1,23 @@
 {
   "app": "Borion CNPJ",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "baseVisual": "Borion Finance 7.7.12 — imagens oficiais; estrutura visual Borion",
   "desktopOnly": false,
-  "storage": "Google Drive como fonte oficial; leitura binária correta do current.json e descoberta enxuta da pasta",
+  "storage": "Google Drive como fonte oficial; edição local imediata com sincronização posterior",
   "driveRootFolder": "Borion CNPJ",
   "pwa": true,
-  "title": "Fotos de cheques corrigidas: edição, lote e drag-and-drop em massa",
+  "title": "Edição transacional: dados e fotos não voltam ao valor antigo",
   "features": [
-    "foto anexada ao editar cheque agora é persistida localmente antes de fechar a janela",
-    "cheques em lote permitem selecionar ou arrastar fotos por cheque antes de gerar",
-    "frente e verso podem ser vinculados já na criação do lote",
-    "Fotos em massa aceita arrastar arquivos diretamente do Windows para a tela",
-    "foto pode ser solta diretamente no slot Frente ou Verso de um cheque",
-    "salvamento em massa confirma o vínculo local antes de iniciar a sincronização com o Google Drive",
-    "PWA 1.0.22 com cache, service worker e manifest atualizados"
+    "corrigida condição de corrida entre janela de edição e atualização automática do Google Drive",
+    "número do cheque e demais campos são reaplicados ao registro vivo pelo ID no instante do salvamento",
+    "edições de cheque, boleto, fornecedor e conta de cheque são persistidas localmente antes de fechar a janela",
+    "atualização automática do Drive é adiada enquanto existe formulário de edição aberto",
+    "pull iniciado durante uma edição preserva alterações locais em vez de sobrescrevê-las",
+    "Fotos em massa salva todas as associações visíveis, sem filtrar apenas cheques confirmados",
+    "anexos são preparados antes do commit e vinculados ao cheque atual pelo ID",
+    "PWA 1.0.23 com todos os query strings e service worker atualizados"
   ],
   "officialImageSource": "BORION_FINANCE_7.7.12_FIX_HUB_URL.zip",
-  "pwaCache": "borion-cnpj-v1.0.22",
+  "pwaCache": "borion-cnpj-v1.0.23",
   "driveRootFolderId": "preferencial; descoberta automática ativa"
 }
