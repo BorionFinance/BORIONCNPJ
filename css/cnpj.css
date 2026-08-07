@@ -476,7 +476,7 @@ html[data-theme="light"] .search-box input,html[data-theme="light"] .filter-sele
 .mobile-total-strip span{font-size:.8rem;opacity:.75}
 .mobile-total-strip b{font-size:1.05rem;color:var(--gold,#d4af6e);font-variant-numeric:tabular-nums}
 
-/* ---------- 1.0.21 ---------- */
+/* ---------- 1.0.22 ---------- */
 .dashboard-month-strip{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin:0 0 16px}
 .dashboard-month-strip .month-nav{padding:9px 14px}
 .dashboard-month-strip .month-nav button{cursor:pointer;font-size:17px;line-height:1;padding:2px 8px;border-radius:9px;transition:background-color .18s,color .18s}
@@ -489,3 +489,11 @@ html[data-theme="light"] .search-box input,html[data-theme="light"] .filter-sele
   .dashboard-month-strip .month-nav-wrap{width:100%}
   .month-pick{min-width:auto;flex:1}
 }
+
+/* v1.0.22 · fotos de cheques */
+.lote-photo-help{margin-top:14px;padding:10px 12px;border:1px solid rgba(201,164,92,.16);border-radius:10px;background:rgba(201,164,92,.045)}
+.lote-photo-cell{min-width:155px;border:1px dashed rgba(255,255,255,.13);border-radius:9px;padding:6px;transition:.16s;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.lote-photo-cell.dragover{border-color:var(--gold);background:rgba(201,164,92,.09)}
+.lote-photo-cell small{font-size:8px;color:var(--muted);max-width:190px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.organizer-import-drop{margin:0 0 13px;padding:16px}.organizer-import-drop .drop-icon{width:36px;height:36px;margin-bottom:6px}.organizer-import-drop p{margin-bottom:0}
+.lote-photo-actions{display:flex;gap:4px;align-items:center}

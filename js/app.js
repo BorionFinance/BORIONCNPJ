@@ -2,7 +2,7 @@
 'use strict';
 
 const CFG = window.BORION_CONFIG || {};
-const applyBorionVersion=()=>{const badge=document.getElementById('borion_version_badge');if(badge)badge.textContent=CFG.version||'1.0.21';};
+const applyBorionVersion=()=>{const badge=document.getElementById('borion_version_badge');if(badge)badge.textContent=CFG.version||'1.0.22';};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',applyBorionVersion,{once:true});else applyBorionVersion();
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const PAGE_META = {
@@ -96,7 +96,7 @@ function wireSmartInputs(root=document){
 
 function blankState(){
   return {
-    meta:{version:CFG.version||'1.0.21',createdAt:nowISO(),updatedAt:nowISO()},
+    meta:{version:CFG.version||'1.0.22',createdAt:nowISO(),updatedAt:nowISO()},
     settings:{companyName:'Borion CNPJ',rootFolderId:'',rootFolderName:CFG.driveRootFolderName||'Borion CNPJ',autoSync:true,keepOriginals:true,warningDays:7},
     fornecedores:[],cheques:[],boletos:[],audit:[],deleted:[]
   };
@@ -830,7 +830,7 @@ const V104_LOCAL_LAST_GOOD_KEY='borion_cnpj_state_v2_last_good';
 function migrateStateV104(raw){
   const base=blankState();
   const out=Object.assign(base,raw||{});
-  out.meta={...base.meta,...(raw?.meta||{}),version:CFG.version||'1.0.21'};
+  out.meta={...base.meta,...(raw?.meta||{}),version:CFG.version||'1.0.22'};
   out.settings={...base.settings,...(raw?.settings||{})};
   out.settings.chequeAccounts=Array.isArray(out.settings.chequeAccounts)?out.settings.chequeAccounts:[];
   out.settings.autoSync=out.settings.autoSync!==false;
@@ -999,7 +999,7 @@ Drive.createSnapshot=async function(structure,prefix='AUTO'){
   const folder=await Drive.monthFolder(structure.backups,todayISO());
   const stamp=nowISO().replace(/[:.]/g,'-');
   const name=`${prefix}_${todayISO()}_${stamp}_R${Number(App.state.meta.revision||0)}.json`;
-  await Drive.uploadJson(folder,name,{app:'Borion CNPJ',version:CFG.version||'1.0.21',kind:prefix,createdAt:nowISO(),user:App.user?.email||'',state:App.state});
+  await Drive.uploadJson(folder,name,{app:'Borion CNPJ',version:CFG.version||'1.0.22',kind:prefix,createdAt:nowISO(),user:App.user?.email||'',state:App.state});
   return name;
 };
 let driveRefreshTimer=0;
@@ -1266,7 +1266,7 @@ renderBoletos=function(){
 };
 function openMobileMore(){
   const install=App.installPrompt?'<button class="mobile-menu-link" data-mobile-install>Instalar no celular <span>›</span></button>':'';
-  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="importar">Importar arquivos <span>›</span></button><button class="mobile-menu-link" data-mobile-go="backup">Backup <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.21')}</div></div>`;
+  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="importar">Importar arquivos <span>›</span></button><button class="mobile-menu-link" data-mobile-go="backup">Backup <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.22')}</div></div>`;
   const modal=openModal({title:'Mais opções',subtitle:'Ferramentas do Borion CNPJ',body});$$('[data-mobile-go]',modal).forEach(b=>b.onclick=()=>{closeModal();setPage(b.dataset.mobileGo)});$('[data-mobile-refresh]',modal)?.addEventListener('click',async()=>{closeModal();try{await Drive.pull(true,true)}catch(e){toast(e.message,'error',6500)}});$('[data-mobile-logout]',modal).onclick=()=>{closeModal();logout()};$('[data-mobile-install]',modal)?.addEventListener('click',async()=>{await installPwa();closeModal()});
 }
 async function installPwa(){if(!App.installPrompt){toast('No navegador, use “Adicionar à tela inicial”.');return}App.installPrompt.prompt();await App.installPrompt.userChoice;App.installPrompt=null;}
@@ -1277,7 +1277,7 @@ let resizeTimer=0;window.addEventListener('resize',()=>{clearTimeout(resizeTimer
 
 
 // ---------- Versão 1.0.15: sincronização transacional entre PC, celular e Drive ----------
-const V115_VERSION='1.0.21';
+const V115_VERSION='1.0.22';
 const V115_CURRENT_FILE='current.json';
 const V115_ROOT_MIRROR='BORION_CNPJ_CURRENT.json';
 const V115_PENDING_PREFIX='borion_cnpj_pending_sync_v115_';
@@ -1628,7 +1628,7 @@ function flushPendingLocalNow(){
 
 
 // ---------- Versão 1.0.16: fonte oficial real no Drive e recuperação PC/celular ----------
-const V116_VERSION='1.0.21';
+const V116_VERSION='1.0.22';
 const V116_RECOVERY_PREFIX='borion_cnpj_recovery_v116_';
 const V116_LAST_REMOTE_PREFIX='borion_cnpj_last_remote_v116_';
 
@@ -1672,7 +1672,7 @@ async function v116RecoverLocalStateIfNeeded(){
       const rows=await new Promise((resolve,reject)=>{const r=App.db.transaction('snapshots').objectStore('snapshots').getAll();r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>reject(r.error)});
       for(const item of rows.slice(-80))add(item.state);
     }
-  }catch(e){console.warn('Recuperação local v1.0.21 não conseguiu ler snapshots',e)}
+  }catch(e){console.warn('Recuperação local v1.0.22 não conseguiu ler snapshots',e)}
   candidates.sort((a,b)=>stateRecordCount(b)-stateRecordCount(a)||String(stateUpdatedAt(b)).localeCompare(String(stateUpdatedAt(a)))||Number(b.meta?.revision||0)-Number(a.meta?.revision||0));
   const best=candidates[0];if(!best||stateRecordCount(best)===0)return false;
   App.state=v116CloneState(best);v115SetPending(true);await saveLocal('recuperacao-local-v116',false);return true;
@@ -1845,7 +1845,7 @@ Drive.login=async function(){
     const pulled=await this.pull(false,true);
     if(pulled?.needsPush||v115Pending()||v116PendingAttachmentCount(App.state)>0){
       showAccountLoading(true,'Confirmando os cheques no Google Drive');
-      try{await this.sync()}catch(e){console.error('Sincronização inicial v1.0.21',e)}
+      try{await this.sync()}catch(e){console.error('Sincronização inicial v1.0.22',e)}
     }
     showAccountLoading(false);showApp();startDriveRefreshLoop();
     if(v115Pending())updateSyncUI('error','Pendente no Drive','Clique em atualizar para tentar novamente');
@@ -1857,11 +1857,11 @@ Drive.login=async function(){
 };
 
 
-// ---------- Versão 1.0.21: descoberta automática da base real e recuperação segura ----------
+// ---------- Versão 1.0.22: descoberta automática da base real e recuperação segura ----------
 // O ID configurado passa a ser apenas uma preferência. O aplicativo procura a base válida,
 // inclusive quando existem pastas Sistema/Dados duplicadas, e nunca escolhe uma pasta vazia
 // apenas porque ela foi modificada mais recentemente.
-const V118_VERSION='1.0.21';
+const V118_VERSION='1.0.22';
 const V118_PREFERRED_ROOT_ID=String(CFG.driveRootFolderId||'').trim();
 const V118_ROOT_MIRROR='BORION_CNPJ_CURRENT.json';
 const V118_FOLDER_MIME='application/vnd.google-apps.folder';
@@ -2229,8 +2229,8 @@ renderCheques=function(){
 };
 
 
-// ---------- Versão 1.0.21: leitura binária correta, token estável e descoberta enxuta ----------
-const V119_VERSION='1.0.21';
+// ---------- Versão 1.0.22: leitura binária correta, token estável e descoberta enxuta ----------
+const V119_VERSION='1.0.22';
 const V119_EXACT_DATA_NAMES=['current.json','BORION_CNPJ_CURRENT.json','dados.json','borion-cnpj-dados.json','current.json.borion'];
 const V119_MAX_GLOBAL_READS=40;
 const V119_MAX_FILE_BYTES=12*1024*1024;
@@ -2251,7 +2251,7 @@ async function v119MapLimit(items,limit,task){
   return out;
 }
 
-/* CORREÇÃO PRINCIPAL 1.0.21
+/* CORREÇÃO PRINCIPAL 1.0.22
    Drive.api devolvia res.json() sempre que o Content-Type era application/json.
    Como o current.json é gravado justamente com mimeType application/json, o alt=media
    voltava um OBJETO já convertido e o TextDecoder().decode(objeto) estourava TypeError.
@@ -2610,7 +2610,7 @@ window.Borion={
 };
 
 
-// ---------- Versão 1.0.21: ordenação por coluna, visão geral enxuta e menu reorganizado ----------
+// ---------- Versão 1.0.22: ordenação por coluna, visão geral enxuta e menu reorganizado ----------
 const V120_COLLATOR=new Intl.Collator('pt-BR',{numeric:true,sensitivity:'base'});
 App.sort=App.sort||{cheques:{key:'',dir:0},fornecedor:{key:'',dir:0}};
 
@@ -2926,7 +2926,7 @@ renderConfig=function(){
 /* ----- Menu do celular sem Backup e Importar soltos ----- */
 openMobileMore=function(){
   const install=App.installPrompt?'<button class="mobile-menu-link" data-mobile-install>Instalar no celular <span>›</span></button>':'';
-  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-force>Forçar salvamento <span>⇧</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.21')}</div></div>`;
+  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-force>Forçar salvamento <span>⇧</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.22')}</div></div>`;
   const modal=openModal({title:'Mais opções',subtitle:'Ferramentas do Borion CNPJ',body});
   $$('[data-mobile-go]',modal).forEach(b=>b.onclick=()=>{closeModal();setPage(b.dataset.mobileGo)});
   $('[data-mobile-refresh]',modal)?.addEventListener('click',async()=>{closeModal();try{await Drive.pull(true,true)}catch(e){toast(e.message,'error',6500)}});
@@ -2939,7 +2939,209 @@ openMobileMore=function(){
 if(!App.filters.chequeMonth)App.filters.chequeMonth=todayISO().slice(0,7);
 
 
-// ---------- Versão 1.0.21: visão geral só de cheques emitidos e faixa de mês no topo ----------
+
+// ---------- Versão 1.0.22: fotos de cheques persistentes, lote com anexos e drag-and-drop real ----------
+function v122IsImageFile(file){
+  if(!file)return false;
+  return String(file.type||'').startsWith('image/')||/\.(jpe?g|png|webp|heic|heif|bmp|gif|tiff?)$/i.test(String(file.name||''));
+}
+function v122IsChequeAttachment(file){
+  if(!file)return false;
+  return v122IsImageFile(file)||String(file.type||'')==='application/pdf'||/\.pdf$/i.test(String(file.name||''));
+}
+function v122TempFile(file,role='documento'){
+  return {file,url:URL.createObjectURL(file),role};
+}
+function v122NextChequeRole(record,temp=[]){
+  const roles=[...(record?.attachments||[]).map(a=>a.role),...temp.map(a=>a.role)];
+  if(!roles.includes('frente'))return'frente';
+  if(!roles.includes('verso'))return'verso';
+  return'documento';
+}
+
+// O drop de anexos passa a aceitar também arquivos com MIME vazio e impede o navegador de "engolir" o drop.
+wireDropZone=function(modal,onFiles){
+  const zone=$('[data-drop-zone]',modal),input=$('[data-files]',modal),pick=$('[data-pick-files]',modal);
+  if(!zone||!input||!pick)return;
+  const send=files=>{const list=Array.from(files||[]);if(list.length)onFiles(list)};
+  pick.onclick=()=>{input.value='';input.click()};
+  input.onchange=()=>send(input.files);
+  ['dragenter','dragover'].forEach(ev=>zone.addEventListener(ev,e=>{e.preventDefault();e.stopPropagation();zone.classList.add('drag');if(e.dataTransfer)e.dataTransfer.dropEffect='copy'}));
+  ['dragleave','dragend'].forEach(ev=>zone.addEventListener(ev,e=>{e.preventDefault();zone.classList.remove('drag')}));
+  zone.addEventListener('drop',e=>{e.preventDefault();e.stopPropagation();zone.classList.remove('drag');send(e.dataTransfer?.files)});
+};
+
+// Edição individual: anexa primeiro, confirma no armazenamento local e somente depois fecha a janela.
+openCheque=function(id=''){
+  const existing=id?active(App.state.cheques).find(x=>x.id===id):null;
+  const x=existing||{tipo:'Emitido',status:'Em aberto',dataEmissao:todayISO(),dataBom:todayISO(),valor:'',attachments:[],contaId:''};
+  const temp=[],removed=[];
+  const body=`<div class="form-grid cols-3">${selectField('tipo','Tipo',['Emitido','Recebido'],x.tipo)}${field('numero','Número do cheque',x.numero||'')}${field('valor','Valor',x.valor||'')}${supplierOptions(x.fornecedorId||'')}${field('pessoa','Nome livre (opcional)',x.pessoa||'')}${field('cpfCnpj','CPF/CNPJ',x.cpfCnpj||'')}${chequeAccountSelectField('contaId','Conta de cheque',x.contaId||'')}${field('cmc7','CMC7',x.cmc7||'')}${field('dataEmissao','Data de emissão/recebimento',x.dataEmissao||todayISO(),'date')}${field('dataBom','Bom para / vencimento',x.dataBom||todayISO(),'date')}${field('dataCompensacao','Data de compensação',x.dataCompensacao||'','date')}${selectField('status','Status',['Em preparação','Emitido','Entregue','Em aberto','Compensado','Devolvido','Reapresentado','Cancelado'],x.status)}${field('lote','Lote',x.lote||'')}${textArea('observacoes','Observações',x.observacoes||'')}${existingAttachmentsHtml(x)}${attachmentDropHtml('image/*,.pdf')}</div>`;
+  const modal=openModal({
+    title:existing?'Editar cheque':'Novo cheque',
+    subtitle:'Fotos e PDFs são salvos neste aparelho antes da sincronização com o Google Drive.',
+    body,saveLabel:existing?'Salvar alterações':'Cadastrar cheque',
+    onSave:async modal=>{
+      const v=formDataObj(modal);
+      if(!v.numero.trim())throw new Error('Informe o número do cheque.');
+      if(v.cpfCnpj&&!docValid(v.cpfCnpj))throw new Error('CPF/CNPJ inválido.');
+      const dup=active(App.state.cheques).find(c=>c.id!==existing?.id&&normalize(c.numero)===normalize(v.numero)&&String(c.contaId||'')===String(v.contaId||''));
+      if(dup&&!confirm(`Já existe o cheque ${dup.numero}. Deseja salvar mesmo assim?`))return;
+      const item=existing||{id:uid(),createdAt:nowISO(),attachments:[]};
+      Object.assign(item,v,{valor:Number(v.valor)||0,contaId:v.contaId||''});
+      delete item.banco;delete item.agencia;delete item.conta;
+      item.attachments=(item.attachments||[]).filter(a=>!removed.some(r=>r.id===a.id));
+      for(const r of removed){
+        try{await deleteAttachmentLocal(r.id)}catch{}
+        if(r.driveFileId&&App.drive.connected)Drive.deleteFile(r.driveFileId).catch(()=>{});
+      }
+      await attachFiles(item,temp,'frente');
+      recordTouch(item);
+      if(!existing)App.state.cheques.push(item);
+      logAudit(existing?'Cheque atualizado':'Cheque cadastrado',`${item.numero} · ${brl(item.valor)} · ${(item.attachments||[]).length} anexo(s)`,'Cheque',item.id);
+      await saveLocal(existing?'cheque-editado-com-foto-v122':'cheque-cadastrado-com-foto-v122');
+      if(App.drive.connected)scheduleSync();
+      closeModal();renderAll();
+      toast(`Cheque salvo${(item.attachments||[]).length?` com ${(item.attachments||[]).length} foto(s)/arquivo(s)`:''}.`,'ok',4200);
+    },
+    onDelete:existing?async()=>{existing.deleted=true;recordTouch(existing);logAudit('Cheque excluído',existing.numero,'Cheque',existing.id);await saveLocal('cheque-excluido-v122');if(App.drive.connected)scheduleSync();closeModal();renderAll()}:null
+  });
+  wireQuickSupplier(modal);wireExistingRemovals(modal,x,removed);
+  const queueFiles=files=>{
+    const valid=Array.from(files||[]).filter(v122IsChequeAttachment);
+    for(const file of valid)temp.push(v122TempFile(file,v122NextChequeRole(x,temp)));
+    renderTempFiles(modal,temp);
+    const p=$('[data-scan-progress]',modal);
+    if(valid.length&&p){p.hidden=false;p.innerHTML=`${valid.length} arquivo(s) pronto(s) para salvar. <button type="button" class="action-btn" data-scan-now>Ler primeiro arquivo</button>`;const b=$('[data-scan-now]',modal);if(b)b.onclick=()=>scanIntoForm(modal,temp[0].file,'cheque').catch(e=>toast(e.message,'error',6000))}
+    if(!valid.length&&files?.length)toast('Use uma foto (JPG/PNG/WEBP/HEIC etc.) ou PDF.','error',5000);
+  };
+  wireDropZone(modal,queueFiles);
+};
+
+// Lote: cada cheque pode receber frente/verso antes de ser criado, por seleção ou arrastando do Windows.
+openLote=function(){
+  let rows=[];
+  const body=`<div class="form-grid cols-3">${selectField('tipo','Tipo',['Emitido','Recebido'],'Emitido')}${field('primeiroNumero','Primeiro número','SU 105120','','required')}${field('quantidade','Quantidade','5','number','min="1" max="120"')}${supplierOptions('')}${chequeAccountSelectField('contaId','Conta de cheque','')}${field('valor','Valor padrão','')}${field('dataBase','Data base',todayISO(),'date')}${field('prazos','Prazos em dias','30, 45, 60','text','full')}${field('nomeLote','Nome do lote','Lote '+new Date().toLocaleDateString('pt-BR'),'text','full')}${textArea('observacoes','Observações','')}</div><div class="field-help lote-photo-help">Cada linha aceita fotos. Clique em <b>＋ Foto</b> ou arraste a frente/verso diretamente sobre a coluna Fotos.</div><div class="lote-actions"><button type="button" class="btn btn-outline btn-sm" data-lote-regerar>Regerar grade</button><button type="button" class="btn btn-outline btn-sm" data-lote-add>Adicionar linha</button><span class="muted" data-lote-total></span></div><div class="table-wrap lote-grid"><table><thead><tr><th>Número</th><th>Prazo</th><th>Data</th><th>Valor</th><th>Fotos</th><th></th></tr></thead><tbody data-lote-rows></tbody></table></div>`;
+  const modal=openModal({
+    title:'Gerar cheques em lote',subtitle:'Crie o lote já com as fotos vinculadas a cada cheque.',body,size:'large',saveLabel:'Gerar cheques confirmados',
+    onSave:async modal=>{
+      syncRowsFromDom();
+      const v=formDataObj(modal),current=rows.filter(r=>String(r.numero||'').trim());
+      if(!current.length)throw new Error('A grade está vazia.');
+      const nums=current.map(r=>normalize(r.numero));if(new Set(nums).size!==nums.length)throw new Error('Existem números repetidos na grade.');
+      const existingNumbers=new Set(active(App.state.cheques).map(c=>normalize(c.numero))),found=current.find(r=>existingNumbers.has(normalize(r.numero)));
+      if(found&&!confirm(`O cheque ${found.numero} já existe. Continuar mesmo assim?`))return;
+      const staged=[];
+      for(const r of current){
+        const item={id:uid(),tipo:v.tipo,status:'Em aberto',numero:r.numero,fornecedorId:v.fornecedorId,pessoa:'',cpfCnpj:'',contaId:v.contaId||'',valor:Number(r.valor)||0,dataEmissao:v.dataBase,dataBom:r.data,lote:v.nomeLote,observacoes:v.observacoes,attachments:[],createdAt:nowISO()};
+        await attachFiles(item,r.files||[],'frente');recordTouch(item);staged.push(item);
+      }
+      App.state.cheques.push(...staged);
+      const photoCount=staged.reduce((n,c)=>n+(c.attachments||[]).length,0);
+      logAudit('Lote de cheques criado',`${staged.length} cheques · ${photoCount} foto(s) · ${v.nomeLote}`,'Lote','');
+      await saveLocal('lote-de-cheques-com-fotos-v122');if(App.drive.connected)scheduleSync();
+      closeModal();App.chequeTab=v.tipo==='Emitido'?'emitidos':'recebidos';setPage('cheques');
+      toast(`${staged.length} cheques salvos${photoCount?` com ${photoCount} foto(s) vinculada(s)`:''}.`,'ok',5000);
+    }
+  });
+  wireQuickSupplier(modal);
+  const syncRowsFromDom=()=>{
+    $$('[data-lote-row]',modal).forEach((tr,i)=>{if(!rows[i])return;rows[i].numero=$('[data-r-numero]',tr)?.value.trim()||'';rows[i].prazo=Number($('[data-r-prazo]',tr)?.value)||0;rows[i].data=$('[data-r-data]',tr)?.value||todayISO();rows[i].valor=moneyInputNumber($('[data-r-valor]',tr)?.value)});
+  };
+  const addFilesToRow=(index,files)=>{
+    syncRowsFromDom();const row=rows[index];if(!row)return;row.files=row.files||[];
+    const valid=Array.from(files||[]).filter(v122IsImageFile);
+    for(const file of valid){const roles=row.files.map(x=>x.role),role=!roles.includes('frente')?'frente':!roles.includes('verso')?'verso':'documento';row.files.push(v122TempFile(file,role))}
+    if(!valid.length&&files?.length)toast('Solte uma foto válida do cheque.','error',4500);
+    renderRows();
+  };
+  const renderRows=()=>{
+    const tbody=$('[data-lote-rows]',modal);
+    tbody.innerHTML=rows.map((r,i)=>{const files=r.files||[],names=files.slice(0,2).map(x=>`${x.role}: ${x.file.name}`).join(' · ');return`<tr data-lote-row><td><input data-r-numero value="${esc(r.numero)}"></td><td><input data-r-prazo type="number" value="${r.prazo}"></td><td><input data-r-data type="date" value="${esc(r.data)}"></td><td><div class="money-field compact"><span>R$</span><input data-r-valor data-money inputmode="numeric" value="${esc(moneyDisplay(r.valor))}"></div></td><td><div class="lote-photo-cell" data-lote-photo-drop="${i}"><div class="lote-photo-actions"><button type="button" class="action-btn" data-lote-photo-pick="${i}">＋ Foto</button>${files.length?`<button type="button" class="action-btn" data-lote-photo-clear="${i}">Limpar</button>`:''}</div><input type="file" accept="image/*" multiple hidden data-lote-photo-input="${i}"><small>${files.length?`${files.length} foto(s) · ${esc(names)}`:'Arraste aqui'}</small></div></td><td><button type="button" class="action-btn" data-r-remove="${i}">Excluir</button></td></tr>`}).join('');
+    wireSmartInputs(tbody);
+    $$('[data-r-remove]',tbody).forEach(b=>b.onclick=()=>{syncRowsFromDom();const i=Number(b.dataset.rRemove);for(const f of rows[i]?.files||[])try{URL.revokeObjectURL(f.url)}catch{}rows.splice(i,1);renderRows()});
+    $$('[data-lote-photo-pick]',tbody).forEach(b=>b.onclick=()=>{const input=$(`[data-lote-photo-input="${b.dataset.lotePhotoPick}"]`,tbody);if(input){input.value='';input.click()}});
+    $$('[data-lote-photo-input]',tbody).forEach(input=>input.onchange=()=>addFilesToRow(Number(input.dataset.lotePhotoInput),input.files));
+    $$('[data-lote-photo-clear]',tbody).forEach(b=>b.onclick=()=>{syncRowsFromDom();const row=rows[Number(b.dataset.lotePhotoClear)];for(const f of row?.files||[])try{URL.revokeObjectURL(f.url)}catch{}if(row)row.files=[];renderRows()});
+    $$('[data-lote-photo-drop]',tbody).forEach(cell=>{
+      cell.addEventListener('dragover',e=>{e.preventDefault();e.stopPropagation();cell.classList.add('dragover');if(e.dataTransfer)e.dataTransfer.dropEffect='copy'});
+      cell.addEventListener('dragleave',()=>cell.classList.remove('dragover'));
+      cell.addEventListener('drop',e=>{e.preventDefault();e.stopPropagation();cell.classList.remove('dragover');addFilesToRow(Number(cell.dataset.lotePhotoDrop),e.dataTransfer?.files)});
+    });
+    const totalPhotos=rows.reduce((n,r)=>n+(r.files||[]).length,0);
+    $('[data-lote-total]',modal).textContent=`${rows.length} cheque(s) · ${brl(rows.reduce((s,r)=>s+Number(r.valor||0),0))}${totalPhotos?` · ${totalPhotos} foto(s)`:''}`;
+  };
+  const regenerate=()=>{
+    syncRowsFromDom();
+    const oldRows=rows.slice(),oldByNumber=new Map(rows.map(r=>[normalize(r.numero),r.files||[]]));
+    const v=formDataObj(modal),q=Math.max(1,Math.min(120,Number(v.quantidade)||1)),nums=parseChequeSequence(v.primeiroNumero,q),ds=parseDaySequence(v.prazos,q);
+    rows=nums.map((numero,i)=>({numero,prazo:ds[i],data:addDays(v.dataBase,ds[i]),valor:Number(v.valor)||0,files:oldByNumber.get(normalize(numero))||oldRows[i]?.files||[]}));renderRows();
+  };
+  $('[data-lote-regerar]',modal).onclick=regenerate;
+  $('[data-lote-add]',modal).onclick=()=>{syncRowsFromDom();const last=rows[rows.length-1]||{numero:'',prazo:0,data:todayISO(),valor:0};let numero=last.numero;try{numero=parseChequeSequence(last.numero,2)[1]}catch{}rows.push({numero,prazo:last.prazo+30,data:addDays(last.data,30),valor:last.valor,files:[]});renderRows()};
+  regenerate();
+};
+
+// Organizador em massa: aceita soltar arquivos diretamente do Explorer e também diretamente em frente/verso.
+Organizer.addFiles=async function(files){
+  const added=[];
+  for(const file of Array.from(files||[]).filter(v122IsImageFile)){
+    let hash='';try{hash=await sha256Hex(file)}catch{}
+    if(hash&&this.hashes.has(hash)){toast(`Foto duplicada ignorada: ${file.name}`,'error',3500);continue}
+    const id=uid();if(hash)this.hashes.set(hash,id);this.photos.set(id,{id,file,url:URL.createObjectURL(file),text:'',confidence:0,rotation:0,hash});added.push(id);
+  }
+  this.autoByFilename();this.render();return added;
+};
+Organizer.open=async function(){
+  this.photos.clear();this.assignments.clear();this.confirmed.clear();this.hashes.clear();
+  this.cheques=active(App.state.cheques).filter(x=>!['Compensado','Cancelado'].includes(x.status)).sort((a,b)=>String(a.numero).localeCompare(String(b.numero),'pt-BR',{numeric:true}));
+  if(!this.cheques.length){toast('Crie primeiro os cheques do lote.','error');return}
+  const body=`<div class="page-toolbar"><div class="toolbar-left"><button class="btn btn-primary" data-org-pick>Selecionar fotos</button><button class="btn btn-outline" data-org-analyze>Analisar OCR</button><button class="btn btn-outline" data-org-confirm-all>Confirmar todos associados</button></div><div class="toolbar-right"><span class="muted" data-org-status>Nenhuma foto selecionada</span></div></div><input type="file" data-org-files accept="image/*" multiple hidden><div class="drop-zone organizer-import-drop" data-org-file-drop><div class="drop-icon">⇧</div><b>Arraste as fotos do Windows para cá</b><p>Elas entram imediatamente no organizador. Você também pode soltar uma foto direto no campo Frente ou Verso de um cheque.</p></div><div class="organizer"><div class="unmatched" data-unmatched><h3>Fotos ainda não vinculadas</h3><div class="organizer-list" data-unmatched-list></div></div><div class="cheque-slots" data-cheque-slots></div></div>`;
+  this.modal=openModal({title:'Organizar fotos dos cheques',subtitle:'Arraste, associe, leia por OCR e salve os vínculos.',body,size:'large',saveLabel:'Salvar fotos vinculadas',onSave:()=>this.save()});
+  const input=$('[data-org-files]',this.modal),drop=$('[data-org-file-drop]',this.modal);
+  $('[data-org-pick]',this.modal).onclick=()=>{input.value='';input.click()};input.onchange=()=>this.addFiles(input.files);
+  $('[data-org-analyze]',this.modal).onclick=()=>this.analyze();
+  $('[data-org-confirm-all]',this.modal).onclick=()=>{for(const c of this.cheques){if([...this.assignments.values()].some(a=>a.chequeId===c.id))this.confirmed.add(c.id)}this.render()};
+  ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();e.stopPropagation();drop.classList.add('drag');if(e.dataTransfer)e.dataTransfer.dropEffect='copy'}));
+  ['dragleave','dragend'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('drag')}));
+  drop.addEventListener('drop',async e=>{e.preventDefault();e.stopPropagation();drop.classList.remove('drag');const ids=await this.addFiles(e.dataTransfer?.files);if(ids.length)toast(`${ids.length} foto(s) adicionada(s). Você pode analisar por OCR ou arrastar para o cheque.`,'ok',4200)});
+  this.render();
+};
+Organizer.wireDrag=function(){
+  $$('[data-photo-id]',this.modal).forEach(el=>el.addEventListener('dragstart',e=>{this.dragId=el.dataset.photoId;e.dataTransfer.setData('text/plain',this.dragId);e.dataTransfer.effectAllowed='move'}));
+  $$('[data-slot-cheque]',this.modal).forEach(slot=>{
+    slot.addEventListener('dragover',e=>{e.preventDefault();e.stopPropagation();slot.classList.add('dragover');if(e.dataTransfer)e.dataTransfer.dropEffect=e.dataTransfer.files?.length?'copy':'move'});
+    slot.addEventListener('dragleave',()=>slot.classList.remove('dragover'));
+    slot.addEventListener('drop',async e=>{
+      e.preventDefault();e.stopPropagation();slot.classList.remove('dragover');const chequeId=slot.dataset.slotCheque,role=slot.dataset.slotRole;
+      if(e.dataTransfer?.files?.length){
+        const ids=await this.addFiles(e.dataTransfer.files);ids.forEach((id,i)=>this.assignments.set(id,{chequeId,role:i===0?role:this.firstEmptyRole(chequeId)}));this.confirmed.add(chequeId);this.render();return;
+      }
+      const id=e.dataTransfer?.getData('text/plain')||this.dragId;if(id){this.assignments.set(id,{chequeId,role});this.confirmed.add(chequeId);this.render()}
+    });
+  });
+  const un=$('[data-unmatched]',this.modal);if(un){un.addEventListener('dragover',e=>{e.preventDefault();if(e.dataTransfer)e.dataTransfer.dropEffect=e.dataTransfer.files?.length?'copy':'move'});un.addEventListener('drop',async e=>{e.preventDefault();e.stopPropagation();if(e.dataTransfer?.files?.length){await this.addFiles(e.dataTransfer.files);return}const id=e.dataTransfer?.getData('text/plain')||this.dragId;if(id)this.unassign(id)})}
+};
+Organizer.save=async function(){
+  if(!this.assignments.size)throw new Error('Associe pelo menos uma foto a um cheque.');
+  const targetChequeIds=this.confirmed.size?new Set(this.confirmed):new Set([...this.assignments.values()].map(a=>a.chequeId));
+  let saved=0;
+  for(const [photoId,a] of this.assignments){
+    if(!targetChequeIds.has(a.chequeId))continue;
+    const p=this.photos.get(photoId),ch=this.cheques.find(x=>x.id===a.chequeId);if(!p||!ch)continue;
+    const meta=await storeAttachment(p.file);meta.role=a.role;ch.attachments=ch.attachments||[];
+    const old=ch.attachments.find(x=>x.role===a.role);if(old)old.role='documento';ch.attachments.push(meta);recordTouch(ch);saved++;
+    try{URL.revokeObjectURL(p.url)}catch{}
+  }
+  for(const chId of targetChequeIds)logAudit('Fotos do cheque vinculadas','Frente/verso salvos localmente','Cheque',chId);
+  await saveLocal('fotos-em-massa-v122');if(App.drive.connected)scheduleSync();
+  closeModal();renderAll();toast(`${saved} foto(s) vinculada(s) e salvas. Sincronização com o Drive iniciada.`,'ok',5000);
+};
+
+Object.assign(window.Borion,{newCheque:()=>openCheque(),editCheque:openCheque,newLote:openLote,organizePhotos:()=>Organizer.open()});
+
+
+// ---------- Versão 1.0.22: visão geral só de cheques emitidos e faixa de mês no topo ----------
 function v121DashboardStrip(){
   const picked=App.dashboardDates;
   const sub=picked.length
