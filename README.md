@@ -1,10 +1,19 @@
-# BORION CNPJ 1.0.18
+# BORION CNPJ 1.0.25
 
 Sistema web/PWA para Cheques, Boletos e Fornecedores, com Google Drive como fonte compartilhada entre computador e celular.
 
+
+## Novidades da 1.0.25
+
+- Conciliação bancária de cheques por extrato disponível no navegador desktop, com etapa de análise e conferência antes de aplicar qualquer mudança.
+- Reconhecimento de compensações, devoluções e reapresentações, com histórico/auditoria e proteção contra eventos duplicados.
+- Regularização financeira e recuperação física de cheque devolvido são controles independentes.
+- Ao salvar um cheque no meio de uma lista longa, a tela retorna à mesma posição em vez de saltar para o topo.
+- O importador de extrato não é disponibilizado no modo PWA instalado.
+
 ## Sincronização e recuperação
 
-A versão 1.0.18 não depende mais de um único ID fixo. Ao entrar com o Google, o aplicativo:
+A base atual mantém o mecanismo de recuperação que não depende mais de um único ID fixo. Ao entrar com o Google, o aplicativo:
 
 1. verifica IDs conhecidos apenas como preferência;
 2. procura todas as pastas `Borion CNPJ` acessíveis;

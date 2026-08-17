@@ -9,7 +9,7 @@
 <link rel="shortcut icon" href="borion-cnpj-v111.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="borion-cnpj-v111-favicon-32.png">
 <link rel="apple-touch-icon" href="borion-cnpj-v111-apple-touch-icon.png">
-<link rel="manifest" href="manifest.webmanifest?v=1.0.24">
+<link rel="manifest" href="manifest.webmanifest?v=1.0.25">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -21,10 +21,10 @@
   }catch(e){document.documentElement.setAttribute('data-theme','dark');}
 })();
 </script>
-<link rel="preload" href="css/borion-7.6.2.css?v=1.0.24" as="style">
+<link rel="preload" href="css/borion-7.6.2.css?v=1.0.25" as="style">
 <link rel="preload" href="borion-cnpj-v111-emblem.png" as="image" type="image/png">
-<link rel="stylesheet" href="css/borion-7.6.2.css?v=1.0.24">
-<link rel="stylesheet" href="css/cnpj.css?v=1.0.24">
+<link rel="stylesheet" href="css/borion-7.6.2.css?v=1.0.25">
+<link rel="stylesheet" href="css/cnpj.css?v=1.0.25">
 </head>
 <body class="borion-intro-active">
 
@@ -50,7 +50,7 @@
 })();
 </script>
 
-<div id="borion_version_badge" aria-label="Versão do Borion CNPJ">1.0.24</div>
+<div id="borion_version_badge" aria-label="Versão do Borion CNPJ">1.0.25</div>
 
 <div id="desktop-warning" class="desktop-warning" hidden>
   <img src="borion-cnpj-v111-emblem.png" alt="Borion CNPJ">
@@ -105,6 +105,7 @@
     <nav id="nav" class="sb-nav" aria-label="Menu principal">
       <button class="sb-item active" data-page="dashboard"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1"/><path d="M5 16h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1"/><path d="M15 12h4a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1"/><path d="M15 4h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1"/></svg></span><span class="sb-label">Visão geral</span></button>
       <button class="sb-item" data-page="cheques"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="10" rx="2"/><path d="M7 11h6M7 14h4M15.5 12l1.5 1.5 3-3"/></svg></span><span class="sb-label">Cheques</span></button>
+      <button class="sb-item" data-page="conciliacao" hidden><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16M6 9V6l6-3 6 3v3M6 19h12M7 9v8M11 9v8M15 9v8M19 9v8"/></svg></span><span class="sb-label">Conciliação</span></button>
       <button class="sb-item" data-page="boletos"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h3"/><path d="M15 14v4M17 14v4M19 14v4"/></svg></span><span class="sb-label">Boletos</span></button>
       <button class="sb-item" data-page="fornecedores"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M17 13a3 3 0 1 0 0-6"/><path d="M3 21v-2a6 6 0 0 1 12 0v2M15 15a5 5 0 0 1 6 4v2"/></svg></span><span class="sb-label">Fornecedores</span></button>
       <button class="sb-item" data-page="alertas"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5a2 2 0 1 1 4 0 7 7 0 0 1 4 6v3l2 3H4l2-3v-3a7 7 0 0 1 4-6M9 21h6"/></svg></span><span class="sb-label">Alertas</span><em id="alert-count" hidden>0</em></button>
@@ -149,6 +150,7 @@
 
     <section id="page-dashboard" class="page active"></section>
     <section id="page-cheques" class="page"></section>
+    <section id="page-conciliacao" class="page"></section>
     <section id="page-boletos" class="page"></section>
     <section id="page-fornecedores" class="page"></section>
     <section id="page-alertas" class="page"></section>
@@ -162,12 +164,12 @@
 <div id="toast-root"></div>
 <input id="hidden-file-input" type="file" hidden multiple>
 
-<script src="js/config.js?v=1.0.24"></script>
+<script src="js/config.js?v=1.0.25"></script>
 <script src="vendor/tesseract/tesseract.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="js/app.js?v=1.0.24"></script>
+<script src="js/app.js?v=1.0.25"></script>
 <script>
 // Limpeza única das versões antigas do PWA. Não apaga dados locais nem login.
 (async()=>{
@@ -175,7 +177,7 @@
     const key='borion_cnpj_cache_migration_1_0_17';
     if(!localStorage.getItem(key)){
       const names=await caches.keys();
-      await Promise.all(names.filter(name=>name.startsWith('borion-cnpj-v')&&name!=='borion-cnpj-v1.0.24').map(name=>caches.delete(name)));
+      await Promise.all(names.filter(name=>name.startsWith('borion-cnpj-v')&&name!=='borion-cnpj-v1.0.25').map(name=>caches.delete(name)));
       localStorage.setItem(key,'1');
     }
   }catch(e){console.warn('Limpeza de cache antigo',e)}
@@ -184,7 +186,7 @@
 if('serviceWorker' in navigator){
   window.addEventListener('load',async()=>{
     try{
-      const reg=await navigator.serviceWorker.register('./service-worker.js?v=1.0.24',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./service-worker.js?v=1.0.25',{updateViaCache:'none'});
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
       reg.addEventListener('updatefound',()=>{
         const worker=reg.installing;
@@ -196,7 +198,7 @@ if('serviceWorker' in navigator){
         if(!sessionStorage.getItem(reloadKey)){sessionStorage.setItem(reloadKey,'1');location.reload();}
       });
       navigator.serviceWorker.addEventListener('message',event=>{
-        if(event.data?.type==='BORION_SW_ACTIVATED'&&event.data.version==='1.0.24'&&!sessionStorage.getItem(reloadKey)){
+        if(event.data?.type==='BORION_SW_ACTIVATED'&&event.data.version==='1.0.25'&&!sessionStorage.getItem(reloadKey)){
           sessionStorage.setItem(reloadKey,'1');location.reload();
         }
       });

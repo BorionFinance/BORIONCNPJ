@@ -2,7 +2,7 @@
 'use strict';
 
 const CFG = window.BORION_CONFIG || {};
-const applyBorionVersion=()=>{const badge=document.getElementById('borion_version_badge');if(badge)badge.textContent=CFG.version||'1.0.24';};
+const applyBorionVersion=()=>{const badge=document.getElementById('borion_version_badge');if(badge)badge.textContent=CFG.version||'1.0.25';};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',applyBorionVersion,{once:true});else applyBorionVersion();
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const PAGE_META = {
@@ -96,9 +96,9 @@ function wireSmartInputs(root=document){
 
 function blankState(){
   return {
-    meta:{version:CFG.version||'1.0.24',createdAt:nowISO(),updatedAt:nowISO()},
+    meta:{version:CFG.version||'1.0.25',createdAt:nowISO(),updatedAt:nowISO()},
     settings:{companyName:'Borion CNPJ',rootFolderId:'',rootFolderName:CFG.driveRootFolderName||'Borion CNPJ',autoSync:true,keepOriginals:true,warningDays:7},
-    fornecedores:[],cheques:[],boletos:[],audit:[],deleted:[]
+    fornecedores:[],cheques:[],boletos:[],conciliacoes:[],audit:[],deleted:[]
   };
 }
 
@@ -280,7 +280,7 @@ const Drive = {
   },
   mergeState(local,remote){
     const merged=blankState(); merged.settings={...remote.settings,...local.settings};
-    for(const key of ['fornecedores','cheques','boletos']){
+    for(const key of ['fornecedores','cheques','boletos','conciliacoes']){
       const map=new Map();
       for(const item of [...(remote[key]||[]),...(local[key]||[])]){
         const prev=map.get(item.id); if(!prev || String(item.updatedAt||'')>=String(prev.updatedAt||'')) map.set(item.id,item);
@@ -497,8 +497,8 @@ function setPage(page){
   const meta=PAGE_META[page]||PAGE_META.dashboard;$('#page-title').textContent=meta[0];$('#page-subtitle').textContent=meta[1]; renderPage(page);
   const calBtn=$('#btn-dashboard-calendar');if(calBtn){calBtn.hidden=page!=='dashboard';calBtn.classList.toggle('has-date',page==='dashboard'&&!!App.dashboardDate)}
 }
-function renderAll(){ renderDashboard();renderCheques();renderBoletos();renderFornecedores();renderAlertas();renderImport();renderBackup();renderConfig(); }
-function renderPage(page){ ({dashboard:renderDashboard,cheques:renderCheques,boletos:renderBoletos,fornecedores:renderFornecedores,alertas:renderAlertas,importar:renderImport,backup:renderBackup,config:renderConfig}[page]||renderDashboard)(); }
+function renderAll(){ renderDashboard();renderCheques();renderBoletos();renderFornecedores();renderAlertas();renderImport();renderBackup();renderConfig();renderConciliacao(); }
+function renderPage(page){ ({dashboard:renderDashboard,cheques:renderCheques,boletos:renderBoletos,fornecedores:renderFornecedores,alertas:renderAlertas,importar:renderImport,backup:renderBackup,config:renderConfig,conciliacao:renderConciliacao}[page]||renderDashboard)(); }
 function upcomingRecords(){
   const arr=[];
   active(App.state.cheques).filter(x=>!['Compensado','Cancelado'].includes(x.status)).forEach(x=>x.dataBom&&arr.push({type:'Cheque',id:x.id,title:x.numero||'Sem número',party:supplierById(x.fornecedorId)?.nome||x.pessoa||'—',date:x.dataBom,value:x.valor,status:x.status}));
@@ -830,7 +830,7 @@ const V104_LOCAL_LAST_GOOD_KEY='borion_cnpj_state_v2_last_good';
 function migrateStateV104(raw){
   const base=blankState();
   const out=Object.assign(base,raw||{});
-  out.meta={...base.meta,...(raw?.meta||{}),version:CFG.version||'1.0.24'};
+  out.meta={...base.meta,...(raw?.meta||{}),version:CFG.version||'1.0.25'};
   out.settings={...base.settings,...(raw?.settings||{})};
   out.settings.chequeAccounts=Array.isArray(out.settings.chequeAccounts)?out.settings.chequeAccounts:[];
   out.settings.autoSync=out.settings.autoSync!==false;
@@ -838,6 +838,7 @@ function migrateStateV104(raw){
   out.fornecedores=Array.isArray(out.fornecedores)?out.fornecedores:[];
   out.cheques=Array.isArray(out.cheques)?out.cheques:[];
   out.boletos=Array.isArray(out.boletos)?out.boletos:[];
+  out.conciliacoes=Array.isArray(out.conciliacoes)?out.conciliacoes:[];
   out.audit=Array.isArray(out.audit)?out.audit:[];
   out.deleted=Array.isArray(out.deleted)?out.deleted:[];
   const accounts=out.settings.chequeAccounts;
@@ -999,7 +1000,7 @@ Drive.createSnapshot=async function(structure,prefix='AUTO'){
   const folder=await Drive.monthFolder(structure.backups,todayISO());
   const stamp=nowISO().replace(/[:.]/g,'-');
   const name=`${prefix}_${todayISO()}_${stamp}_R${Number(App.state.meta.revision||0)}.json`;
-  await Drive.uploadJson(folder,name,{app:'Borion CNPJ',version:CFG.version||'1.0.24',kind:prefix,createdAt:nowISO(),user:App.user?.email||'',state:App.state});
+  await Drive.uploadJson(folder,name,{app:'Borion CNPJ',version:CFG.version||'1.0.25',kind:prefix,createdAt:nowISO(),user:App.user?.email||'',state:App.state});
   return name;
 };
 let driveRefreshTimer=0;
@@ -1266,7 +1267,7 @@ renderBoletos=function(){
 };
 function openMobileMore(){
   const install=App.installPrompt?'<button class="mobile-menu-link" data-mobile-install>Instalar no celular <span>›</span></button>':'';
-  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="importar">Importar arquivos <span>›</span></button><button class="mobile-menu-link" data-mobile-go="backup">Backup <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.24')}</div></div>`;
+  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="importar">Importar arquivos <span>›</span></button><button class="mobile-menu-link" data-mobile-go="backup">Backup <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.25')}</div></div>`;
   const modal=openModal({title:'Mais opções',subtitle:'Ferramentas do Borion CNPJ',body});$$('[data-mobile-go]',modal).forEach(b=>b.onclick=()=>{closeModal();setPage(b.dataset.mobileGo)});$('[data-mobile-refresh]',modal)?.addEventListener('click',async()=>{closeModal();try{await Drive.pull(true,true)}catch(e){toast(e.message,'error',6500)}});$('[data-mobile-logout]',modal).onclick=()=>{closeModal();logout()};$('[data-mobile-install]',modal)?.addEventListener('click',async()=>{await installPwa();closeModal()});
 }
 async function installPwa(){if(!App.installPrompt){toast('No navegador, use “Adicionar à tela inicial”.');return}App.installPrompt.prompt();await App.installPrompt.userChoice;App.installPrompt=null;}
@@ -1277,7 +1278,7 @@ let resizeTimer=0;window.addEventListener('resize',()=>{clearTimeout(resizeTimer
 
 
 // ---------- Versão 1.0.15: sincronização transacional entre PC, celular e Drive ----------
-const V115_VERSION='1.0.24';
+const V115_VERSION='1.0.25';
 const V115_CURRENT_FILE='current.json';
 const V115_ROOT_MIRROR='BORION_CNPJ_CURRENT.json';
 const V115_PENDING_PREFIX='borion_cnpj_pending_sync_v115_';
@@ -1398,6 +1399,7 @@ Drive.mergeState=function(local,remote,prefer='newest'){
   merged.fornecedores=mergeList(l.fornecedores,r.fornecedores);
   merged.cheques=mergeList(l.cheques,r.cheques);
   merged.boletos=mergeList(l.boletos,r.boletos);
+  merged.conciliacoes=mergeList(l.conciliacoes,r.conciliacoes);
   merged.settings.chequeAccounts=mergeList(l.settings.chequeAccounts||[],r.settings.chequeAccounts||[]);
   const audit=new Map();for(const a of [...(l.audit||[]),...(r.audit||[])])if(a?.id)audit.set(a.id,a);
   merged.audit=Array.from(audit.values()).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,1000);
@@ -1628,7 +1630,7 @@ function flushPendingLocalNow(){
 
 
 // ---------- Versão 1.0.16: fonte oficial real no Drive e recuperação PC/celular ----------
-const V116_VERSION='1.0.24';
+const V116_VERSION='1.0.25';
 const V116_RECOVERY_PREFIX='borion_cnpj_recovery_v116_';
 const V116_LAST_REMOTE_PREFIX='borion_cnpj_last_remote_v116_';
 
@@ -1861,7 +1863,7 @@ Drive.login=async function(){
 // O ID configurado passa a ser apenas uma preferência. O aplicativo procura a base válida,
 // inclusive quando existem pastas Sistema/Dados duplicadas, e nunca escolhe uma pasta vazia
 // apenas porque ela foi modificada mais recentemente.
-const V118_VERSION='1.0.24';
+const V118_VERSION='1.0.25';
 const V118_PREFERRED_ROOT_ID=String(CFG.driveRootFolderId||'').trim();
 const V118_ROOT_MIRROR='BORION_CNPJ_CURRENT.json';
 const V118_FOLDER_MIME='application/vnd.google-apps.folder';
@@ -2230,7 +2232,7 @@ renderCheques=function(){
 
 
 // ---------- Versão 1.0.24: leitura binária correta, token estável e descoberta enxuta ----------
-const V119_VERSION='1.0.24';
+const V119_VERSION='1.0.25';
 const V119_EXACT_DATA_NAMES=['current.json','BORION_CNPJ_CURRENT.json','dados.json','borion-cnpj-dados.json','current.json.borion'];
 const V119_MAX_GLOBAL_READS=40;
 const V119_MAX_FILE_BYTES=12*1024*1024;
@@ -2926,7 +2928,7 @@ renderConfig=function(){
 /* ----- Menu do celular sem Backup e Importar soltos ----- */
 openMobileMore=function(){
   const install=App.installPrompt?'<button class="mobile-menu-link" data-mobile-install>Instalar no celular <span>›</span></button>':'';
-  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-force>Forçar salvamento <span>⇧</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.24')}</div></div>`;
+  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-force>Forçar salvamento <span>⇧</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.25')}</div></div>`;
   const modal=openModal({title:'Mais opções',subtitle:'Ferramentas do Borion CNPJ',body});
   $$('[data-mobile-go]',modal).forEach(b=>b.onclick=()=>{closeModal();setPage(b.dataset.mobileGo)});
   $('[data-mobile-refresh]',modal)?.addEventListener('click',async()=>{closeModal();try{await Drive.pull(true,true)}catch(e){toast(e.message,'error',6500)}});
@@ -3326,7 +3328,405 @@ Organizer.save=async function(){
   for(const entry of staged)try{URL.revokeObjectURL(entry.url)}catch{}closeModal();renderAll();toast(`${saved} foto(s) vinculada(s) e confirmada(s) no armazenamento local.`,'ok',5200);
 };
 
+// ---------- Versão 1.0.25: conciliação bancária de cheques + posição da lista ----------
+const V125_VERSION='1.0.25';
+const V125_RECON_FORMATS=['ofx','csv','txt','xlsx','pdf'];
+const V125_MONTH_MAP={jan:1,janeiro:1,feb:2,fev:2,fevereiro:2,mar:3,marco:3,'março':3,apr:4,abr:4,abril:4,may:5,mai:5,maio:5,jun:6,junho:6,jul:7,julho:7,aug:8,ago:8,agosto:8,sep:9,set:9,setembro:9,oct:10,out:10,outubro:10,nov:11,novembro:11,dec:12,dez:12,dezembro:12};
+
+function v125IsInstalledPWA(){
+  return Boolean(window.matchMedia?.('(display-mode: standalone)')?.matches||window.navigator?.standalone===true);
+}
+function v125ReconciliationAvailable(){return !v125IsInstalledPWA()&&!isMobileView()}
+function v125ConfigureReconciliationAvailability(){
+  const nav=$('[data-page="conciliacao"]');
+  if(nav)nav.hidden=!v125ReconciliationAvailable();
+  if(App.page==='conciliacao'&&!v125ReconciliationAvailable())setPage('cheques');
+}
+window.matchMedia?.('(display-mode: standalone)')?.addEventListener?.('change',v125ConfigureReconciliationAvailability);
+window.addEventListener('resize',()=>{clearTimeout(App._v125ReconResize);App._v125ReconResize=setTimeout(v125ConfigureReconciliationAvailability,120)});
+
+function v125NormalizeChequeNumber(value){
+  const d=digits(value).replace(/^0+(?=\d)/,'');
+  return d||'';
+}
+function v125MoneyFromBank(value){
+  if(typeof value==='number'&&Number.isFinite(value))return value;
+  let s=String(value??'').trim().replace(/\s/g,'').replace(/R\$/gi,'');
+  if(!s)return 0;
+  let sign=1;if(s.startsWith('-')){sign=-1;s=s.slice(1)}else if(s.startsWith('+'))s=s.slice(1);
+  s=s.replace(/[^0-9.,]/g,'');
+  if(!s)return 0;
+  const comma=s.lastIndexOf(','),dot=s.lastIndexOf('.');
+  let normalized=s;
+  if(comma>=0&&dot>=0){
+    if(comma>dot)normalized=s.replace(/\./g,'').replace(',','.');
+    else normalized=s.replace(/,/g,'');
+  }else if(comma>=0){normalized=s.replace(/\./g,'').replace(',','.')}
+  else if(dot>=0){
+    const decimals=s.length-dot-1;
+    normalized=decimals===2?s:s.replace(/\./g,'');
+  }
+  const n=Number(normalized);return Number.isFinite(n)?sign*n:0;
+}
+function v125ExcelDate(value){
+  const n=Number(value);if(!Number.isFinite(n)||n<20000||n>90000)return '';
+  const utc=Math.round((n-25569)*86400*1000);const d=new Date(utc);return Number.isNaN(d.getTime())?'':d.toISOString().slice(0,10);
+}
+function v125ParseBankDate(value,yearHint=''){
+  const raw=String(value??'').trim();if(!raw)return '';
+  if(/^\d{5}(?:\.\d+)?$/.test(raw)){const x=v125ExcelDate(raw);if(x)return x}
+  let m=raw.match(/\b(20\d{2})[-\/.](\d{1,2})[-\/.](\d{1,2})\b/);
+  if(m)return `${m[1]}-${String(m[2]).padStart(2,'0')}-${String(m[3]).padStart(2,'0')}`;
+  m=raw.match(/\b(\d{1,2})[\/.\-]([A-Za-zÀ-ÿ]{3,}|\d{1,2})(?:[\/.\-](\d{2,4}))?\b/);
+  if(m){
+    const day=Number(m[1]);const monKey=normalize(m[2]).replace(/[^a-z]/g,'');const month=/^\d+$/.test(m[2])?Number(m[2]):V125_MONTH_MAP[monKey];
+    let y=m[3]?Number(m[3]):Number(yearHint||new Date().getFullYear());if(y<100)y+=2000;
+    if(day>=1&&day<=31&&month>=1&&month<=12)return `${y}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+  }
+  m=raw.match(/\b(\d{4})(\d{2})(\d{2})/);if(m)return `${m[1]}-${m[2]}-${m[3]}`;
+  const d=new Date(raw);return Number.isNaN(d.getTime())?'':d.toISOString().slice(0,10);
+}
+function v125BankEventKey(event){
+  // A chave usa o ID do cheque já correspondido (quando disponível), e não nome do arquivo/FITID/texto exato.
+  // Assim o mesmo evento exportado em OFX/CSV/XLSX continua idempotente sem misturar cheques iguais de contas diferentes.
+  const chequeIdentity=event.chequeId||v125NormalizeChequeNumber(event.chequeNumber||'');
+  const basis=[event.date||'',chequeIdentity,Math.round(Math.abs(Number(event.amount||0))*100),event.kind||'review'].join('|');
+  let h=2166136261;for(let i=0;i<basis.length;i++){h^=basis.charCodeAt(i);h=Math.imul(h,16777619)}
+  return 'bev-'+(h>>>0).toString(16).padStart(8,'0');
+}
+function v125ProcessedEventKeys(){
+  const out=new Set();for(const c of App.state.conciliacoes||[])for(const a of c.aplicados||[])if(a.bankEventKey)out.add(a.bankEventKey);return out;
+}
+function v125ExtractChequeNumber(description,explicit=''){
+  const ex=v125NormalizeChequeNumber(explicit);if(ex)return ex;
+  const src=normalize(description).toUpperCase();
+  const direct=src.match(/\bCH(?:EQUE|Q)?\s*([0-9]{4,10})\b/);if(direct)return v125NormalizeChequeNumber(direct[1]);
+  const withStatus=src.match(/\bCH(?:EQUE|Q)?\b[^\d]{0,30}(?:COMPENSAD[OA]?|DEVOLVID[OA]?|DEV|REAPRESENTAD[OA]?|REAPRES)?[^\d]{0,20}([0-9]{4,10})\b/);if(withStatus)return v125NormalizeChequeNumber(withStatus[1]);
+  if(/\bCH(?:EQUE|Q)?\b/.test(src)){
+    const nums=[...src.matchAll(/\b(\d{4,10})\b/g)].map(x=>x[1]);if(nums.length)return v125NormalizeChequeNumber(nums[nums.length-1]);
+  }
+  return '';
+}
+function v125ClassifyBankDescription(description){
+  const raw=String(description||'').trim(),n=normalize(raw).toUpperCase();
+  let kind='review';
+  if(/\b(REAPRESENT|REAPRES|REAP\s*CH)/.test(n))kind='reapresentado';
+  else if(/\b(DEVOLV|DEV\s*CH|C\s*-\s*DEV\s*CH|CH\s*DEV)/.test(n))kind='devolvido';
+  else if(/\b(CH|CHEQUE|CHQ)\b.*\b(COMPENSAD|COMPENS|COMP\b)/.test(n)||/\b(COMPENSAD|COMPENS)\b.*\b(CH|CHEQUE|CHQ)\b/.test(n))kind='compensado';
+  let reason='',reasonCode='';
+  const code=n.match(/\b(?:MOT|MOTIVO|COD|CODIGO)\s*[:.-]?\s*(\d{1,3})\b/);if(code)reasonCode=code[1];
+  if(kind==='devolvido'){
+    const ch=n.match(/\bCH(?:EQUE|Q)?\s*\d{4,10}\b/);if(ch){reason=n.slice((ch.index||0)+ch[0].length).trim().replace(/^[-–—:;,.\s]+/,'')}
+    if(!reason){const dev=n.match(/\bDEV(?:OLVID[OA]?)?\b/);if(dev)reason=n.slice((dev.index||0)+dev[0].length).trim().replace(/^[-–—:;,.\s]+/,'')}
+    reason=reason.replace(/\b(?:MOT|MOTIVO|COD|CODIGO)\s*[:.-]?\s*\d{1,3}\b/g,'').trim();
+    if(/^CONTR\s+ORDEM\b/.test(reason))reason='Contraordem';
+    else if(reason)reason=reason.toLowerCase().replace(/(^|\s)\S/g,s=>s.toUpperCase());
+    if(!reason&&reasonCode)reason=`Motivo ${reasonCode}`;
+  }
+  return {kind,reason,reasonCode};
+}
+function v125MovementFromParts({date='',description='',amount=0,fitId='',chequeNumber='',bank='',account='',sourceLine='',extra={}}={}){
+  const desc=String(description||'').replace(/\s+/g,' ').trim();
+  const classification=v125ClassifyBankDescription(desc);const number=v125ExtractChequeNumber(desc,chequeNumber);
+  return {id:uid(),date:v125ParseBankDate(date),description:desc,amount:Number(amount)||0,fitId:String(fitId||''),chequeNumber:number,bank:String(bank||''),account:String(account||''),kind:classification.kind,reason:classification.reason,reasonCode:classification.reasonCode,sourceLine:String(sourceLine||desc),extra:extra||{}};
+}
+function v125ParseOFX(text){
+  const src=String(text||''),bank=(src.match(/<BANKID>\s*([^<\r\n]+)/i)||[])[1]||'',account=(src.match(/<ACCTID>\s*([^<\r\n]+)/i)||[])[1]||'';
+  const blocks=[...src.matchAll(/<STMTTRN>([\s\S]*?)(?=<STMTTRN>|<\/BANKTRANLIST>|<\/STMTTRN>|$)/gi)].map(m=>m[1]);
+  const tag=(block,name)=>((block.match(new RegExp('<'+name+'>\\s*([^<\\r\\n]+)','i'))||[])[1]||'').trim();
+  const out=[];
+  for(const block of blocks){
+    const name=tag(block,'NAME'),memo=tag(block,'MEMO'),desc=[name,memo].filter(Boolean).join(' · ');const amt=v125MoneyFromBank(tag(block,'TRNAMT'));
+    const mov=v125MovementFromParts({date:tag(block,'DTPOSTED'),description:desc,amount:amt,fitId:tag(block,'FITID'),chequeNumber:tag(block,'CHECKNUM'),bank,account,sourceLine:desc,extra:{trnType:tag(block,'TRNTYPE')}});
+    if(mov.description||mov.chequeNumber)out.push(mov);
+  }
+  return {movements:out,bank,account,period:v125Period(out)};
+}
+function v125CSVRows(text,delimiter=''){
+  const src=String(text||'').replace(/^\uFEFF/,'');
+  if(!delimiter){
+    const sample=src.split(/\r?\n/).filter(Boolean).slice(0,10).join('\n');const candidates=[';','\t',',','|'];delimiter=candidates.sort((a,b)=>(sample.split(b).length)-(sample.split(a).length))[0];
+  }
+  const rows=[];let row=[],cell='',quote=false;
+  for(let i=0;i<src.length;i++){
+    const c=src[i];if(c==='"'){if(quote&&src[i+1]==='"'){cell+='"';i++}else quote=!quote;continue}
+    if(c===delimiter&&!quote){row.push(cell.trim());cell='';continue}
+    if((c==='\n'||c==='\r')&&!quote){if(c==='\r'&&src[i+1]==='\n')i++;row.push(cell.trim());cell='';if(row.some(x=>x!==''))rows.push(row);row=[];continue}
+    cell+=c;
+  }
+  if(cell||row.length){row.push(cell.trim());if(row.some(x=>x!==''))rows.push(row)}
+  return rows;
+}
+function v125HeaderIndex(headers,words){
+  const normalized=headers.map(x=>normalize(x).replace(/[^a-z0-9]+/g,' ').trim());
+  for(const word of words){const w=normalize(word);const exact=normalized.findIndex(x=>x===w);if(exact>=0)return exact}
+  for(const word of words){const w=normalize(word);const contains=normalized.findIndex(x=>x.includes(w));if(contains>=0)return contains}
+  return -1;
+}
+function v125TabularToMovements(rows){
+  const list=(rows||[]).filter(r=>Array.isArray(r)&&r.some(v=>String(v??'').trim()));if(!list.length)return [];
+  let headerAt=list.slice(0,15).findIndex(r=>r.some(c=>/data|date|hist[oó]rico|descri[cç][aã]o|valor|amount|cheque/i.test(String(c))));if(headerAt<0)headerAt=0;
+  const headers=list[headerAt].map(x=>String(x??''));
+  const idx={date:v125HeaderIndex(headers,['data','data lancamento','date','dt']),desc:v125HeaderIndex(headers,['historico','descricao','memo','lancamento','description']),amount:v125HeaderIndex(headers,['valor','amount','valor lancamento','trnamt']),debit:v125HeaderIndex(headers,['debito','debit']),credit:v125HeaderIndex(headers,['credito','credit']),fit:v125HeaderIndex(headers,['fitid','id','identificador']),cheque:v125HeaderIndex(headers,['numero cheque','n cheque','cheque','checknum']),bank:v125HeaderIndex(headers,['banco','bank']),account:v125HeaderIndex(headers,['conta','account'])};
+  const hasHeader=idx.date>=0||idx.desc>=0||idx.amount>=0||idx.debit>=0||idx.credit>=0;
+  const dataRows=hasHeader?list.slice(headerAt+1):list;const out=[];
+  for(const r of dataRows){
+    if(hasHeader){
+      const get=i=>i>=0?String(r[i]??'').trim():'';let amount=idx.amount>=0?v125MoneyFromBank(get(idx.amount)):0;
+      if(idx.amount<0){const debit=v125MoneyFromBank(get(idx.debit)),credit=v125MoneyFromBank(get(idx.credit));amount=credit?Math.abs(credit):debit?-Math.abs(debit):0}
+      const desc=get(idx.desc)||r.map(x=>String(x??'')).join(' ');const mov=v125MovementFromParts({date:get(idx.date),description:desc,amount,fitId:get(idx.fit),chequeNumber:get(idx.cheque),bank:get(idx.bank),account:get(idx.account),sourceLine:r.join(' | ')});
+      if(mov.description||mov.chequeNumber)out.push(mov);
+    }else{
+      const mov=v125MovementFromLine(r.join(' '));if(mov)out.push(mov);
+    }
+  }
+  return out;
+}
+function v125MovementFromLine(line,yearHint=''){
+  const raw=String(line||'').replace(/\s+/g,' ').trim();if(!raw)return null;
+  const dateMatch=raw.match(/^\s*(\d{1,2}[\/.\-](?:\d{1,2}|[A-Za-zÀ-ÿ]{3,})(?:[\/.\-]\d{2,4})?|20\d{2}[\/.\-]\d{1,2}[\/.\-]\d{1,2})\s+/);if(!dateMatch)return null;
+  const date=v125ParseBankDate(dateMatch[1],yearHint);let rest=raw.slice(dateMatch[0].length).trim();
+  const moneyMatches=[...rest.matchAll(/[+-]?\s*(?:R\$\s*)?\d{1,3}(?:\.\d{3})*,\d{2}|[+-]?\s*(?:R\$\s*)?\d+[.,]\d{2}/g)];
+  if(!moneyMatches.length)return null;const last=moneyMatches[moneyMatches.length-1];const amount=v125MoneyFromBank(last[0]);const desc=rest.slice(0,last.index).trim();
+  if(!desc)return null;return v125MovementFromParts({date,description:desc,amount,sourceLine:raw});
+}
+function v125ParseTextStatement(text){
+  const lines=String(text||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);const fullYear=(String(text).match(/\b20\d{2}\b/)||[])[0]||new Date().getFullYear();
+  const out=[];for(const line of lines){const mov=v125MovementFromLine(line,fullYear);if(mov)out.push(mov)}return {movements:out,bank:'',account:'',period:v125Period(out)};
+}
+function v125XmlChildrenByLocal(node,name){return [...(node?.getElementsByTagName?.('*')||[])].filter(n=>n.localName===name||n.nodeName===name)}
+async function v125ParseXLSX(file){
+  if(!window.JSZip)throw new Error('Leitor XLSX não carregou. Use OFX ou CSV.');const zip=await JSZip.loadAsync(file);
+  const shared=[];const sharedEntry=zip.file('xl/sharedStrings.xml');if(sharedEntry){const doc=new DOMParser().parseFromString(await sharedEntry.async('text'),'application/xml');for(const si of v125XmlChildrenByLocal(doc,'si'))shared.push(v125XmlChildrenByLocal(si,'t').map(t=>t.textContent||'').join(''))}
+  let sheetPath='xl/worksheets/sheet1.xml';
+  const wb=zip.file('xl/workbook.xml'),rels=zip.file('xl/_rels/workbook.xml.rels');
+  if(wb&&rels){
+    const wdoc=new DOMParser().parseFromString(await wb.async('text'),'application/xml'),rdoc=new DOMParser().parseFromString(await rels.async('text'),'application/xml');const first=v125XmlChildrenByLocal(wdoc,'sheet')[0];const rid=first?.getAttribute('r:id')||first?.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships','id');
+    const rel=v125XmlChildrenByLocal(rdoc,'Relationship').find(x=>x.getAttribute('Id')===rid);if(rel){const target=rel.getAttribute('Target')||'';sheetPath=target.startsWith('/')?target.slice(1):('xl/'+target.replace(/^\.\//,'')).replace(/xl\/xl\//,'xl/')}}
+  const sheet=zip.file(sheetPath)||zip.file('xl/worksheets/sheet1.xml');if(!sheet)throw new Error('A primeira planilha do XLSX não pôde ser lida.');
+  const doc=new DOMParser().parseFromString(await sheet.async('text'),'application/xml');const rows=[];
+  for(const row of v125XmlChildrenByLocal(doc,'row')){
+    const values=[];for(const c of [...row.children].filter(n=>n.localName==='c'||n.nodeName==='c')){
+      const ref=c.getAttribute('r')||'';const col=ref.match(/[A-Z]+/i)?.[0]||'';let idx=0;for(const ch of col.toUpperCase())idx=idx*26+(ch.charCodeAt(0)-64);idx=Math.max(0,idx-1);
+      const type=c.getAttribute('t')||'';const v=v125XmlChildrenByLocal(c,'v')[0]?.textContent??'';let value=v;
+      if(type==='s')value=shared[Number(v)]??v;else if(type==='inlineStr')value=v125XmlChildrenByLocal(c,'t').map(t=>t.textContent||'').join('');
+      values[idx]=value;
+    }rows.push(values)
+  }
+  const movements=v125TabularToMovements(rows);return {movements,bank:'',account:'',period:v125Period(movements)};
+}
+async function v125ParsePDF(file){
+  if(!window.pdfjsLib)throw new Error('Leitor de PDF não carregou. Para maior confiabilidade, prefira OFX, CSV ou XLSX.');
+  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;const lines=[];
+  for(let p=1;p<=pdf.numPages;p++){
+    const page=await pdf.getPage(p),content=await page.getTextContent(),groups=new Map();
+    for(const item of content.items||[]){const y=Math.round(Number(item.transform?.[5]||0)/2)*2,x=Number(item.transform?.[4]||0);if(!groups.has(y))groups.set(y,[]);groups.get(y).push({x,text:String(item.str||'')})}
+    for(const y of [...groups.keys()].sort((a,b)=>b-a)){const line=groups.get(y).sort((a,b)=>a.x-b.x).map(x=>x.text).join(' ').replace(/\s+/g,' ').trim();if(line)lines.push(line)}
+  }
+  return v125ParseTextStatement(lines.join('\n'));
+}
+function v125Period(movements){
+  const dates=(movements||[]).map(x=>x.date).filter(Boolean).sort();return dates.length?{start:dates[0],end:dates[dates.length-1]}:{start:'',end:''};
+}
+async function v125ParseStatementFile(file){
+  const ext=String(file.name||'').split('.').pop().toLowerCase();if(!V125_RECON_FORMATS.includes(ext)){
+    if(ext==='xls')throw new Error('O formato .XLS antigo não é importado por segurança. Salve como .XLSX, CSV ou OFX.');
+    throw new Error('Formato não suportado. Use OFX, CSV, TXT, XLSX ou PDF pesquisável.');
+  }
+  if(ext==='ofx')return v125ParseOFX(await file.text());
+  if(ext==='csv'){const rows=v125CSVRows(await file.text());const movements=v125TabularToMovements(rows);return {movements,bank:'',account:'',period:v125Period(movements)}}
+  if(ext==='txt')return v125ParseTextStatement(await file.text());
+  if(ext==='xlsx')return v125ParseXLSX(file);
+  return v125ParsePDF(file);
+}
+function v125AccountMatchesMovement(cheque,mov){
+  if(!mov.account&&!mov.bank)return true;const account=accountById(cheque.contaId);if(!account)return true;
+  const bankOk=!mov.bank||normalize([account.banco,account.nome].join(' ')).includes(normalize(mov.bank));const acctDigits=digits(mov.account),storedDigits=digits(account.conta);const accountOk=!acctDigits||!storedDigits||storedDigits.endsWith(acctDigits)||acctDigits.endsWith(storedDigits);return bankOk&&accountOk;
+}
+function v125MatchMovement(mov,processed){
+  if(!mov.chequeNumber)return null;
+  let candidates=active(App.state.cheques).filter(c=>v125NormalizeChequeNumber(c.numero)===mov.chequeNumber);
+  if(!candidates.length)return {...mov,bankEventKey:v125BankEventKey(mov),state:'not_found',selected:false,candidates:[]};
+  const amountAbs=Math.abs(Number(mov.amount||0));const exactValue=candidates.filter(c=>Math.abs(Number(c.valor||0)-amountAbs)<=0.01);if(exactValue.length)candidates=exactValue;
+  const accountMatches=candidates.filter(c=>v125AccountMatchesMovement(c,mov));if(accountMatches.length)candidates=accountMatches;
+  if(candidates.length!==1)return {...mov,state:'review',selected:false,candidates:candidates.map(c=>c.id),reasonReview:'Mais de um cheque pode corresponder a esta movimentação.'};
+  const cheque=candidates[0],bankEventKey=v125BankEventKey({...mov,chequeId:cheque.id}),valueMismatch=amountAbs>0&&Math.abs(Number(cheque.valor||0)-amountAbs)>0.01;
+  if(processed.has(bankEventKey))return {...mov,bankEventKey,state:'duplicate',selected:false,candidates:[cheque.id],chequeId:cheque.id};
+  if(valueMismatch)return {...mov,bankEventKey,state:'review',selected:false,candidates:[cheque.id],chequeId:cheque.id,reasonReview:`O número confere, mas o valor do extrato (${brl(amountAbs)}) difere do cheque (${brl(cheque.valor)}).`};
+  if(mov.kind==='review')return {...mov,bankEventKey,state:'review',selected:false,candidates:[cheque.id],chequeId:cheque.id,reasonReview:'O cheque foi identificado, mas o extrato não informou com segurança se houve compensação ou devolução.'};
+  return {...mov,bankEventKey,state:'matched',selected:true,candidates:[cheque.id],chequeId:cheque.id};
+}
+async function v125AnalyzeReconciliationFile(file){
+  const parsed=await v125ParseStatementFile(file);const all=parsed.movements||[],processed=v125ProcessedEventKeys(),relevant=[];
+  for(const mov of all){const hit=v125MatchMovement(mov,processed);if(hit)relevant.push(hit)}
+  const hash=await sha256Hex(file);const prior=(App.state.conciliacoes||[]).find(c=>c.fileHash===hash);
+  return {id:uid(),fileName:file.name,fileSize:file.size,fileType:(file.name.split('.').pop()||'').toUpperCase(),fileHash:hash,bank:parsed.bank||'',account:parsed.account||'',period:parsed.period||v125Period(all),totalMovements:all.length,relevant,prior,createdAt:nowISO()};
+}
+function v125ReconSummary(analysis){
+  const r=analysis?.relevant||[];return {relevant:r.filter(x=>x.state!=='duplicate').length,matched:r.filter(x=>x.state==='matched').length,comp:r.filter(x=>x.state==='matched'&&x.kind==='compensado').length,dev:r.filter(x=>x.state==='matched'&&x.kind==='devolvido').length,reap:r.filter(x=>x.state==='matched'&&x.kind==='reapresentado').length,review:r.filter(x=>x.state==='review').length,notFound:r.filter(x=>x.state==='not_found').length,duplicate:r.filter(x=>x.state==='duplicate').length};
+}
+function v125KindLabel(kind){return kind==='compensado'?'Compensado':kind==='devolvido'?'Devolvido':kind==='reapresentado'?'Reapresentado':'Revisão necessária'}
+function v125ReconStateClass(item){if(item.state==='duplicate')return 'recon-duplicate';if(item.state==='not_found')return 'recon-unmatched';if(item.state==='review')return 'recon-review';return item.kind==='devolvido'?'recon-returned':item.kind==='compensado'?'recon-paid':'recon-represented'}
+function v125ChequeLabel(id){const c=active(App.state.cheques).find(x=>x.id===id);return c?`${c.numero} · ${brl(c.valor)} · ${accountLabelForCheque(c)}`:'Cheque não encontrado'}
+function v125ReconResultHtml(item,index){
+  const cheque=item.chequeId?active(App.state.cheques).find(c=>c.id===item.chequeId):null;
+  const title=item.state==='not_found'?`Cheque ${esc(item.chequeNumber)} não cadastrado`:cheque?`Cheque ${esc(cheque.numero)}`:`Cheque ${esc(item.chequeNumber||'—')}`;
+  const badge=item.state==='duplicate'?'Já processado':item.state==='not_found'?'Não cadastrado':item.state==='review'?'Revisão necessária':v125KindLabel(item.kind);
+  const candidateSelect=item.state==='review'&&item.candidates?.length?`<div class="recon-candidate"><label>Vincular manualmente</label><select data-recon-candidate="${index}"><option value="">Selecione o cheque</option>${item.candidates.map(id=>`<option value="${id}" ${item.chequeId===id?'selected':''}>${esc(v125ChequeLabel(id))}</option>`).join('')}</select><button class="action-btn" type="button" data-recon-use-candidate="${index}">Usar este cheque</button></div>`:'';
+  return `<article class="recon-result ${v125ReconStateClass(item)}" data-recon-row="${index}"><div class="recon-check"><input type="checkbox" data-recon-select="${index}" ${item.selected?'checked':''} ${item.state==='matched'?'':'disabled'} aria-label="Selecionar ${esc(item.chequeNumber||'cheque')}"></div><div class="recon-result-main"><div class="recon-result-top"><div><b>${title}</b><small>${fmtDate(item.date)} · ${brl(Math.abs(item.amount||0))}</small></div><span class="badge ${statusClass(badge)}">${esc(badge)}</span></div>${cheque?`<div class="recon-meta"><span>Vencimento <b>${fmtDate(cheque.dataBom)}</b></span><span>Conta <b>${esc(accountLabelForCheque(cheque))}</b></span>${item.kind==='devolvido'?`<span>Motivo <b>${esc(item.reason||item.reasonCode||'Motivo não identificado')}</b></span>`:''}</div>`:''}${item.reasonReview?`<div class="recon-warning">${esc(item.reasonReview)}</div>`:''}${candidateSelect}<div class="recon-origin"><span>Extrato</span><code>${esc(item.sourceLine||item.description)}</code></div></div></article>`;
+}
+function v125ReconciliationHistoryHtml(){
+  const history=(App.state.conciliacoes||[]).slice().sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))).slice(0,12);if(!history.length)return '<div class="empty compact"><b>Nenhuma conciliação aplicada ainda</b><p>As importações confirmadas aparecerão aqui.</p></div>';
+  return `<div class="quick-list">${history.map(c=>`<div class="quick-item"><div><b>${esc(c.fileName||'Extrato')}</b><small>${c.totalMovements||0} movimentações analisadas · ${(c.aplicados||[]).length} alteração(ões)</small></div><div class="quick-date"><b>${(c.aplicados||[]).filter(a=>a.kind==='compensado').length} comp. · ${(c.aplicados||[]).filter(a=>a.kind==='devolvido').length} dev.</b><small>${fmtDateTime(c.createdAt)}</small></div></div>`).join('')}</div>`;
+}
+function v125PendingCheques(){
+  const list=active(App.state.cheques),today=todayISO();
+  const returned=list.filter(c=>c.situacaoBancaria==='Devolvido'||c.status==='Devolvido');
+  const awaitingPayment=returned.filter(c=>!['Pago por outro meio','Reapresentado','Encerrado'].includes(c.statusRegularizacao||''));
+  const awaitingPhysical=returned.filter(c=>c.statusRegularizacao==='Pago por outro meio'&&c.chequeFisicoRecuperado!==true);
+  const upcoming=list.filter(c=>!['Compensado','Cancelado'].includes(c.status)&&c.dataBom&&daysUntil(c.dataBom)>=0&&daysUntil(c.dataBom)<=Number(App.state.settings.warningDays||7));
+  return {awaitingPayment,awaitingPhysical,upcoming,total:new Set([...awaitingPayment,...awaitingPhysical,...upcoming].map(x=>x.id)).size};
+}
+function renderConciliacao(){
+  const root=$('#page-conciliacao');if(!root)return;
+  if(!v125ReconciliationAvailable()){root.innerHTML='<div class="panel"><div class="empty"><b>Conciliação disponível no navegador do computador</b><p>Esta atualização não é exibida na versão PWA, conforme solicitado.</p></div></div>';return}
+  const session=App.reconciliation||{},analysis=session.analysis,summary=analysis?v125ReconSummary(analysis):null,pending=v125PendingCheques();
+  root.innerHTML=`<div class="recon-page"><section class="panel recon-import-panel"><div class="panel-head"><div><div class="panel-title">Conciliação bancária de cheques</div><p class="muted">Importe o extrato, confira o que o banco informou e só depois aplique as alterações.</p></div><span class="recon-safety">Nenhuma alteração é automática</span></div><div class="panel-body"><input type="file" data-recon-file accept=".ofx,.csv,.txt,.xlsx,.pdf" hidden><div class="recon-drop" data-recon-drop><div class="recon-drop-icon">⇧</div><h3>${session.file?esc(session.file.name):'Solte o extrato aqui'}</h3><p>${session.file?`${esc((session.file.name.split('.').pop()||'').toUpperCase())} · ${sizeText(session.file.size)}`:'OFX, CSV, TXT, XLSX ou PDF pesquisável. Prefira formatos estruturados.'}</p><div class="recon-drop-actions"><button class="btn btn-primary" type="button" data-recon-pick>${session.file?'Trocar extrato':'Selecionar extrato'}</button>${session.file?'<button class="btn btn-outline" type="button" data-recon-analyze>Analisar extrato</button>':''}</div><small>O Borion não usa OCR para extratos bancários e não altera cheques durante a análise.</small></div></div></section>
+  <section class="panel"><div class="panel-head"><div class="panel-title">Cheques que exigem atenção</div><span class="badge ${pending.total?'returned':'paid'}">${pending.total}</span></div><div class="panel-body"><div class="recon-pending-grid"><div><span>Devolvidos aguardando pagamento</span><b>${pending.awaitingPayment.length}</b></div><div><span>Pagos aguardando recuperar cheque</span><b>${pending.awaitingPhysical.length}</b></div><div><span>Próximos do vencimento</span><b>${pending.upcoming.length}</b></div></div></div></section>
+  ${analysis?`<section class="panel full-span recon-analysis"><div class="panel-head"><div><div class="panel-title">Extrato analisado</div><p class="muted">${esc(analysis.fileName)}${analysis.period?.start?` · ${fmtDate(analysis.period.start)} a ${fmtDate(analysis.period.end)}`:''}${analysis.bank?` · ${esc(analysis.bank)}`:''}</p></div><button class="action-btn" type="button" data-recon-reset>Limpar análise</button></div><div class="panel-body"><div class="recon-kpis"><div><span>Movimentações</span><b>${analysis.totalMovements}</b></div><div><span>Cheques encontrados</span><b>${summary.matched}</b></div><div><span>Compensados</span><b>${summary.comp}</b></div><div><span>Devolvidos</span><b>${summary.dev}</b></div><div><span>Revisão</span><b>${summary.review}</b></div><div><span>Já processados</span><b>${summary.duplicate}</b></div></div>${analysis.prior?'<div class="recon-warning">Este mesmo arquivo já foi analisado anteriormente. Movimentações já processadas continuam protegidas contra duplicação.</div>':''}<div class="recon-selection-bar"><div><button class="action-btn" type="button" data-recon-select-all>Selecionar todos seguros</button><button class="action-btn" type="button" data-recon-clear-all>Desmarcar todos</button></div><b data-recon-selection-count>${analysis.relevant.filter(x=>x.selected).length} selecionado(s)</b></div><div class="recon-results">${analysis.relevant.length?analysis.relevant.map(v125ReconResultHtml).join(''):'<div class="empty"><b>Nenhum cheque do Borion apareceu neste extrato</b><p>As demais movimentações foram ignoradas visualmente.</p></div>'}</div><div class="recon-apply-bar"><div><b>Conferência antes de aplicar</b><small>Somente os cheques marcados serão alterados.</small></div><button class="btn btn-primary" type="button" data-recon-apply ${analysis.relevant.some(x=>x.selected)?'':'disabled'}>Aplicar conciliação</button></div></div></section>`:''}
+  <section class="panel full-span"><div class="panel-head"><div><div class="panel-title">Histórico de conciliações</div><p class="muted">Registro das importações realmente aplicadas.</p></div></div><div class="panel-body">${v125ReconciliationHistoryHtml()}</div></section></div>`;
+  v125WireReconciliation(root);
+}
+function v125WireReconciliation(root){
+  const input=$('[data-recon-file]',root),drop=$('[data-recon-drop]',root);if(!input||!drop)return;
+  const choose=()=>input.click();$('[data-recon-pick]',root).onclick=choose;
+  input.onchange=()=>{const file=input.files?.[0];if(file){App.reconciliation={file,analysis:null};renderConciliacao()}};
+  drop.ondragover=e=>{e.preventDefault();drop.classList.add('dragover')};drop.ondragleave=()=>drop.classList.remove('dragover');drop.ondrop=e=>{e.preventDefault();drop.classList.remove('dragover');const file=e.dataTransfer?.files?.[0];if(file){App.reconciliation={file,analysis:null};renderConciliacao()}};
+  $('[data-recon-analyze]',root)?.addEventListener('click',async e=>{const btn=e.currentTarget;try{btn.disabled=true;btn.textContent='Analisando…';const analysis=await v125AnalyzeReconciliationFile(App.reconciliation.file);App.reconciliation.analysis=analysis;renderConciliacao();toast(`${analysis.totalMovements} movimentações analisadas. ${analysis.relevant.length} relacionadas a cheque.`,'ok',5000)}catch(err){toast(err.message||'Não foi possível analisar o extrato.','error',7000);btn.disabled=false;btn.textContent='Analisar extrato'}});
+  $('[data-recon-reset]',root)?.addEventListener('click',()=>{App.reconciliation={file:App.reconciliation.file,analysis:null};renderConciliacao()});
+  const refreshCount=()=>{const a=App.reconciliation?.analysis;if(!a)return;const count=a.relevant.filter(x=>x.selected).length;const label=$('[data-recon-selection-count]',root);if(label)label.textContent=`${count} selecionado(s)`;const apply=$('[data-recon-apply]',root);if(apply)apply.disabled=!count};
+  $$('[data-recon-select]',root).forEach(box=>box.onchange=()=>{const item=App.reconciliation.analysis.relevant[Number(box.dataset.reconSelect)];if(item)item.selected=box.checked;refreshCount()});
+  $('[data-recon-select-all]',root)?.addEventListener('click',()=>{for(const x of App.reconciliation.analysis.relevant)if(x.state==='matched')x.selected=true;renderConciliacao()});
+  $('[data-recon-clear-all]',root)?.addEventListener('click',()=>{for(const x of App.reconciliation.analysis.relevant)x.selected=false;renderConciliacao()});
+  $$('[data-recon-use-candidate]',root).forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.reconUseCandidate),item=App.reconciliation.analysis.relevant[i],select=$(`[data-recon-candidate="${i}"]`,root),id=select?.value;if(!item||!id)return;const cheque=active(App.state.cheques).find(c=>c.id===id);if(!cheque)return;item.chequeId=id;item.bankEventKey=v125BankEventKey({...item,chequeId:id});const amountAbs=Math.abs(Number(item.amount||0));if(amountAbs&&Math.abs(Number(cheque.valor||0)-amountAbs)>0.01){toast('O valor do extrato ainda difere do cheque. A alteração não foi liberada automaticamente.','error',5500);return}if(item.kind==='review'){toast('A movimentação ainda não informa com segurança se foi compensada ou devolvida.','error',5500);return}if(v125ProcessedEventKeys().has(item.bankEventKey)){item.state='duplicate';item.selected=false;toast('Esta ocorrência bancária já foi conciliada e será ignorada.','local',4800);renderConciliacao();return}item.state='matched';item.selected=true;renderConciliacao()});
+  $('[data-recon-apply]',root)?.addEventListener('click',()=>v125ConfirmApplyReconciliation());
+}
+function v125ConfirmApplyReconciliation(){
+  const analysis=App.reconciliation?.analysis;if(!analysis)return;const selected=analysis.relevant.filter(x=>x.selected&&x.state==='matched');if(!selected.length)return;
+  const comp=selected.filter(x=>x.kind==='compensado').length,dev=selected.filter(x=>x.kind==='devolvido').length,reap=selected.filter(x=>x.kind==='reapresentado').length;
+  const body=`<div class="recon-confirm"><p><b>${selected.length} cheque(s)</b> serão atualizados.</p><div class="mini-kpis"><div><span>Compensados</span><b>${comp}</b></div><div><span>Devolvidos</span><b>${dev}</b></div><div><span>Reapresentados</span><b>${reap}</b></div><div><span>Sem correspondência</span><b>0</b></div></div><div class="recon-warning neutral">Nenhuma movimentação não identificada será alterada. O histórico anterior dos cheques será preservado.</div></div>`;
+  openModal({title:'Aplicar alterações?',subtitle:'Esta é a única etapa que altera os cheques.',body,saveLabel:'Aplicar alterações',onSave:async()=>{await v125ApplyReconciliation(selected);closeModal();renderAll();setPage('conciliacao')}});
+}
+function v125AddChequeEvent(cheque,type,date,description,extra={}){
+  cheque.historicoEventos=Array.isArray(cheque.historicoEventos)?cheque.historicoEventos:[];const event={id:uid(),type,date:date||todayISO(),description,origin:'Conciliação bancária',createdAt:nowISO(),user:App.user?.email||'local',...extra};cheque.historicoEventos.push(event);return event;
+}
+async function v125ApplyReconciliation(selected){
+  const analysis=App.reconciliation.analysis,snapshot=v124Clone(App.state),conciliation={id:analysis.id||uid(),createdAt:nowISO(),fileName:analysis.fileName,fileHash:analysis.fileHash,fileSize:analysis.fileSize,bank:analysis.bank,account:analysis.account,period:analysis.period,totalMovements:analysis.totalMovements,relevantMovements:analysis.relevant.length,user:App.user?.email||'local',aplicados:[]};
+  try{
+    // Aplica em ordem cronológica para preservar corretamente ciclos como Devolvido → Reapresentado → Compensado no mesmo extrato.
+    const ordered=[...selected].sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))||String(a.chequeNumber||'').localeCompare(String(b.chequeNumber||'')));
+    for(const mov of ordered){
+      const current=v124LiveRecord(App.state.cheques,mov.chequeId);if(!current)throw new Error(`Cheque ${mov.chequeNumber} não existe mais. A conciliação foi cancelada.`);const cheque=v124Clone(current),oldStatus=cheque.status||'';
+      const common={bankEventKey:mov.bankEventKey,kind:mov.kind,date:mov.date,amount:Math.abs(Number(mov.amount||0)),sourceLine:mov.sourceLine,reason:mov.reason||'',reasonCode:mov.reasonCode||'',fitId:mov.fitId||'',chequeId:cheque.id,chequeNumber:cheque.numero,statusBefore:oldStatus};
+      if(mov.kind==='compensado'){
+        const hadReturn=(cheque.historicoEventos||[]).some(e=>e.type==='devolvido'||e.type==='reapresentado')||cheque.dataDevolucao;
+        cheque.status='Compensado';cheque.situacaoBancaria='Compensado';cheque.dataCompensacao=mov.date||todayISO();cheque.dataUltimaConciliacao=nowISO();cheque.conciliacaoOrigem=conciliation.id;
+        v125AddChequeEvent(cheque,'compensado',cheque.dataCompensacao,hadReturn?'Compensado após reapresentação':'Cheque compensado',{conciliacaoId:conciliation.id,bankEventKey:mov.bankEventKey,sourceLine:mov.sourceLine});
+      }else if(mov.kind==='devolvido'){
+        cheque.status='Devolvido';cheque.situacaoBancaria='Devolvido';cheque.dataDevolucao=mov.date||todayISO();cheque.motivoDevolucao=mov.reason||'Motivo não identificado';cheque.codigoMotivoDevolucao=mov.reasonCode||'';cheque.descricaoBancariaDevolucao=mov.sourceLine||mov.description;cheque.statusRegularizacao=cheque.statusRegularizacao||'Em cobrança';if(typeof cheque.chequeFisicoRecuperado!=='boolean')cheque.chequeFisicoRecuperado=false;cheque.dataUltimaConciliacao=nowISO();cheque.conciliacaoOrigem=conciliation.id;
+        v125AddChequeEvent(cheque,'devolvido',cheque.dataDevolucao,`Cheque devolvido${cheque.motivoDevolucao?` · ${cheque.motivoDevolucao}`:''}`,{conciliacaoId:conciliation.id,bankEventKey:mov.bankEventKey,sourceLine:mov.sourceLine,reasonCode:mov.reasonCode||''});
+      }else if(mov.kind==='reapresentado'){
+        cheque.status='Reapresentado';cheque.situacaoBancaria='Reapresentado';cheque.statusRegularizacao='Reapresentado';cheque.dataUltimaConciliacao=nowISO();cheque.conciliacaoOrigem=conciliation.id;v125AddChequeEvent(cheque,'reapresentado',mov.date||todayISO(),'Cheque reapresentado',{conciliacaoId:conciliation.id,bankEventKey:mov.bankEventKey,sourceLine:mov.sourceLine});
+      }
+      recordTouch(cheque);v124ReplaceRecord(App.state.cheques,cheque.id,cheque);logAudit('Conciliação bancária',`${cheque.numero} · ${oldStatus||'sem status'} → ${cheque.status} · ${mov.sourceLine}`,'Cheque',cheque.id);conciliation.aplicados.push({...common,statusAfter:cheque.status});
+    }
+    App.state.conciliacoes.push(conciliation);recordTouch(conciliation);await v124PersistAndVerify('conciliacao-bancaria-v125',st=>{const c=(st.conciliacoes||[]).find(x=>x.id===conciliation.id);if(!c||c.aplicados?.length!==selected.length)return false;return selected.every(m=>{const ch=v124LiveRecord(st.cheques,m.chequeId);return ch&&ch.conciliacaoOrigem===conciliation.id})},'conciliação bancária');
+    const s=v125ReconSummary({relevant:selected.map(x=>({...x,state:'matched'}))});toast(`Conciliação concluída: ${selected.length} cheque(s) atualizados · ${s.comp} compensado(s) · ${s.dev} devolvido(s).`,'ok',7000);
+    App.reconciliation={file:null,analysis:null};
+  }catch(err){App.state=migrateStateV104(snapshot);await saveLocal('rollback-conciliacao-v125',false);renderAll();throw err}
+}
+
+function v125RegularizationBody(cheque){
+  const paid=cheque.statusRegularizacao==='Pago por outro meio';return `<div class="form-grid cols-2">${selectField('tipoRegularizacao','Como o cheque foi resolvido?',['Pix','Transferência','Dinheiro','Novo cheque','Reapresentação do mesmo cheque','Outro'],cheque.tipoRegularizacao||'Pix')}${field('dataRegularizacao','Data',cheque.dataRegularizacao||todayISO(),'date')}${field('valorRegularizado','Valor recebido',cheque.valorRegularizado||cheque.valor||'')}${field('observacaoRegularizacao','Observação',cheque.observacaoRegularizacao||'','text','full')}<label class="borion-switch full"><input name="pagamentoRecebido" type="checkbox" ${paid?'checked':''}><span class="switch-track"></span><span><b>Pagamento recebido</b><small>Marca a regularização financeira sem presumir que o cheque físico já foi recuperado.</small></span></label><label class="borion-switch full"><input name="chequeFisicoRecuperado" type="checkbox" ${cheque.chequeFisicoRecuperado?'checked':''}><span class="switch-track"></span><span><b>Cheque físico recuperado</b><small>Controle independente do pagamento.</small></span></label></div>`;
+}
+function v125RegisterRegularization(id){
+  const cheque=v124LiveRecord(App.state.cheques,id);if(!cheque)return;openModal({title:'Registrar regularização',subtitle:`Cheque ${cheque.numero} · ${brl(cheque.valor)}`,body:v125RegularizationBody(cheque),saveLabel:'Salvar regularização',onSave:async modal=>{const v=formDataObj(modal),current=v124LiveRecord(App.state.cheques,id);if(!current)throw new Error('Cheque não encontrado.');const item=v124Clone(current);const reap=v.tipoRegularizacao==='Reapresentação do mesmo cheque';item.tipoRegularizacao=v.tipoRegularizacao;item.dataRegularizacao=v.dataRegularizacao||todayISO();item.valorRegularizado=Number(v.valorRegularizado)||0;item.observacaoRegularizacao=v.observacaoRegularizacao||'';item.chequeFisicoRecuperado=Boolean(v.chequeFisicoRecuperado);if(item.chequeFisicoRecuperado&&!item.dataRecuperacaoFisica)item.dataRecuperacaoFisica=todayISO();if(reap){item.statusRegularizacao='Reapresentado';item.status='Reapresentado';item.situacaoBancaria='Reapresentado';v125AddChequeEvent(item,'reapresentado',item.dataRegularizacao,'Cheque reapresentado manualmente',{origin:'Regularização manual'})}else{item.statusRegularizacao=v.pagamentoRecebido?'Pago por outro meio':'Em cobrança';if(v.pagamentoRecebido)v125AddChequeEvent(item,'pago_por_outro_meio',item.dataRegularizacao,`Pagamento recebido via ${v.tipoRegularizacao}${item.valorRegularizado?` · ${brl(item.valorRegularizado)}`:''}`,{origin:'Regularização manual'});if(item.chequeFisicoRecuperado)v125AddChequeEvent(item,'cheque_recuperado',item.dataRecuperacaoFisica,'Cheque físico recuperado',{origin:'Regularização manual'})}recordTouch(item);v124ReplaceRecord(App.state.cheques,id,item);logAudit('Regularização do cheque',`${item.numero} · ${item.statusRegularizacao}`,'Cheque',id);await v124PersistAndVerify('regularizacao-cheque-v125',st=>{const r=v124LiveRecord(st.cheques,id);return r&&r.updatedAt===item.updatedAt&&r.statusRegularizacao===item.statusRegularizacao},'regularização do cheque');closeModal();renderAll();toast('Regularização registrada. Pagamento e recuperação física continuam separados.','ok',5200)}});
+}
+async function v125MarkChequeRecovered(id){
+  const current=v124LiveRecord(App.state.cheques,id);if(!current)return;const item=v124Clone(current);item.chequeFisicoRecuperado=true;item.dataRecuperacaoFisica=todayISO();v125AddChequeEvent(item,'cheque_recuperado',item.dataRecuperacaoFisica,'Cheque físico recuperado',{origin:'Regularização manual'});recordTouch(item);v124ReplaceRecord(App.state.cheques,id,item);logAudit('Cheque físico recuperado',item.numero,'Cheque',id);await v124PersistAndVerify('cheque-fisico-recuperado-v125',st=>v124LiveRecord(st.cheques,id)?.chequeFisicoRecuperado===true,'recuperação física do cheque');toast('Cheque marcado como recuperado.','ok',4000);
+}
+async function v125CloseChequeOccurrence(id){
+  const current=v124LiveRecord(App.state.cheques,id);if(!current)return;const item=v124Clone(current);if(item.statusRegularizacao!=='Pago por outro meio'||item.chequeFisicoRecuperado!==true){toast('Para encerrar, registre o pagamento e a recuperação física do cheque.','error',5200);return}item.ocorrenciaEncerrada=true;item.statusRegularizacao='Encerrado';item.dataEncerramento=todayISO();v125AddChequeEvent(item,'encerrado',item.dataEncerramento,'Ocorrência encerrada',{origin:'Regularização manual'});recordTouch(item);v124ReplaceRecord(App.state.cheques,id,item);logAudit('Ocorrência do cheque encerrada',item.numero,'Cheque',id);await v124PersistAndVerify('ocorrencia-cheque-encerrada-v125',st=>v124LiveRecord(st.cheques,id)?.ocorrenciaEncerrada===true,'encerramento da ocorrência');toast('Ocorrência encerrada. O histórico anterior foi preservado.','ok',4500);
+}
+
+// A busca passa a encontrar dados bancários e de regularização sem remover nenhum critério antigo.
+chequeMatches=function(x,q){const s=normalize([x.numero,x.banco,x.status,x.situacaoBancaria,x.statusRegularizacao,x.tipoRegularizacao,x.motivoDevolucao,x.codigoMotivoDevolucao,x.dataCompensacao,x.dataDevolucao,x.pessoa,supplierById(x.fornecedorId)?.nome,x.cpfCnpj,x.lote].join(' '));return!q||s.includes(normalize(q))};
+
+// Os filtros especiais usam os campos separados de situação bancária, regularização e situação física.
+const v125FilterChequesBase=v120FilterCheques;
+v120FilterCheques=function(){
+  const special=new Set(['Em cobrança','Pago por outro meio','Aguardando recuperar cheque','Cheque recuperado','Encerrado']);const selected=App.filters.chequeStatus;
+  if(!special.has(selected))return v125FilterChequesBase();
+  const keep=App.filters.chequeStatus;App.filters.chequeStatus='';let items=v125FilterChequesBase();App.filters.chequeStatus=keep;
+  if(selected==='Em cobrança')items=items.filter(x=>x.statusRegularizacao==='Em cobrança');
+  if(selected==='Pago por outro meio')items=items.filter(x=>x.statusRegularizacao==='Pago por outro meio');
+  if(selected==='Aguardando recuperar cheque')items=items.filter(x=>x.statusRegularizacao==='Pago por outro meio'&&x.chequeFisicoRecuperado!==true);
+  if(selected==='Cheque recuperado')items=items.filter(x=>x.chequeFisicoRecuperado===true);
+  if(selected==='Encerrado')items=items.filter(x=>x.statusRegularizacao==='Encerrado'||x.ocorrenciaEncerrada===true);
+  return items;
+};
+const v125ChequeToolbarBase=v120ChequeToolbar;
+v120ChequeToolbar=function(){
+  let html=v125ChequeToolbarBase();html=html.replace(`['Em preparação','Emitido','Entregue','Em aberto','Compensado','Devolvido','Reapresentado','Cancelado']`,'');
+  html=html.replace('</select><select class="filter-select" data-filter-ch-month>',`${['Em cobrança','Pago por outro meio','Aguardando recuperar cheque','Cheque recuperado','Encerrado'].map(s=>`<option ${App.filters.chequeStatus===s?'selected':''}>${s}</option>`).join('')}</select><select class="filter-select" data-filter-ch-month>`);
+  if(v125ReconciliationAvailable())html=html.replace('<button class="btn btn-outline" onclick="Borion.organizePhotos()">Fotos em massa</button>','<button class="btn btn-outline" onclick="Borion.go(\'conciliacao\')">Conciliar extrato</button><button class="btn btn-outline" onclick="Borion.organizePhotos()">Fotos em massa</button>');
+  return html;
+};
+
+// Mantém a posição exata da lista ao editar/salvar um cheque, inclusive quando renderAll recria a tabela.
+App.chequeListPosition=App.chequeListPosition||null;
+function v125RememberChequeListPosition(id){
+  if(App.page!=='cheques')return;const wrap=$('#page-cheques .table-wrap');App.chequeListPosition={id,windowY:window.scrollY,wrapTop:wrap?.scrollTop||0,wrapLeft:wrap?.scrollLeft||0,at:Date.now()};
+}
+function v125RestoreChequeListPosition(){
+  const pos=App.chequeListPosition;if(!pos)return;App.chequeListPosition=null;requestAnimationFrame(()=>requestAnimationFrame(()=>{const wrap=$('#page-cheques .table-wrap');if(wrap){wrap.scrollTop=pos.wrapTop;wrap.scrollLeft=pos.wrapLeft}window.scrollTo({top:pos.windowY,left:0,behavior:'auto'});const row=$(`#page-cheques [data-cheque-row="${CSS.escape(pos.id||'')}"]`);if(row){row.classList.add('v125-saved-row');setTimeout(()=>row.classList.remove('v125-saved-row'),1400)}}));
+}
+const v125OpenChequeBase=openCheque;
+openCheque=function(id=''){if(id)v125RememberChequeListPosition(id);return v125OpenChequeBase(id)};
+const v125RenderChequesBase=renderCheques;
+renderCheques=function(){
+  v125RenderChequesBase();const root=$('#page-cheques');if(!root)return;
+  if(!isMobileView()){
+    const rows=$$('tbody tr',root),items=v120FilterCheques();rows.forEach((row,i)=>{if(items[i])row.dataset.chequeRow=items[i].id});
+    const pending=v125PendingCheques();if(v125ReconciliationAvailable()&&!$('[data-v125-pending-strip]',root)){
+      root.insertAdjacentHTML('afterbegin',`<div class="recon-cheque-strip" data-v125-pending-strip><div><span>Cheques que exigem atenção</span><b>${pending.total}</b><small>${pending.awaitingPayment.length} devolvido(s) em cobrança · ${pending.awaitingPhysical.length} pago(s) aguardando cheque físico</small></div><button class="btn btn-outline" onclick="Borion.go('conciliacao')">Conciliar extrato bancário</button></div>`);
+    }
+  }
+};
+
+// O editor 1.0.24 continua responsável pelo commit; apenas restauramos a posição depois do sucesso.
+const v125PersistBase=v124PersistAndVerify;
+v124PersistAndVerify=async function(reason,verify,label='alteração'){
+  const persisted=await v125PersistBase(reason,verify,label);if(String(reason||'').includes('cheque-editado')||String(reason||'').includes('cheque-excluido'))v125RestoreChequeListPosition();return persisted;
+};
+
+// Enriquecimento do visualizador de cheque com situação bancária e ações de regularização.
+const v125ShowViewerBase=showViewer;
+showViewer=async function(record,type){
+  await v125ShowViewerBase(record,type);if(type!=='Cheque')return;const modal=$('#modal-root .modal');if(!modal)return;const live=v124LiveRecord(App.state.cheques,record.id)||record;const side=$('.viewer-side',modal);if(!side)return;
+  const first=$('.detail-box',side);if(first){const rows=[];if(live.situacaoBancaria)rows.push(['Situação bancária',live.situacaoBancaria]);if(live.dataCompensacao)rows.push(['Data da compensação',fmtDate(live.dataCompensacao)]);if(live.dataDevolucao)rows.push(['Data da devolução',fmtDate(live.dataDevolucao)]);if(live.motivoDevolucao)rows.push(['Motivo da devolução',live.motivoDevolucao]);if(live.statusRegularizacao)rows.push(['Regularização',live.statusRegularizacao]);if(live.situacaoBancaria==='Devolvido'||live.status==='Devolvido')rows.push(['Cheque físico',live.chequeFisicoRecuperado?'Recuperado':'Aguardando recuperação']);if(rows.length)first.insertAdjacentHTML('beforeend',rows.map(([a,b])=>`<div class="detail-row"><span>${esc(a)}</span><b>${esc(b)}</b></div>`).join(''))}
+  const edit=$('[data-edit-record]',side);if(edit&&(live.situacaoBancaria==='Devolvido'||live.status==='Devolvido'||live.statusRegularizacao)){
+    edit.insertAdjacentHTML('beforebegin',`<button class="btn btn-outline" data-regularize-cheque>Registrar regularização</button>${live.statusRegularizacao==='Pago por outro meio'&&live.chequeFisicoRecuperado!==true?'<button class="btn btn-outline" data-recover-cheque>Marcar cheque como recuperado</button>':''}${live.statusRegularizacao==='Pago por outro meio'&&live.chequeFisicoRecuperado===true&&!live.ocorrenciaEncerrada?'<button class="btn btn-outline" data-close-cheque-occurrence>Encerrar ocorrência</button>':''}`);
+    $('[data-regularize-cheque]',side)?.addEventListener('click',()=>{closeModal();v125RegisterRegularization(live.id)});$('[data-recover-cheque]',side)?.addEventListener('click',async()=>{await v125MarkChequeRecovered(live.id);closeModal();showViewer(v124LiveRecord(App.state.cheques,live.id),'Cheque')});$('[data-close-cheque-occurrence]',side)?.addEventListener('click',async()=>{await v125CloseChequeOccurrence(live.id);closeModal();showViewer(v124LiveRecord(App.state.cheques,live.id),'Cheque')});
+  }
+};
+
+PAGE_META.conciliacao=['Conciliação Bancária','Importe o extrato, confira os cheques encontrados e aplique somente o que estiver correto.'];
+App.reconciliation=App.reconciliation||{file:null,analysis:null};
+v125ConfigureReconciliationAvailability();
+
 Object.assign(window.Borion,{newFornecedor:()=>openFornecedor(),editFornecedor:openFornecedor,newCheque:()=>openCheque(),editCheque:openCheque,newBoleto:()=>openBoleto(),editBoleto:openBoleto,newChequeAccount:()=>openChequeAccount(),editChequeAccount:openChequeAccount,newLote:openLote,organizePhotos:()=>Organizer.open()});
+Object.assign(window.Borion,{openReconciliation:()=>{if(v125ReconciliationAvailable())setPage('conciliacao')},registerChequeRegularization:v125RegisterRegularization,markChequeRecovered:v125MarkChequeRecovered,closeChequeOccurrence:v125CloseChequeOccurrence});
 
 Object.assign(window.Borion,{
   dashboardSelectDate,openDashboardCalendar,clearDashboardDates:v120ClearDashboardDates,
