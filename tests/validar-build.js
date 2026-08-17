@@ -6,8 +6,8 @@ const app=fs.readFileSync('js/app.js','utf8');
 const config=fs.readFileSync('js/config.js','utf8');
 const css=fs.readFileSync('css/cnpj.css','utf8');
 const sw=fs.readFileSync('service-worker.js','utf8');
-assert(index.includes('1.0.25'),'index.html não está na versão 1.0.25');
-assert(config.includes("version: '1.0.25'"),'config.js não está na versão 1.0.25');
+assert(index.includes('1.0.26'),'index.html não está na versão 1.0.26');
+assert(config.includes("version: '1.0.26'"),'config.js não está na versão 1.0.26');
 assert(config.includes('946105310952-gp143h81mm3704lrq3877hsie49njgak.apps.googleusercontent.com'),'Client ID ausente');
 assert(app.includes('Drive.discoverOfficialV118'),'descoberta automática da base real ausente');
 assert(app.includes('Drive.listLikelyDataFilesV118'),'busca global de current.json ausente');
@@ -57,7 +57,7 @@ assert(index.includes('borion-cnpj-v111-emblem.png'),'emblema oficial não refer
 assert(index.includes('borion-cnpj-v111-apple-touch-icon.png'),'ícone mobile oficial não referenciado');
 assert(fs.existsSync('borion-cnpj-v111-icon-192.png'),'ícone 192 oficial ausente');
 assert(fs.existsSync('borion-cnpj-v111-icon-512.png'),'ícone 512 oficial ausente');
-assert(sw.includes("borion-cnpj-v1.0.25"),'cache PWA não está em 1.0.25');
+assert(sw.includes("borion-cnpj-v1.0.26"),'cache PWA não está em 1.0.26');
 
 assert(app.includes("const V124_VERSION='1.0.24'"),'v1.0.24: camada de edição executável ausente');
 assert(app.includes('v124HasActiveEditor'),'v1.0.24: trava de atualização durante edição ausente');
@@ -68,14 +68,23 @@ const v124pos=app.indexOf("const V124_VERSION='1.0.24'");
 const closePos=app.lastIndexOf('})();');
 assert(v124pos>0 && v124pos<closePos,'v1.0.24: camada de edição ficou fora do escopo principal');
 assert(app.trim().endsWith('})();'),'v1.0.24: há código executável solto depois do fechamento do app');
-assert(index.includes('js/app.js?v=1.0.25'),'index.html não força app.js 1.0.25');
-assert(index.includes("service-worker.js?v=1.0.25"),'index.html não força service worker 1.0.25');
+assert(index.includes('js/app.js?v=1.0.26'),'index.html não força app.js 1.0.26');
+assert(index.includes("service-worker.js?v=1.0.26"),'index.html não força service worker 1.0.26');
 
-assert(app.includes("const V125_VERSION='1.0.25'"),'v1.0.25: camada de conciliação ausente');
-assert(index.includes('data-page="conciliacao" hidden'),'v1.0.25: navegação de conciliação não está protegida por disponibilidade');
-assert(index.includes('page-conciliacao'),'v1.0.25: página de conciliação ausente');
-assert(app.includes('v125AnalyzeReconciliationFile'),'v1.0.25: analisador de extrato ausente');
-assert(app.includes('v125ApplyReconciliation'),'v1.0.25: aplicação confirmada da conciliação ausente');
-assert(app.includes('v125IsInstalledPWA'),'v1.0.25: regra para não exibir conciliação na PWA ausente');
-assert(app.includes('v125RememberChequeListPosition'),'v1.0.25: preservação da posição da lista ausente');
-if(!process.exitCode) console.log('BORION CNPJ 1.0.25 validado com sucesso.');
+assert(app.includes("const V125_VERSION='1.0.26'"),'v1.0.26: camada de conciliação ausente');
+assert(index.includes('data-page="conciliacao" hidden'),'v1.0.26: navegação de conciliação não está protegida por disponibilidade');
+assert(index.includes('page-conciliacao'),'v1.0.26: página de conciliação ausente');
+assert(app.includes('v125AnalyzeReconciliationFile'),'v1.0.26: analisador de extrato ausente');
+assert(app.includes('v125ApplyReconciliation'),'v1.0.26: aplicação confirmada da conciliação ausente');
+assert(app.includes('v125IsInstalledPWA'),'v1.0.26: regra para não exibir conciliação na PWA ausente');
+assert(app.includes('v125RememberChequeListPosition'),'v1.0.26: preservação da posição da lista ausente');
+
+assert(app.includes("const V126_VERSION='1.0.26'"),'v1.0.26: camada de proteção contra duplicidade ausente');
+assert(app.includes('v126AuditDuplicateCompensations'),'v1.0.26: auditoria de compensações duplicadas ausente');
+assert(app.includes('v126AlreadyProcessedMovement'),'v1.0.26: diferenciação de evento já processado ausente');
+assert(app.includes('v126SecurityPanel'),'v1.0.26: painel de segurança contra duplicidade ausente');
+assert(app.includes('v126OpenChequeOccurrences'),'v1.0.26: visualização de ocorrências bancárias ausente');
+assert(app.includes('duplicate_alert')&&app.includes('duplicate_review'),'v1.0.26: níveis de alerta de duplicidade ausentes');
+assert(css.includes('.recon-security')&&css.includes('.recon-duplicate-alert'),'v1.0.26: estética da proteção contra duplicidade ausente');
+
+if(!process.exitCode) console.log('BORION CNPJ 1.0.26 validado com sucesso.');

@@ -2,7 +2,7 @@
 'use strict';
 
 const CFG = window.BORION_CONFIG || {};
-const applyBorionVersion=()=>{const badge=document.getElementById('borion_version_badge');if(badge)badge.textContent=CFG.version||'1.0.25';};
+const applyBorionVersion=()=>{const badge=document.getElementById('borion_version_badge');if(badge)badge.textContent=CFG.version||'1.0.26';};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',applyBorionVersion,{once:true});else applyBorionVersion();
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const PAGE_META = {
@@ -96,7 +96,7 @@ function wireSmartInputs(root=document){
 
 function blankState(){
   return {
-    meta:{version:CFG.version||'1.0.25',createdAt:nowISO(),updatedAt:nowISO()},
+    meta:{version:CFG.version||'1.0.26',createdAt:nowISO(),updatedAt:nowISO()},
     settings:{companyName:'Borion CNPJ',rootFolderId:'',rootFolderName:CFG.driveRootFolderName||'Borion CNPJ',autoSync:true,keepOriginals:true,warningDays:7},
     fornecedores:[],cheques:[],boletos:[],conciliacoes:[],audit:[],deleted:[]
   };
@@ -830,7 +830,7 @@ const V104_LOCAL_LAST_GOOD_KEY='borion_cnpj_state_v2_last_good';
 function migrateStateV104(raw){
   const base=blankState();
   const out=Object.assign(base,raw||{});
-  out.meta={...base.meta,...(raw?.meta||{}),version:CFG.version||'1.0.25'};
+  out.meta={...base.meta,...(raw?.meta||{}),version:CFG.version||'1.0.26'};
   out.settings={...base.settings,...(raw?.settings||{})};
   out.settings.chequeAccounts=Array.isArray(out.settings.chequeAccounts)?out.settings.chequeAccounts:[];
   out.settings.autoSync=out.settings.autoSync!==false;
@@ -1000,7 +1000,7 @@ Drive.createSnapshot=async function(structure,prefix='AUTO'){
   const folder=await Drive.monthFolder(structure.backups,todayISO());
   const stamp=nowISO().replace(/[:.]/g,'-');
   const name=`${prefix}_${todayISO()}_${stamp}_R${Number(App.state.meta.revision||0)}.json`;
-  await Drive.uploadJson(folder,name,{app:'Borion CNPJ',version:CFG.version||'1.0.25',kind:prefix,createdAt:nowISO(),user:App.user?.email||'',state:App.state});
+  await Drive.uploadJson(folder,name,{app:'Borion CNPJ',version:CFG.version||'1.0.26',kind:prefix,createdAt:nowISO(),user:App.user?.email||'',state:App.state});
   return name;
 };
 let driveRefreshTimer=0;
@@ -1267,7 +1267,7 @@ renderBoletos=function(){
 };
 function openMobileMore(){
   const install=App.installPrompt?'<button class="mobile-menu-link" data-mobile-install>Instalar no celular <span>›</span></button>':'';
-  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="importar">Importar arquivos <span>›</span></button><button class="mobile-menu-link" data-mobile-go="backup">Backup <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.25')}</div></div>`;
+  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="importar">Importar arquivos <span>›</span></button><button class="mobile-menu-link" data-mobile-go="backup">Backup <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.26')}</div></div>`;
   const modal=openModal({title:'Mais opções',subtitle:'Ferramentas do Borion CNPJ',body});$$('[data-mobile-go]',modal).forEach(b=>b.onclick=()=>{closeModal();setPage(b.dataset.mobileGo)});$('[data-mobile-refresh]',modal)?.addEventListener('click',async()=>{closeModal();try{await Drive.pull(true,true)}catch(e){toast(e.message,'error',6500)}});$('[data-mobile-logout]',modal).onclick=()=>{closeModal();logout()};$('[data-mobile-install]',modal)?.addEventListener('click',async()=>{await installPwa();closeModal()});
 }
 async function installPwa(){if(!App.installPrompt){toast('No navegador, use “Adicionar à tela inicial”.');return}App.installPrompt.prompt();await App.installPrompt.userChoice;App.installPrompt=null;}
@@ -1278,7 +1278,7 @@ let resizeTimer=0;window.addEventListener('resize',()=>{clearTimeout(resizeTimer
 
 
 // ---------- Versão 1.0.15: sincronização transacional entre PC, celular e Drive ----------
-const V115_VERSION='1.0.25';
+const V115_VERSION='1.0.26';
 const V115_CURRENT_FILE='current.json';
 const V115_ROOT_MIRROR='BORION_CNPJ_CURRENT.json';
 const V115_PENDING_PREFIX='borion_cnpj_pending_sync_v115_';
@@ -1630,7 +1630,7 @@ function flushPendingLocalNow(){
 
 
 // ---------- Versão 1.0.16: fonte oficial real no Drive e recuperação PC/celular ----------
-const V116_VERSION='1.0.25';
+const V116_VERSION='1.0.26';
 const V116_RECOVERY_PREFIX='borion_cnpj_recovery_v116_';
 const V116_LAST_REMOTE_PREFIX='borion_cnpj_last_remote_v116_';
 
@@ -1863,7 +1863,7 @@ Drive.login=async function(){
 // O ID configurado passa a ser apenas uma preferência. O aplicativo procura a base válida,
 // inclusive quando existem pastas Sistema/Dados duplicadas, e nunca escolhe uma pasta vazia
 // apenas porque ela foi modificada mais recentemente.
-const V118_VERSION='1.0.25';
+const V118_VERSION='1.0.26';
 const V118_PREFERRED_ROOT_ID=String(CFG.driveRootFolderId||'').trim();
 const V118_ROOT_MIRROR='BORION_CNPJ_CURRENT.json';
 const V118_FOLDER_MIME='application/vnd.google-apps.folder';
@@ -2232,7 +2232,7 @@ renderCheques=function(){
 
 
 // ---------- Versão 1.0.24: leitura binária correta, token estável e descoberta enxuta ----------
-const V119_VERSION='1.0.25';
+const V119_VERSION='1.0.26';
 const V119_EXACT_DATA_NAMES=['current.json','BORION_CNPJ_CURRENT.json','dados.json','borion-cnpj-dados.json','current.json.borion'];
 const V119_MAX_GLOBAL_READS=40;
 const V119_MAX_FILE_BYTES=12*1024*1024;
@@ -2928,7 +2928,7 @@ renderConfig=function(){
 /* ----- Menu do celular sem Backup e Importar soltos ----- */
 openMobileMore=function(){
   const install=App.installPrompt?'<button class="mobile-menu-link" data-mobile-install>Instalar no celular <span>›</span></button>':'';
-  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-force>Forçar salvamento <span>⇧</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.25')}</div></div>`;
+  const body=`<div class="mobile-more-menu"><button class="mobile-menu-link" data-mobile-refresh>Atualizar agora <span>↻</span></button><button class="mobile-menu-link" data-mobile-force>Forçar salvamento <span>⇧</span></button><button class="mobile-menu-link" data-mobile-go="fornecedores">Fornecedores <span>›</span></button><button class="mobile-menu-link" data-mobile-go="config">Configurações <span>›</span></button>${install}<button class="mobile-menu-link danger" data-mobile-logout>Sair da conta <span>›</span></button><div class="mobile-menu-version">Borion CNPJ · versão ${esc(CFG.version||'1.0.26')}</div></div>`;
   const modal=openModal({title:'Mais opções',subtitle:'Ferramentas do Borion CNPJ',body});
   $$('[data-mobile-go]',modal).forEach(b=>b.onclick=()=>{closeModal();setPage(b.dataset.mobileGo)});
   $('[data-mobile-refresh]',modal)?.addEventListener('click',async()=>{closeModal();try{await Drive.pull(true,true)}catch(e){toast(e.message,'error',6500)}});
@@ -3328,8 +3328,8 @@ Organizer.save=async function(){
   for(const entry of staged)try{URL.revokeObjectURL(entry.url)}catch{}closeModal();renderAll();toast(`${saved} foto(s) vinculada(s) e confirmada(s) no armazenamento local.`,'ok',5200);
 };
 
-// ---------- Versão 1.0.25: conciliação bancária de cheques + posição da lista ----------
-const V125_VERSION='1.0.25';
+// ---------- Versão 1.0.25/1.0.26: conciliação bancária + proteção contra duplicidade ----------
+const V125_VERSION='1.0.26';
 const V125_RECON_FORMATS=['ofx','csv','txt','xlsx','pdf'];
 const V125_MONTH_MAP={jan:1,janeiro:1,feb:2,fev:2,fevereiro:2,mar:3,marco:3,'março':3,apr:4,abr:4,abril:4,may:5,mai:5,maio:5,jun:6,junho:6,jul:7,julho:7,aug:8,ago:8,agosto:8,sep:9,set:9,setembro:9,oct:10,out:10,outubro:10,nov:11,novembro:11,dec:12,dez:12,dezembro:12};
 
@@ -3608,7 +3608,7 @@ function v125WireReconciliation(root){
   $$('[data-recon-select]',root).forEach(box=>box.onchange=()=>{const item=App.reconciliation.analysis.relevant[Number(box.dataset.reconSelect)];if(item)item.selected=box.checked;refreshCount()});
   $('[data-recon-select-all]',root)?.addEventListener('click',()=>{for(const x of App.reconciliation.analysis.relevant)if(x.state==='matched')x.selected=true;renderConciliacao()});
   $('[data-recon-clear-all]',root)?.addEventListener('click',()=>{for(const x of App.reconciliation.analysis.relevant)x.selected=false;renderConciliacao()});
-  $$('[data-recon-use-candidate]',root).forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.reconUseCandidate),item=App.reconciliation.analysis.relevant[i],select=$(`[data-recon-candidate="${i}"]`,root),id=select?.value;if(!item||!id)return;const cheque=active(App.state.cheques).find(c=>c.id===id);if(!cheque)return;item.chequeId=id;item.bankEventKey=v125BankEventKey({...item,chequeId:id});const amountAbs=Math.abs(Number(item.amount||0));if(amountAbs&&Math.abs(Number(cheque.valor||0)-amountAbs)>0.01){toast('O valor do extrato ainda difere do cheque. A alteração não foi liberada automaticamente.','error',5500);return}if(item.kind==='review'){toast('A movimentação ainda não informa com segurança se foi compensada ou devolvida.','error',5500);return}if(v125ProcessedEventKeys().has(item.bankEventKey)){item.state='duplicate';item.selected=false;toast('Esta ocorrência bancária já foi conciliada e será ignorada.','local',4800);renderConciliacao();return}item.state='matched';item.selected=true;renderConciliacao()});
+  $$('[data-recon-use-candidate]',root).forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.reconUseCandidate),item=App.reconciliation.analysis.relevant[i],select=$(`[data-recon-candidate="${i}"]`,root),id=select?.value;if(!item||!id)return;const cheque=active(App.state.cheques).find(c=>c.id===id);if(!cheque)return;item.chequeId=id;item.bankEventKey=v125BankEventKey({...item,chequeId:id});const amountAbs=Math.abs(Number(item.amount||0));if(amountAbs&&Math.abs(Number(cheque.valor||0)-amountAbs)>0.01){toast('O valor do extrato ainda difere do cheque. A alteração não foi liberada automaticamente.','error',5500);return}if(item.kind==='review'){toast('A movimentação ainda não informa com segurança se foi compensada ou devolvida.','error',5500);return}if((typeof v126AlreadyProcessedMovement==='function'?v126AlreadyProcessedMovement(item,id):v125ProcessedEventKeys().has(item.bankEventKey))){item.state='duplicate';item.selected=false;toast('Esta ocorrência bancária já foi conciliada e será ignorada.','local',4800);renderConciliacao();return}item.state='matched';item.selected=true;if(typeof v126AuditDuplicateCompensations==='function')v126AuditDuplicateCompensations(App.reconciliation.analysis.relevant);renderConciliacao()});
   $('[data-recon-apply]',root)?.addEventListener('click',()=>v125ConfirmApplyReconciliation());
 }
 function v125ConfirmApplyReconciliation(){
@@ -3621,13 +3621,13 @@ function v125AddChequeEvent(cheque,type,date,description,extra={}){
   cheque.historicoEventos=Array.isArray(cheque.historicoEventos)?cheque.historicoEventos:[];const event={id:uid(),type,date:date||todayISO(),description,origin:'Conciliação bancária',createdAt:nowISO(),user:App.user?.email||'local',...extra};cheque.historicoEventos.push(event);return event;
 }
 async function v125ApplyReconciliation(selected){
-  const analysis=App.reconciliation.analysis,snapshot=v124Clone(App.state),conciliation={id:analysis.id||uid(),createdAt:nowISO(),fileName:analysis.fileName,fileHash:analysis.fileHash,fileSize:analysis.fileSize,bank:analysis.bank,account:analysis.account,period:analysis.period,totalMovements:analysis.totalMovements,relevantMovements:analysis.relevant.length,user:App.user?.email||'local',aplicados:[]};
+  const analysis=App.reconciliation.analysis,snapshot=v124Clone(App.state),conciliation={id:analysis.id||uid(),createdAt:nowISO(),fileName:analysis.fileName,fileHash:analysis.fileHash,fileSize:analysis.fileSize,bank:analysis.bank,account:analysis.account,period:analysis.period,totalMovements:analysis.totalMovements,relevantMovements:analysis.relevant.length,user:App.user?.email||'local',alertasDuplicidade:(typeof v126SerializeDuplicateAlerts==='function'?v126SerializeDuplicateAlerts(analysis.relevant):[]),aplicados:[]};
   try{
     // Aplica em ordem cronológica para preservar corretamente ciclos como Devolvido → Reapresentado → Compensado no mesmo extrato.
     const ordered=[...selected].sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))||String(a.chequeNumber||'').localeCompare(String(b.chequeNumber||'')));
     for(const mov of ordered){
       const current=v124LiveRecord(App.state.cheques,mov.chequeId);if(!current)throw new Error(`Cheque ${mov.chequeNumber} não existe mais. A conciliação foi cancelada.`);const cheque=v124Clone(current),oldStatus=cheque.status||'';
-      const common={bankEventKey:mov.bankEventKey,kind:mov.kind,date:mov.date,amount:Math.abs(Number(mov.amount||0)),sourceLine:mov.sourceLine,reason:mov.reason||'',reasonCode:mov.reasonCode||'',fitId:mov.fitId||'',chequeId:cheque.id,chequeNumber:cheque.numero,statusBefore:oldStatus};
+      const common={bankEventKey:mov.bankEventKey,bankTransactionKey:(typeof v126BankTransactionKey==='function'?v126BankTransactionKey({...mov,chequeId:cheque.id}):''),kind:mov.kind,date:mov.date,amount:Math.abs(Number(mov.amount||0)),sourceLine:mov.sourceLine,reason:mov.reason||'',reasonCode:mov.reasonCode||'',fitId:mov.fitId||'',chequeId:cheque.id,chequeNumber:cheque.numero,statusBefore:oldStatus,reapresentationNormal:Boolean(mov.reapresentationNormal)};
       if(mov.kind==='compensado'){
         const hadReturn=(cheque.historicoEventos||[]).some(e=>e.type==='devolvido'||e.type==='reapresentado')||cheque.dataDevolucao;
         cheque.status='Compensado';cheque.situacaoBancaria='Compensado';cheque.dataCompensacao=mov.date||todayISO();cheque.dataUltimaConciliacao=nowISO();cheque.conciliacaoOrigem=conciliation.id;
@@ -3720,6 +3720,185 @@ showViewer=async function(record,type){
     $('[data-regularize-cheque]',side)?.addEventListener('click',()=>{closeModal();v125RegisterRegularization(live.id)});$('[data-recover-cheque]',side)?.addEventListener('click',async()=>{await v125MarkChequeRecovered(live.id);closeModal();showViewer(v124LiveRecord(App.state.cheques,live.id),'Cheque')});$('[data-close-cheque-occurrence]',side)?.addEventListener('click',async()=>{await v125CloseChequeOccurrence(live.id);closeModal();showViewer(v124LiveRecord(App.state.cheques,live.id),'Cheque')});
   }
 };
+
+
+// ---------- Versão 1.0.26: proteção contra depósito/compensação duplicada ----------
+const V126_VERSION='1.0.26';
+
+function v126HashString(value){
+  const s=String(value||'');let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(16).padStart(8,'0');
+}
+function v126NormalizedBankText(value){return normalize(String(value||'')).replace(/[^a-z0-9]+/g,' ').trim()}
+function v126CoreMovementSignature(event){
+  return [event.date||'',event.chequeId||v125NormalizeChequeNumber(event.chequeNumber||''),Math.round(Math.abs(Number(event.amount||0))*100),event.kind||'review'].join('|');
+}
+function v126BankTransactionKey(event){
+  const cheque=event.chequeId||v125NormalizeChequeNumber(event.chequeNumber||'');
+  const fit=String(event.fitId||'').trim();const bank=v126NormalizedBankText(event.bank||'');const account=v126NormalizedBankText(event.account||'');
+  const basis=fit?['fit',bank,account,fit].join('|'):['raw',event.date||'',cheque,Math.round(Math.abs(Number(event.amount||0))*100),event.kind||'review',v126NormalizedBankText(event.sourceLine||event.description||'')].join('|');
+  return 'btx-'+v126HashString(basis);
+}
+function v126AppliedEventsForCheque(chequeId,chequeNumber=''){
+  const number=v125NormalizeChequeNumber(chequeNumber);const out=[];
+  for(const c of App.state.conciliacoes||[]){
+    for(const a of c.aplicados||[]){
+      const sameId=chequeId&&a.chequeId===chequeId;const sameNumber=number&&v125NormalizeChequeNumber(a.chequeNumber||'')===number;if(!sameId&&!sameNumber)continue;
+      const event={...a,bank:c.bank||'',account:c.account||'',fileName:c.fileName||'',conciliationId:c.id||'',conciliationCreatedAt:c.createdAt||'',_origin:'historical'};
+      event.bankTransactionKey=a.bankTransactionKey||v126BankTransactionKey(event);out.push(event);
+    }
+  }
+  return out.sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))||String(a.conciliationCreatedAt||'').localeCompare(String(b.conciliationCreatedAt||'')));
+}
+function v126AlreadyProcessedMovement(mov,chequeId){
+  const current={...mov,chequeId};const curFit=String(current.fitId||'').trim();const curSource=v126NormalizedBankText(current.sourceLine||current.description||'');const core=v126CoreMovementSignature(current);
+  for(const prior of v126AppliedEventsForCheque(chequeId,mov.chequeNumber)){
+    if(v126CoreMovementSignature(prior)!==core)continue;
+    const prevFit=String(prior.fitId||'').trim();
+    if(curFit&&prevFit){if(curFit===prevFit)return true;continue}
+    const prevSource=v126NormalizedBankText(prior.sourceLine||prior.description||'');
+    if(curSource&&prevSource&&curSource===prevSource)return true;
+    if(!curFit&&!prevFit&&!curSource&&!prevSource&&prior.bankEventKey===v125BankEventKey(current))return true;
+  }
+  return false;
+}
+function v126MatchMovement(mov){
+  if(!mov.chequeNumber)return null;
+  let candidates=active(App.state.cheques).filter(c=>v125NormalizeChequeNumber(c.numero)===mov.chequeNumber);
+  if(!candidates.length)return {...mov,bankEventKey:v125BankEventKey(mov),bankTransactionKey:v126BankTransactionKey(mov),state:'not_found',selected:false,candidates:[]};
+  const amountAbs=Math.abs(Number(mov.amount||0));const exactValue=candidates.filter(c=>Math.abs(Number(c.valor||0)-amountAbs)<=0.01);if(exactValue.length)candidates=exactValue;
+  const accountMatches=candidates.filter(c=>v125AccountMatchesMovement(c,mov));if(accountMatches.length)candidates=accountMatches;
+  if(candidates.length!==1)return {...mov,state:'review',selected:false,candidates:candidates.map(c=>c.id),reasonReview:'Mais de um cheque pode corresponder a esta movimentação.'};
+  const cheque=candidates[0],bankEventKey=v125BankEventKey({...mov,chequeId:cheque.id}),bankTransactionKey=v126BankTransactionKey({...mov,chequeId:cheque.id}),valueMismatch=amountAbs>0&&Math.abs(Number(cheque.valor||0)-amountAbs)>0.01;
+  if(v126AlreadyProcessedMovement(mov,cheque.id))return {...mov,bankEventKey,bankTransactionKey,state:'duplicate',selected:false,candidates:[cheque.id],chequeId:cheque.id};
+  if(valueMismatch)return {...mov,bankEventKey,bankTransactionKey,state:'review',selected:false,candidates:[cheque.id],chequeId:cheque.id,reasonReview:`O número confere, mas o valor do extrato (${brl(amountAbs)}) difere do cheque (${brl(cheque.valor)}).`};
+  if(mov.kind==='review')return {...mov,bankEventKey,bankTransactionKey,state:'review',selected:false,candidates:[cheque.id],chequeId:cheque.id,reasonReview:'O cheque foi identificado, mas o extrato não informou com segurança se houve compensação ou devolução.'};
+  return {...mov,bankEventKey,bankTransactionKey,state:'matched',selected:true,candidates:[cheque.id],chequeId:cheque.id};
+}
+function v126DuplicateStrength(current,previous){
+  const curFit=String(current.fitId||'').trim(),prevFit=String(previous.fitId||'').trim();
+  if(curFit&&prevFit&&curFit!==prevFit)return 'high';
+  if(current.date&&previous.date&&current.date!==previous.date)return 'high';
+  return 'review';
+}
+function v126DuplicateReason(level,current,previous){
+  const first=`${fmtDate(previous.date)} · ${brl(Math.abs(Number(previous.amount||0)))}`;const second=`${fmtDate(current.date)} · ${brl(Math.abs(Number(current.amount||0)))}`;
+  if(level==='high')return `Forte indício de duas compensações distintas para o mesmo cheque (${first} e ${second}), sem devolução ou reapresentação entre elas. Confira o extrato e, se confirmado, contate o banco.`;
+  return `O mesmo cheque possui mais de uma linha de compensação (${first} e ${second}), mas o extrato não traz identificadores suficientes para afirmar que são débitos diferentes. Revisão necessária.`;
+}
+function v126AuditDuplicateCompensations(relevant){
+  const groups=new Map();for(const item of relevant||[]){if(!item.chequeId)continue;if(!groups.has(item.chequeId))groups.set(item.chequeId,[]);groups.get(item.chequeId).push(item)}
+  for(const [chequeId,items] of groups){
+    const cheque=active(App.state.cheques).find(c=>c.id===chequeId);const historical=v126AppliedEventsForCheque(chequeId,cheque?.numero||'').filter(e=>['compensado','devolvido','reapresentado'].includes(e.kind));
+    const current=items.filter(e=>e.state!=='duplicate'&&['compensado','devolvido','reapresentado'].includes(e.kind)).map(e=>({...e,_origin:'current'}));
+    const timeline=[...historical.map((e,i)=>({...e,_sortOrigin:0,_statementIndex:i})),...current.map(e=>({...e,_sortOrigin:1,_statementIndex:Number(e._statementIndex||0)}))].sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))||a._sortOrigin-b._sortOrigin||a._statementIndex-b._statementIndex);
+    for(const item of items.filter(e=>e.state==='matched'&&e.kind==='compensado')){
+      const pos=timeline.findIndex(e=>e._origin==='current'&&e.id===item.id);if(pos<0)continue;
+      let prevPos=-1;for(let i=pos-1;i>=0;i--){if(timeline[i].kind==='compensado'){prevPos=i;break}}
+      if(prevPos<0)continue;const previous=timeline[prevPos];const between=timeline.slice(prevPos+1,pos);const hadCycleBreak=between.some(e=>e.kind==='devolvido'||e.kind==='reapresentado');
+      if(hadCycleBreak){item.reapresentationNormal=true;item.reapresentationPrevious={date:previous.date,amount:previous.amount,fitId:previous.fitId||'',sourceLine:previous.sourceLine||'',origin:previous._origin||'historical'};continue}
+      const level=v126DuplicateStrength(item,previous);item.state=level==='high'?'duplicate_alert':'duplicate_review';item.selected=false;item.duplicateLevel=level;item.reasonReview=v126DuplicateReason(level,item,previous);item.duplicateWith={date:previous.date,amount:previous.amount,fitId:previous.fitId||'',sourceLine:previous.sourceLine||'',fileName:previous.fileName||'',origin:previous._origin||'historical',bankTransactionKey:previous.bankTransactionKey||''};
+    }
+  }
+  return relevant;
+}
+async function v126AnalyzeReconciliationFile(file){
+  const parsed=await v125ParseStatementFile(file);const all=parsed.movements||[],relevant=[],seenStrong=new Set();
+  for(let i=0;i<all.length;i++){
+    const mov=all[i],hit=v126MatchMovement(mov);if(!hit)continue;hit._statementIndex=i;
+    if(hit.chequeId&&hit.fitId&&hit.state==='matched'){
+      const strong=v126BankTransactionKey({...hit,chequeId:hit.chequeId});if(seenStrong.has(strong)){hit.state='duplicate';hit.selected=false;hit.reasonReview='A mesma transação bancária (mesmo identificador) apareceu mais de uma vez no arquivo e foi tratada como repetição do mesmo evento.'}else seenStrong.add(strong);
+    }
+    relevant.push(hit);
+  }
+  v126AuditDuplicateCompensations(relevant);
+  const hash=await sha256Hex(file);const prior=(App.state.conciliacoes||[]).find(c=>c.fileHash===hash);
+  return {id:uid(),fileName:file.name,fileSize:file.size,fileType:(file.name.split('.').pop()||'').toUpperCase(),fileHash:hash,bank:parsed.bank||'',account:parsed.account||'',period:parsed.period||v125Period(all),totalMovements:all.length,relevant,prior,createdAt:nowISO(),duplicateProtection:true};
+}
+v125AnalyzeReconciliationFile=v126AnalyzeReconciliationFile;
+
+function v126IsDuplicateAlert(item){return item?.state==='duplicate_alert'||item?.state==='duplicate_review'}
+function v126IsReconciliationIssue(item){return v126IsDuplicateAlert(item)||item?.state==='review'||item?.state==='not_found'}
+function v126SecurityAuditSummary(analysis){
+  const list=analysis?.relevant||[];const verifiedIds=new Set(list.filter(x=>x.chequeId).map(x=>x.chequeId));const alertIds=new Set(list.filter(v126IsDuplicateAlert).map(x=>x.chequeId).filter(Boolean));
+  return {verified:verifiedIds.size,clear:Math.max(0,verifiedIds.size-alertIds.size),reapNormal:list.filter(x=>x.reapresentationNormal).length,alerts:list.filter(v126IsDuplicateAlert).length,alertCheques:alertIds.size,high:list.filter(x=>x.state==='duplicate_alert').length,review:list.filter(x=>x.state==='duplicate_review').length};
+}
+const v126ReconSummaryBase=v125ReconSummary;
+v125ReconSummary=function(analysis){const base=v126ReconSummaryBase(analysis),list=analysis?.relevant||[];return {...base,duplicateAlerts:list.filter(v126IsDuplicateAlert).length,duplicateHigh:list.filter(x=>x.state==='duplicate_alert').length,duplicateReview:list.filter(x=>x.state==='duplicate_review').length,issues:list.filter(v126IsReconciliationIssue).length}};
+const v126ReconStateClassBase=v125ReconStateClass;
+v125ReconStateClass=function(item){if(item.state==='duplicate_alert')return 'recon-duplicate-alert';if(item.state==='duplicate_review')return 'recon-duplicate-review';return v126ReconStateClassBase(item)};
+function v126OccurrenceMini(event,label){
+  if(!event)return '';return `<div class="recon-dup-occ"><span>${esc(label)}</span><b>${fmtDate(event.date)} · ${brl(Math.abs(Number(event.amount||0)))}</b>${event.fitId?`<small>ID bancário: ${esc(event.fitId)}</small>`:''}${event.sourceLine?`<code>${esc(event.sourceLine)}</code>`:''}</div>`;
+}
+v125ReconResultHtml=function(item,index){
+  const cheque=item.chequeId?active(App.state.cheques).find(c=>c.id===item.chequeId):null;
+  const title=item.state==='not_found'?`Cheque ${esc(item.chequeNumber)} não cadastrado`:cheque?`Cheque ${esc(cheque.numero)}`:`Cheque ${esc(item.chequeNumber||'—')}`;
+  const badge=item.state==='duplicate'?'Já processado':item.state==='duplicate_alert'?'Possível duplicidade':item.state==='duplicate_review'?'Revisar duplicidade':item.state==='not_found'?'Não cadastrado':item.state==='review'?'Revisão necessária':v125KindLabel(item.kind);
+  const candidateSelect=item.state==='review'&&item.candidates?.length?`<div class="recon-candidate"><label>Vincular manualmente</label><select data-recon-candidate="${index}"><option value="">Selecione o cheque</option>${item.candidates.map(id=>`<option value="${id}" ${item.chequeId===id?'selected':''}>${esc(v125ChequeLabel(id))}</option>`).join('')}</select><button class="action-btn" type="button" data-recon-use-candidate="${index}">Usar este cheque</button></div>`:'';
+  const duplicateBox=v126IsDuplicateAlert(item)?`<div class="recon-dup-box ${item.duplicateLevel==='high'?'danger':'review'}"><div class="recon-dup-title"><b>${item.duplicateLevel==='high'?'Forte indício de compensação duplicada':'Possível duplicidade — precisa conferir'}</b><button class="action-btn" type="button" data-recon-occurrences="${esc(item.chequeId||'')}">Ver ocorrências</button></div><p>${esc(item.reasonReview||'')}</p><div class="recon-dup-compare">${v126OccurrenceMini(item.duplicateWith,'Ocorrência anterior')}${v126OccurrenceMini(item,'Ocorrência encontrada agora')}</div><small>O Borion não altera esta segunda ocorrência automaticamente.</small></div>`:'';
+  const reapBox=item.reapresentationNormal?`<div class="recon-cycle-ok"><b>Reapresentação coerente</b><span>Houve devolução ou reapresentação entre as compensações. Não foi tratada como depósito duplicado.</span><button class="action-btn" type="button" data-recon-occurrences="${esc(item.chequeId||'')}">Ver histórico</button></div>`:'';
+  const reviewBox=item.reasonReview&&!v126IsDuplicateAlert(item)?`<div class="recon-warning">${esc(item.reasonReview)}</div>`:'';
+  return `<article class="recon-result ${v125ReconStateClass(item)}" data-recon-row="${index}"><div class="recon-check"><input type="checkbox" data-recon-select="${index}" ${item.selected?'checked':''} ${item.state==='matched'?'':'disabled'} aria-label="Selecionar ${esc(item.chequeNumber||'cheque')}"></div><div class="recon-result-main"><div class="recon-result-top"><div><b>${title}</b><small>${fmtDate(item.date)} · ${brl(Math.abs(item.amount||0))}</small></div><span class="badge ${v126IsDuplicateAlert(item)?'returned':statusClass(badge)}">${esc(badge)}</span></div>${cheque?`<div class="recon-meta"><span>Vencimento <b>${fmtDate(cheque.dataBom)}</b></span><span>Conta <b>${esc(accountLabelForCheque(cheque))}</b></span>${item.kind==='devolvido'?`<span>Motivo <b>${esc(item.reason||item.reasonCode||'Motivo não identificado')}</b></span>`:''}</div>`:''}${duplicateBox}${reapBox}${reviewBox}${candidateSelect}<div class="recon-origin"><span>Extrato</span><code>${esc(item.sourceLine||item.description)}</code></div></div></article>`;
+};
+function v126SerializeDuplicateAlerts(relevant){
+  return (relevant||[]).filter(v126IsDuplicateAlert).map(x=>({chequeId:x.chequeId||'',chequeNumber:x.chequeNumber||'',date:x.date||'',amount:Math.abs(Number(x.amount||0)),fitId:x.fitId||'',sourceLine:x.sourceLine||'',level:x.duplicateLevel||'review',previous:x.duplicateWith||null,createdAt:nowISO()}));
+}
+function v126StoredDuplicateAudit(cheque){
+  const events=v126AppliedEventsForCheque(cheque.id,cheque.numero).filter(e=>['compensado','devolvido','reapresentado'].includes(e.kind));let previousComp=null,cycleBreak=false;const alerts=[];let normalReap=0;
+  for(const e of events){
+    if(e.kind==='devolvido'||e.kind==='reapresentado'){if(previousComp)cycleBreak=true;continue}
+    if(e.kind!=='compensado')continue;
+    if(previousComp){if(cycleBreak)normalReap++;else alerts.push({current:e,previous:previousComp,level:v126DuplicateStrength(e,previousComp)})}
+    previousComp=e;cycleBreak=false;
+  }
+  return {events,alerts,normalReap,status:alerts.length?'alert':events.length?'clear':'empty'};
+}
+function v126OpenChequeOccurrences(chequeId){
+  const cheque=active(App.state.cheques).find(c=>c.id===chequeId);if(!cheque)return;const historical=v126AppliedEventsForCheque(cheque.id,cheque.numero).map((e,i)=>({...e,_label:'Conciliação anterior',_sortOrigin:0,_statementIndex:i}));
+  const current=(App.reconciliation?.analysis?.relevant||[]).filter(e=>e.chequeId===chequeId&&e.state!=='duplicate').map(e=>({...e,_label:'Extrato atual',_sortOrigin:1}));
+  const timeline=[...historical,...current].sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))||a._sortOrigin-b._sortOrigin||Number(a._statementIndex||0)-Number(b._statementIndex||0));
+  const rows=timeline.map(e=>`<div class="bank-occ-row ${v126IsDuplicateAlert(e)?'danger':''}"><div><span>${esc(e._label||'Evento')}</span><b>${esc(v125KindLabel(e.kind))}</b></div><div><b>${fmtDate(e.date)}</b><small>${brl(Math.abs(Number(e.amount||0)))}</small></div>${e.fitId?`<div class="bank-occ-id">ID bancário <code>${esc(e.fitId)}</code></div>`:''}<code class="bank-occ-source">${esc(e.sourceLine||e.description||'Sem descrição original')}</code></div>`).join('');
+  const body=`<div class="bank-occ-head"><div><span>Número</span><b>${esc(cheque.numero||'—')}</b></div><div><span>Valor cadastrado</span><b>${brl(cheque.valor)}</b></div><div><span>Conta</span><b>${esc(accountLabelForCheque(cheque))}</b></div></div><div class="recon-warning neutral">Compensações repetidas só são consideradas normais quando há uma devolução/reapresentação entre elas. Sem identificador bancário suficiente, o Borion mostra revisão em vez de afirmar algo que o extrato não prova.</div><div class="bank-occ-list">${rows||'<div class="empty compact"><b>Nenhuma ocorrência bancária registrada</b></div>'}</div>`;
+  openModal({title:'Ocorrências bancárias do cheque',subtitle:`Cheque ${cheque.numero} · conferência de duplicidade`,body,saveLabel:'Fechar',onSave:()=>closeModal()});
+}
+function v126SecurityPanel(analysis){
+  const s=v126SecurityAuditSummary(analysis),ok=s.alerts===0;return `<div class="recon-security ${ok?'ok':'alert'}"><div class="recon-security-head"><div><span>Proteção contra duplicidade</span><b>${ok?'Nenhuma possível duplicidade encontrada':'Atenção: há compensações para conferir'}</b><small>O Borion compara número, valor, conta, data, sequência de devolução/reapresentação e identificador bancário quando disponível.</small></div><div class="recon-security-mark">${ok?'✓':'!'}</div></div><div class="recon-security-grid"><div><span>Cheques verificados</span><b>${s.verified}</b></div><div><span>Sem alerta</span><b>${s.clear}</b></div><div><span>Reapresentações coerentes</span><b>${s.reapNormal}</b></div><div><span>Possíveis duplicidades</span><b>${s.alerts}</b></div></div>${s.alerts?`<div class="recon-dup-advice"><b>${s.high} forte(s) indício(s) · ${s.review} para revisão</b><span>Essas ocorrências ficam desmarcadas e não são aplicadas automaticamente.</span></div>`:''}</div>`;
+}
+renderConciliacao=function(){
+  const root=$('#page-conciliacao');if(!root)return;if(!v125ReconciliationAvailable()){root.innerHTML='<div class="panel"><div class="empty"><b>Conciliação disponível no navegador do computador</b><p>Esta atualização não é exibida na versão PWA, conforme solicitado.</p></div></div>';return}
+  const session=App.reconciliation||{},analysis=session.analysis,summary=analysis?v125ReconSummary(analysis):null,pending=v125PendingCheques(),view=session.view||'all';
+  const indexed=analysis?(analysis.relevant||[]).map((item,index)=>({item,index})):[];const shown=view==='issues'?indexed.filter(x=>v126IsReconciliationIssue(x.item)):indexed;const issueCount=indexed.filter(x=>v126IsReconciliationIssue(x.item)).length;
+  root.innerHTML=`<div class="recon-page"><section class="panel recon-import-panel"><div class="panel-head"><div><div class="panel-title">Conciliação bancária de cheques</div><p class="muted">Importe o extrato, confira o que o banco informou e só depois aplique as alterações.</p></div><span class="recon-safety">Nenhuma alteração é automática</span></div><div class="panel-body"><input type="file" data-recon-file accept=".ofx,.csv,.txt,.xlsx,.pdf" hidden><div class="recon-drop" data-recon-drop><div class="recon-drop-icon">⇧</div><h3>${session.file?esc(session.file.name):'Solte o extrato aqui'}</h3><p>${session.file?`${esc((session.file.name.split('.').pop()||'').toUpperCase())} · ${sizeText(session.file.size)}`:'OFX, CSV, TXT, XLSX ou PDF pesquisável. Prefira formatos estruturados.'}</p><div class="recon-drop-actions"><button class="btn btn-primary" type="button" data-recon-pick>${session.file?'Trocar extrato':'Selecionar extrato'}</button>${session.file?'<button class="btn btn-outline" type="button" data-recon-analyze>Analisar extrato</button>':''}</div><small>O Borion não usa OCR para extratos bancários e não altera cheques durante a análise.</small></div></div></section>
+  <section class="panel"><div class="panel-head"><div class="panel-title">Cheques que exigem atenção</div><span class="badge ${pending.total?'returned':'paid'}">${pending.total}</span></div><div class="panel-body"><div class="recon-pending-grid"><div><span>Devolvidos aguardando pagamento</span><b>${pending.awaitingPayment.length}</b></div><div><span>Pagos aguardando recuperar cheque</span><b>${pending.awaitingPhysical.length}</b></div><div><span>Próximos do vencimento</span><b>${pending.upcoming.length}</b></div></div></div></section>
+  ${analysis?`<section class="panel full-span recon-analysis"><div class="panel-head"><div><div class="panel-title">Extrato analisado</div><p class="muted">${esc(analysis.fileName)}${analysis.period?.start?` · ${fmtDate(analysis.period.start)} a ${fmtDate(analysis.period.end)}`:''}${analysis.bank?` · ${esc(analysis.bank)}`:''}</p></div><button class="action-btn" type="button" data-recon-reset>Limpar análise</button></div><div class="panel-body"><div class="recon-kpis"><div><span>Movimentações</span><b>${analysis.totalMovements}</b></div><div><span>Cheques encontrados</span><b>${summary.matched}</b></div><div><span>Compensados seguros</span><b>${summary.comp}</b></div><div><span>Devolvidos</span><b>${summary.dev}</b></div><div><span>Revisão</span><b>${summary.review+summary.duplicateReview}</b></div><div><span>Já processados</span><b>${summary.duplicate}</b></div></div>${v126SecurityPanel(analysis)}${analysis.prior?'<div class="recon-warning">Este mesmo arquivo já foi analisado anteriormente. Movimentações já processadas continuam protegidas contra duplicação.</div>':''}<div class="recon-selection-bar"><div class="recon-selection-actions"><button class="action-btn" type="button" data-recon-select-all>Selecionar todos seguros</button><button class="action-btn" type="button" data-recon-clear-all>Desmarcar todos</button><span class="recon-divider"></span><button class="action-btn ${view==='all'?'active':''}" type="button" data-recon-show-all>Todos</button><button class="action-btn ${view==='issues'?'active':''}" type="button" data-recon-show-issues>Inconsistências (${issueCount})</button></div><b data-recon-selection-count>${analysis.relevant.filter(x=>x.selected).length} selecionado(s)</b></div><div class="recon-results">${shown.length?shown.map(({item,index})=>v125ReconResultHtml(item,index)).join(''):(view==='issues'?'<div class="empty"><div class="orb">✓</div><b>Nenhuma inconsistência encontrada</b><p>Não há duplicidade, divergência ou cheque sem correspondência neste extrato.</p></div>':'<div class="empty"><b>Nenhum cheque do Borion apareceu neste extrato</b><p>As demais movimentações foram ignoradas visualmente.</p></div>')}</div><div class="recon-apply-bar"><div><b>Conferência antes de aplicar</b><small>Somente os cheques marcados e considerados seguros serão alterados.</small></div><button class="btn btn-primary" type="button" data-recon-apply ${analysis.relevant.some(x=>x.selected)?'':'disabled'}>Aplicar conciliação</button></div></div></section>`:''}
+  <section class="panel full-span"><div class="panel-head"><div><div class="panel-title">Histórico de conciliações</div><p class="muted">Registro das importações realmente aplicadas.</p></div></div><div class="panel-body">${v125ReconciliationHistoryHtml()}</div></section></div>`;
+  v125WireReconciliation(root);
+};
+const v126WireReconciliationBase=v125WireReconciliation;
+v125WireReconciliation=function(root){
+  v126WireReconciliationBase(root);
+  $('[data-recon-show-all]',root)?.addEventListener('click',()=>{App.reconciliation.view='all';renderConciliacao()});
+  $('[data-recon-show-issues]',root)?.addEventListener('click',()=>{App.reconciliation.view='issues';renderConciliacao()});
+  $$('[data-recon-occurrences]',root).forEach(btn=>btn.addEventListener('click',()=>v126OpenChequeOccurrences(btn.dataset.reconOccurrences)));
+};
+v125ConfirmApplyReconciliation=function(){
+  const analysis=App.reconciliation?.analysis;if(!analysis)return;const selected=analysis.relevant.filter(x=>x.selected&&x.state==='matched');if(!selected.length)return;
+  const comp=selected.filter(x=>x.kind==='compensado').length,dev=selected.filter(x=>x.kind==='devolvido').length,reap=selected.filter(x=>x.kind==='reapresentado').length,dup=analysis.relevant.filter(v126IsDuplicateAlert).length;
+  const body=`<div class="recon-confirm"><p><b>${selected.length} cheque(s)</b> serão atualizados.</p><div class="mini-kpis"><div><span>Compensados</span><b>${comp}</b></div><div><span>Devolvidos</span><b>${dev}</b></div><div><span>Reapresentados</span><b>${reap}</b></div><div><span>Alertas de duplicidade</span><b>${dup}</b></div></div>${dup?`<div class="recon-warning">${dup} possível(is) duplicidade(s) permanecerão sem alteração para conferência manual.</div>`:''}<div class="recon-warning neutral">Nenhuma movimentação não identificada será alterada. O histórico anterior dos cheques será preservado.</div></div>`;
+  openModal({title:'Aplicar alterações?',subtitle:'Esta é a única etapa que altera os cheques.',body,saveLabel:'Aplicar alterações',onSave:async()=>{await v125ApplyReconciliation(selected);closeModal();renderAll();setPage('conciliacao')}});
+};
+
+// A verificação também aparece dentro do cheque para tranquilidade e auditoria do histórico já conciliado.
+const v126ShowViewerBase=showViewer;
+showViewer=async function(record,type){
+  await v126ShowViewerBase(record,type);if(type!=='Cheque')return;const modal=$('#modal-root .modal');if(!modal)return;const live=v124LiveRecord(App.state.cheques,record.id)||record;const side=$('.viewer-side',modal);if(!side)return;const audit=v126StoredDuplicateAudit(live);const first=$('.detail-box',side);if(!first)return;
+  const label=audit.status==='alert'?`${audit.alerts.length} possível(is) duplicidade(s) no histórico`:audit.status==='clear'?'Nenhuma duplicidade encontrada':'Ainda sem conciliação bancária';
+  const detail=audit.status==='alert'?'Existem compensações repetidas sem devolução/reapresentação entre elas. Confira as ocorrências.':audit.status==='clear'?`${audit.events.filter(e=>e.kind==='compensado').length} compensação(ões) registrada(s) · ${audit.normalReap} reapresentação(ões) coerente(s).`:'A proteção será preenchida quando um extrato for conciliado.';
+  first.insertAdjacentHTML('afterend',`<div class="detail-box cheque-dup-audit ${audit.status==='alert'?'danger':''}"><h4>Proteção contra duplicidade</h4><div class="detail-row"><span>Situação</span><b>${esc(label)}</b></div><p>${esc(detail)}</p><button class="action-btn" type="button" data-view-bank-occurrences>Ver ocorrências bancárias</button></div>`);
+  $('[data-view-bank-occurrences]',side)?.addEventListener('click',()=>v126OpenChequeOccurrences(live.id));
+};
+
+Object.assign(window.Borion,{viewChequeBankOccurrences:v126OpenChequeOccurrences});
+
 
 PAGE_META.conciliacao=['Conciliação Bancária','Importe o extrato, confira os cheques encontrados e aplique somente o que estiver correto.'];
 App.reconciliation=App.reconciliation||{file:null,analysis:null};

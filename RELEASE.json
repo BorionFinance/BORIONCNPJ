@@ -1,22 +1,22 @@
 {
   "app": "Borion CNPJ",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "storage": "Google Drive como fonte oficial; edição local confirmada antes da sincronização",
   "driveRootFolder": "Borion CNPJ",
   "pwa": true,
-  "title": "Conciliação bancária de cheques e preservação da posição da lista",
+  "title": "Proteção contra compensação duplicada de cheques",
   "features": [
-    "conciliação de cheques por extrato no navegador desktop, com OFX, CSV, TXT, XLSX e PDF pesquisável",
-    "reconhecimento dos padrões reais CH COMPENSADO 756 105791, CH COMPENSADO 033 105779 e C - DEV CH105721 CONTR ORDEM",
-    "análise e conferência obrigatórias antes de qualquer alteração nos cheques",
-    "correspondência segura por número do cheque, valor e conta quando disponível, com revisão em caso de dúvida",
-    "idempotência por evento bancário e detecção de arquivo já analisado para impedir duplicações",
-    "histórico da conciliação, auditoria e histórico de eventos preservados no cheque",
-    "fluxo de devolução, regularização, reapresentação e recuperação física do cheque",
-    "pagamento por outro meio e recuperação do cheque físico controlados separadamente",
-    "posição vertical e horizontal da lista de cheques preservada após salvar ou excluir uma edição",
-    "módulo de importação de extrato deliberadamente oculto e indisponível na versão PWA",
-    "PWA e cache atualizados para 1.0.25 sem adicionar o importador de extrato ao modo instalado"
+    "auditoria de possível compensação/deposição duplicada por cheque durante a análise do extrato",
+    "diferencia evento já processado, reapresentação legítima e possível nova compensação suspeita",
+    "identidade bancária reforçada por FITID/identificador de transação quando disponível",
+    "alerta forte para duas compensações distintas sem devolução ou reapresentação entre elas",
+    "modo revisão quando o extrato não possui evidência suficiente para afirmar duplicidade",
+    "possíveis duplicidades ficam desmarcadas e nunca são aplicadas automaticamente",
+    "painel Proteção contra duplicidade e filtro Inconsistências na conciliação",
+    "visualização de todas as ocorrências bancárias do cheque para auditoria",
+    "proteção visível também no detalhe do cheque com histórico já conciliado",
+    "conciliação de extrato permanece indisponível na versão PWA",
+    "posição da lista de cheques continua preservada após editar/salvar"
   ],
-  "pwaCache": "borion-cnpj-v1.0.25"
+  "pwaCache": "borion-cnpj-v1.0.26"
 }

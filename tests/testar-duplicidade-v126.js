@@ -1,0 +1,15 @@
+'use strict';
+const fs=require('fs');
+const assert=require('assert');
+const app=fs.readFileSync('js/app.js','utf8');
+assert(app.includes("const V126_VERSION='1.0.26'"),'camada v1.0.26 ausente');
+assert(app.includes('Forte indício de duas compensações distintas'),'mensagem de forte indício ausente');
+assert(app.includes('Reapresentação coerente'),'tratamento de reapresentação normal ausente');
+assert(app.includes("item.state=level==='high'?'duplicate_alert':'duplicate_review'"),'classificação de duplicidade ausente');
+assert(app.includes("hadCycleBreak=between.some(e=>e.kind==='devolvido'||e.kind==='reapresentado')"),'quebra de ciclo por devolução/reapresentação ausente');
+assert(app.includes('curFit&&prevFit&&curFit!==prevFit'),'FITIDs distintos não estão sendo tratados como evidência forte');
+assert(app.includes("if(curFit&&prevFit){if(curFit===prevFit)return true;continue}"),'mesmo FITID não está sendo tratado como o mesmo evento');
+assert(app.includes("state:'duplicate'"),'proteção de reimportação ausente');
+assert(app.includes('data-recon-show-issues'),'filtro Inconsistências ausente');
+assert(app.includes('data-recon-occurrences'),'ação Ver ocorrências ausente');
+console.log('Duplicidade 1.0.26: identidade bancária, reapresentação, alertas e UI validados.');

@@ -293,3 +293,8 @@ O teste de regressão 1.0.24 continua validando a correção de edição real do
 No desktop, o operador pode gerar o extrato, importar o arquivo, deixar o Borion localizar somente os cheques relevantes, conferir o resultado e aplicar somente os itens selecionados. Compensações recebem a data bancária real; devoluções preservam motivo e texto original; regularização e recuperação física ficam separadas; eventos anteriores permanecem no histórico; e reimportar o mesmo evento não gera duplicação.
 
 Ao editar um cheque no meio de uma lista longa, salvar não deve mais devolver o usuário ao início da lista.
+
+
+## Complemento 1.0.26 — proteção contra duplicidade
+
+A conciliação ganhou auditoria específica para possível compensação duplicada. Ver `CHANGELOG_DUPLICIDADE_CHEQUES.md`.

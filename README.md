@@ -1,7 +1,20 @@
-# BORION CNPJ 1.0.25
+# BORION CNPJ 1.0.26
 
 Sistema web/PWA para Cheques, Boletos e Fornecedores, com Google Drive como fonte compartilhada entre computador e celular.
 
+
+
+## Novidades da 1.0.26
+
+- Proteção contra possível compensação/deposição duplicada do mesmo cheque durante a conciliação bancária.
+- Diferencia repetição do mesmo evento bancário, reapresentação legítima e possível duplicidade real.
+- Usa identificador bancário/FITID quando disponível; sem evidência suficiente, mostra **Revisão necessária** em vez de afirmar algo que o extrato não prova.
+- Painel de segurança com cheques verificados, sem alerta, reapresentações coerentes e possíveis duplicidades.
+- Filtro **Inconsistências** na conferência do extrato.
+- Tela de **Ocorrências bancárias do cheque** para comparar datas, valores, texto original e identificadores.
+- Possíveis duplicidades ficam desmarcadas e nunca são aplicadas automaticamente.
+- A importação/conciliação continua fora da versão PWA, como solicitado.
+- Mantida a correção da posição da lista após editar/salvar cheque.
 
 ## Novidades da 1.0.25
 
